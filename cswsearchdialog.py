@@ -39,15 +39,13 @@ from cswresponsedialog import CSWResponseDialog
 from cswsearchdialogbase import Ui_CSWSearchDialog
 
 class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
-  def __init__( self, iface ):
+  def __init__( self, iface, url ):
     QDialog.__init__( self )
     self.setupUi( self )
 
     self.iface = iface
-    self.catUrl = None
+    self.catalogUrl = str( url )
     self.catalog = None
-
-    QObject.connect( self.cmbCatalogs, SIGNAL( "activated( int )" ), self.saveSelection )
 
     QObject.connect( self.treeRecords, SIGNAL( "itemSelectionChanged()" ), self.recordClicked )
 
@@ -67,54 +65,12 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     #print "*****DEBUG*******", res
     #self.spnRecords.setValue( settings.value( "/CSWClient/results", "10" ).toInt() [ 0 ] )
 
-    self.populateCatalogList()
-
     self.setBboxFromCanvas()
 
     self.btnAddToMap.setEnabled( False )
     self.btnDownload.setEnabled( False )
     self.btnMetadata.setEnabled( False )
     self.btnShowXML.setEnabled( False )
-
-  def populateCatalogList( self ):
-    settings = QSettings()
-
-    settings.beginGroup( "/CSWClient/" )
-    self.cmbCatalogs.clear()
-    self.cmbCatalogs.addItems( settings.childGroups() )
-    settings.endGroup()
-
-    self.setCatalogListPosition()
-
-  def setCatalogListPosition( self ):
-    settings = QSettings()
-
-    toSelect = settings.value( "/CSWClient/search" ).toString()
-    # does toSelect exist in cmbConnections?
-    exists = False
-    for i in range( self.cmbCatalogs.count() ):
-      if self.cmbCatalogs.itemText( i + 1 ) == toSelect:
-        self.cmbCatalogs.setCurrentIndex( i + 1 )
-        exists = True
-        break
-
-    # If we couldn't find the stored item, but there are some, default
-    # to the last item (this makes some sense when deleting items as it
-    # allows the user to repeatidly click on delete to remove a whole
-    # lot of items)
-    if not exists and self.cmbCatalogs.count() > 0:
-      # If toSelect is null, then the selected connection wasn't found
-      # by QSettings, which probably means that this is the first time
-      # the user has used qgis with database connections, so default to
-      # the first in the list of connetions. Otherwise default to the last.
-      if toSelect.isEmpty():
-        self.cmbCatalogs.setCurrentIndex( 0 )
-      else:
-        self.cmbCatalogs.setCurrentIndex( self.cmbCatalogs.count() - 1 )
-
-  def saveSelection( self, index ):
-    settings = QSettings()
-    settings.setValue( "/CSWClient/search", self.cmbCatalogs.currentText() )
 
   def setBboxFromCanvas( self ):
     extent = self.iface.mapCanvas().extent()
@@ -154,13 +110,8 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     # records to return
     maxRecords = self.spnRecords.value()
 
-    # catalog URL
-    key = "/CSWClient/" + self.cmbCatalogs.currentText()
-    url = str( settings.value( key + "/url" ).toString() )
-    self.catUrl = url
-
     # build request
-    self.catalog = csw( url )
+    self.catalog = csw( self.catalogUrl )
 
     self.catalog.getrecords( qtype = None, keywords = keywords, bbox = bbox, sortby = None, maxrecords = maxRecords )
 
@@ -187,7 +138,7 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     recordId = str( item.text( 2 ) )
 
-    cat = csw( self.catUrl )
+    cat = csw( self.catalogUrl )
     cat.getrecordbyid( [ self.catalog.records[ recordId ].identifier ] )
     print cat.request
 
@@ -205,10 +156,8 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
       item = QTreeWidgetItem( self.treeRecords )
       item.setText( 0, self.catalog.records[ rec ].type )
       item.setText( 1, self.catalog.records[ rec ].title )
+      print "*** DEBUG ***", self.catalog.records[ rec ].identifier
       item.setText( 2, self.catalog.records[ rec ].identifier )
-      #print self.catalog.records[ rec ].uri
-      #print self.catalog.records[ rec ].source
-      #print self.catalog.records[ rec ].format
 
   def recordClicked( self ):
     if not self.treeRecords.selectedItems():

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'newcswconnectiondialogbase.ui'
 #
-# Created: Tue Sep 28 19:51:50 2010
+# Created: Mon Oct  4 21:46:53 2010
 #      by: PyQt4 UI code generator 4.5.2
 #
 # WARNING! All changes made in this file will be lost!

@@ -31,11 +31,11 @@ from PyQt4.QtGui import *
 from newcswconnectiondialogbase import Ui_NewCSWConnectionDialog
 
 class NewCSWConnectionDialog( QDialog, Ui_NewCSWConnectionDialog ):
-  def __init__( self ):
+  def __init__( self, connectionName ):
     QDialog.__init__( self )
     self.setupUi( self )
 
-    self.origName = self.leName.text()
+    self.origName = connectionName
 
   def accept( self ):
     settings = QSettings()
@@ -55,6 +55,8 @@ class NewCSWConnectionDialog( QDialog, Ui_NewCSWConnectionDialog ):
           return
 
       # on rename delete original entry first
+      print "ORIG", str( self.origName )
+      print "NEW", str( connName )
       if not self.origName.isEmpty() and self.origName != connName:
         settings.remove( "/CSWClient/" + self.origName )
 

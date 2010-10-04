@@ -57,21 +57,18 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     self.iface = iface
     self.catalog = None
 
-    self.okButton = self.buttonBox.button( QDialogButtonBox.Ok )
-    self.closeButton = self.buttonBox.button( QDialogButtonBox.Close )
-
     QObject.connect( self.cmbConnections, SIGNAL( "activated( int )" ), self.saveSelection )
 
-    QObject.connect( self.btnConnect, SIGNAL( "clicked()" ), self.connectServer )
+    QObject.connect( self.btnSearch, SIGNAL( "clicked()" ), self.searchServer )
+    QObject.connect( self.btnSrvInfo, SIGNAL( "clicked()" ), self.serverInfo )
+    QObject.connect( self.btnDefault, SIGNAL( "clicked()" ), self.addDefaultServers )
+    QObject.connect( self.btnShowCapabilities, SIGNAL( "clicked()" ), self.showCapabilities )
+
     QObject.connect( self.btnNew, SIGNAL( "clicked()" ), self.newServer )
     QObject.connect( self.btnEdit, SIGNAL( "clicked()" ), self.editServer )
     QObject.connect( self.btnDelete, SIGNAL( "clicked()" ), self.deleteServer )
     QObject.connect( self.btnLoad, SIGNAL( "clicked()" ), self.loadServers )
     QObject.connect( self.btnSave, SIGNAL( "clicked()" ), self.saveServers )
-    QObject.connect( self.btnSave, SIGNAL( "clicked()" ), self.saveServers )
-    QObject.connect( self.btnDefault, SIGNAL( "clicked()" ), self.addDefaultServers )
-    QObject.connect( self.btnShowCapabilities, SIGNAL( "clicked()" ), self.showCapabilities )
-    QObject.connect( self.btnSearch, SIGNAL( "clicked()" ), self.searchServer )
 
     self.manageGui()
 
@@ -79,7 +76,6 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     self.populateConnectionList()
 
     self.btnShowCapabilities.setEnabled( False )
-    # self.btnSearch.setEnabled( False )
 
   def populateConnectionList( self ):
     settings = QSettings()
@@ -93,25 +89,25 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
     if self.cmbConnections.count() == 0:
       # no connections - disable various buttons
-      self.btnConnect.setEnabled( False )
+      self.btnSrvInfo.setEnabled( False )
       self.btnEdit.setEnabled( False )
       self.btnDelete.setEnabled( False )
       self.btnSave.setEnabled( False )
     else:
       # connections - enable various buttons
-      self.btnConnect.setEnabled( True )
+      self.btnSrvInfo.setEnabled( True )
       self.btnEdit.setEnabled( True )
       self.btnDelete.setEnabled( True )
 
   def setConnectionListPosition( self ):
     settings = QSettings()
 
-    toSelect = settings.value( "/CSWClient/selected" ).toString()
+    toSelect = settings.value( "/CSWClient/selected", QVariant("") ).toString()
     # does toSelect exist in cmbConnections?
     exists = False
     for i in range( self.cmbConnections.count() ):
-      if self.cmbConnections.itemText( i + 1 ) == toSelect:
-        self.cmbConnections.setCurrentIndex( i + 1 )
+      if self.cmbConnections.itemText( i ) == toSelect:
+        self.cmbConnections.setCurrentIndex( i )
         exists = True
         break
 
@@ -139,7 +135,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
   def reject( self ):
     QDialog.reject( self )
 
-  def connectServer( self ):
+  def serverInfo( self ):
     settings = QSettings()
     key = "/CSWClient/" + self.cmbConnections.currentText()
     url = str( settings.value( key + "/url" ).toString() )
@@ -161,7 +157,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     settings = QSettings()
     url = settings.value( "/CSWClient/" + self.cmbConnections.currentText() + "/url" ).toString()
 
-    dlgEdit = NewCSWConnectionDialog()
+    dlgEdit = NewCSWConnectionDialog( self.cmbConnections.currentText() )
     dlgEdit.leName.setText( self.cmbConnections.currentText() )
     dlgEdit.leURL.setText( url )
     if dlgEdit.exec_() == QDialog.Accepted:
@@ -201,7 +197,6 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     errorColumn = 0
 
     ( success, errorStr, errorLine, errorColumn ) = doc.setContent( file, True )
-    print success
     if not success:
       QMessageBox.warning( self, self.tr( "Loading connections" ),
                            self.tr( "Parse error at line %1, column %2:\n%3" )
@@ -249,5 +244,8 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     dlg.exec_()
 
   def searchServer( self ):
-    dlgSearch = CSWSearchDialog( self.iface )
+    settings = QSettings()
+    url = settings.value( "/CSWClient/" + self.cmbConnections.currentText() + "/url" ).toString()
+
+    dlgSearch = CSWSearchDialog( self.iface, url )
     dlgSearch.exec_()

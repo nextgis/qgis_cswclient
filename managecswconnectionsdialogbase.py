@@ -2,7 +2,8 @@
 
 # Form implementation generated from reading ui file 'managecswconnectionsdialogbase.ui'
 #
-# Created by: PyQt4 UI code generator 4.7.3
+# Created: Mon Oct  4 21:46:56 2010
+#      by: PyQt4 UI code generator 4.5.2
 #
 # WARNING! All changes made in this file will be lost!
 

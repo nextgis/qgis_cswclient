@@ -1,8 +1,10 @@
 <!DOCTYPE connections>
-<qgsCSWConnections version="1.0">
-    <csw url="http://198.102.63.45/geoportal/csw202/discovery" name="ESRI Geoportal"/>
-    <csw url="http://www.fao.org/geonetwork/srv/en/csw" name="FAO GeoNetwork"/>
-    <csw url="http://geossregistries.info:1090/GEOSSCSW202/discovery" name="GEOSS"/>
-    <csw url="http://gos2.geodata.gov/Portal/csw202/discovery" name="Geospatial One Stop"/>
-    <csw url="http://geonetwork.sopac.org/geonetwork/srv/en/csw" name="SOPAC GeoNetwork"/>
+<qgsCSWConnections version="1.0" >
+    <csw url="http://enviroinfo.enviroportal.sk/csw/index.php" name="EnviroInfo" />
+    <csw url="http://geodiscover.cgdi.ca/wes/serviceManagerCSW/csw" name="GeoConnections Discovery Portal" />
+    <csw url="http://www.geodata.alterra.nl/excat/csw" name="GeoDesk" />
+    <csw url="http://geomatics.nlr.nl/excat/csw" name="Geomatics" />
+    <csw url="http://gos2.geodata.gov/Portal/csw202/discovery" name="Geospatial One Stop" />
+    <csw url="http://www.portalu.de/csw202" name="PortalU" />
+    <csw url="http://geonetwork.sopac.org/geonetwork/srv/en/csw" name="SOPAC GeoNetwork" />
 </qgsCSWConnections>
