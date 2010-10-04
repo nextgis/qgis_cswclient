@@ -36,7 +36,8 @@ import sys, os.path
 
 # Set up current path, so that we know where to look for mudules
 currentPath = os.path.dirname( __file__ )
-sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
+sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) + '/owslib' )
+#sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
 
 from owslib.csw import CatalogueServiceWeb as csw
 

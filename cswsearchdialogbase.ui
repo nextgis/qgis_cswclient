@@ -164,7 +164,7 @@
      <item row="0" column="0" colspan="3">
       <widget class="QLabel" name="lblResults">
        <property name="text">
-        <string>Found</string>
+        <string>Found 0 from 0</string>
        </property>
       </widget>
      </item>
@@ -188,9 +188,6 @@
        <property name="allColumnsShowFocus">
         <bool>true</bool>
        </property>
-       <attribute name="headerStretchLastSection">
-        <bool>true</bool>
-       </attribute>
        <attribute name="headerStretchLastSection">
         <bool>true</bool>
        </attribute>

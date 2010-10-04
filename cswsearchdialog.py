@@ -32,6 +32,11 @@ from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
+# Set up current path, so that we know where to look for mudules
+currentPath = os.path.dirname( __file__ )
+sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) + '/owslib' )
+#sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
+
 from owslib.csw import CatalogueServiceWeb as csw
 
 from cswresponsedialog import CSWResponseDialog
@@ -87,6 +92,7 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
   def startSearch( self ):
     # clear all fields
+    self.lblrecords.setText( self.tr( "Found 0 from 0" ) )
     self.treeRecords.clear()
     self.txtAbstract.clear()
 
