@@ -2,7 +2,8 @@
 
 # Form implementation generated from reading ui file 'cswsearchdialogbase.ui'
 #
-# Created by: PyQt4 UI code generator 4.7.3
+# Created: Tue Oct  5 22:21:10 2010
+#      by: PyQt4 UI code generator 4.5.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,7 +28,7 @@ class Ui_CSWSearchDialog(object):
         self.horizontalLayout.addWidget(self.label_5)
         self.spnRecords = QtGui.QSpinBox(CSWSearchDialog)
         self.spnRecords.setMaximum(100)
-        self.spnRecords.setProperty("value", 10)
+        self.spnRecords.setProperty("value", QtCore.QVariant(10))
         self.spnRecords.setObjectName("spnRecords")
         self.horizontalLayout.addWidget(self.spnRecords)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -75,7 +76,6 @@ class Ui_CSWSearchDialog(object):
         self.gridLayout_3 = QtGui.QGridLayout()
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.lblResults = QtGui.QLabel(CSWSearchDialog)
-        self.lblResults.setText("")
         self.lblResults.setObjectName("lblResults")
         self.gridLayout_3.addWidget(self.lblResults, 0, 0, 1, 3)
         self.treeRecords = QtGui.QTreeWidget(CSWSearchDialog)
@@ -135,7 +135,7 @@ class Ui_CSWSearchDialog(object):
         self.label_5.setText(QtGui.QApplication.translate("CSWSearchDialog", "Return records", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSearch.setText(QtGui.QApplication.translate("CSWSearchDialog", "Search", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("CSWSearchDialog", "Bounding box", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnDefaultBbox.setText(QtGui.QApplication.translate("CSWSearchDialog", "Set defaults", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnDefaultBbox.setText(QtGui.QApplication.translate("CSWSearchDialog", "Set global", None, QtGui.QApplication.UnicodeUTF8))
         self.btnCanvasBbox.setText(QtGui.QApplication.translate("CSWSearchDialog", "From map canvas", None, QtGui.QApplication.UnicodeUTF8))
         self.treeRecords.setSortingEnabled(True)
         self.treeRecords.headerItem().setText(0, QtGui.QApplication.translate("CSWSearchDialog", "Type", None, QtGui.QApplication.UnicodeUTF8))

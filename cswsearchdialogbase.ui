@@ -145,7 +145,7 @@
       <item row="1" column="1">
        <widget class="QPushButton" name="btnDefaultBbox">
         <property name="text">
-         <string>Set defaults</string>
+         <string>Set global</string>
         </property>
        </widget>
       </item>
@@ -188,9 +188,6 @@
        <property name="allColumnsShowFocus">
         <bool>true</bool>
        </property>
-       <attribute name="headerStretchLastSection">
-        <bool>true</bool>
-       </attribute>
        <attribute name="headerStretchLastSection">
         <bool>true</bool>
        </attribute>
