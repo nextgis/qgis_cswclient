@@ -34,13 +34,10 @@ from qgis.gui import *
 
 import sys, os.path
 
-# Set up current path, so that we know where to look for mudules
-currentPath = os.path.dirname( __file__ )
-#sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) + '/owslib' )
-sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
+# Set up current path, so that we know where to look for modules
+sys.path.append( os.path.abspath( os.path.dirname( __file__ ) ) )
 
 from owslib.csw import CatalogueServiceWeb as csw
-#import owslib.csw.CatalogueServiceWeb as csw
 
 from cswresponsedialog import CSWResponseDialog
 
