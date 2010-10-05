@@ -34,12 +34,16 @@ from qgis.gui import *
 
 import sys, os.path
 
+from urllib2 import HTTPError
+from xml.parsers.expat import ExpatError
+
 # Set up current path, so that we know where to look for mudules
 currentPath = os.path.dirname( __file__ )
-sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) + '/owslib' )
-#sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
+#sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) + '/owslib' )
+sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
 
 from owslib.csw import CatalogueServiceWeb as csw
+#import owslib.csw.CatalogueServiceWeb as csw
 
 import cswclient_utils as utils
 
@@ -102,8 +106,8 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
   def setConnectionListPosition( self ):
     settings = QSettings()
-
     toSelect = settings.value( "/CSWClient/selected", QVariant("") ).toString()
+
     # does toSelect exist in cmbConnections?
     exists = False
     for i in range( self.cmbConnections.count() ):
@@ -130,17 +134,38 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     settings = QSettings()
     settings.setValue( "/CSWClient/selected", self.cmbConnections.currentText() )
 
-  def accept( self ):
-    QDialog.accept( self )
+  #def accept( self ):
+  #  QDialog.accept( self )
 
-  def reject( self ):
-    QDialog.reject( self )
+  #def reject( self ):
+  #  QDialog.reject( self )
 
   def serverInfo( self ):
     settings = QSettings()
     key = "/CSWClient/" + self.cmbConnections.currentText()
     url = str( settings.value( key + "/url" ).toString() )
-    self.catalog = csw( url )
+
+    try:
+      QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
+      self.catalog = csw( url )
+    except (HTTPError, AttributeError, ExpatError ):
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Connection error" ),
+                           self.tr( "Error connecting to server %1:\n%2" )
+                           .arg( self.cmbConnections.currentText() )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+
+    QApplication.restoreOverrideCursor()
+    if self.catalog.exceptionreport:
+      print self.catalog.exceptionreport.exceptions
+      QMessageBox.warning( self, self.tr( "Connection error" ),
+                           self.tr( "Error connecting to server %1:\n%2: %3" )
+                           .arg( self.cmbConnections.currentText() )
+                           .arg( self.catalog.exceptionreport.exceptions[ 0 ][ "exceptionCode" ])
+                           .arg( self.catalog.exceptionreport.exceptions[ 0 ][ "ExceptionText" ] ) )
+
 
     if self.catalog:
       self.btnShowCapabilities.setEnabled( True )
@@ -151,6 +176,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
   def newServer( self ):
     dlgNew = NewCSWConnectionDialog()
+    dlgNew.setWindowTitle( self.tr( "New CSW server" ) )
     if dlgNew.exec_() == QDialog.Accepted:
       self.populateConnectionList()
 
@@ -159,6 +185,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     url = settings.value( "/CSWClient/" + self.cmbConnections.currentText() + "/url" ).toString()
 
     dlgEdit = NewCSWConnectionDialog( self.cmbConnections.currentText() )
+    dlgEdit.setWindowTitle( self.tr( "Edit CSW server" ) )
     dlgEdit.leName.setText( self.cmbConnections.currentText() )
     dlgEdit.leURL.setText( url )
     if dlgEdit.exec_() == QDialog.Accepted:

@@ -35,6 +35,11 @@ def serverMetadata( srv ):
   myMetadata += QCoreApplication.translate( "CSWClient", "Server properties" )
   myMetadata += "</td></tr>"
 
+  try:
+    id = srv.identification
+  except:
+    return "Failed to get server capabilities"
+
   # server identification
   if srv.identification:
     # start nested table

@@ -164,7 +164,7 @@
      <item row="0" column="0" colspan="3">
       <widget class="QLabel" name="lblResults">
        <property name="text">
-        <string>Found 0 from 0</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -191,6 +191,9 @@
        <attribute name="headerStretchLastSection">
         <bool>true</bool>
        </attribute>
+       <attribute name="headerStretchLastSection">
+        <bool>true</bool>
+       </attribute>
        <column>
         <property name="text">
          <string>Type</string>
@@ -208,41 +211,69 @@
        </column>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Abstract</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="4">
+     <item row="4" column="0" colspan="4">
       <widget class="QTextEdit" name="txtAbstract"/>
      </item>
-     <item row="4" column="0">
+     <item row="5" column="0">
       <widget class="QPushButton" name="btnAddToMap">
        <property name="text">
         <string>Add to map</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="5" column="1">
       <widget class="QPushButton" name="btnDownload">
        <property name="text">
         <string>Download</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="2">
+     <item row="5" column="2">
       <widget class="QPushButton" name="btnMetadata">
        <property name="text">
         <string>Full metadata</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="3">
+     <item row="5" column="3">
       <widget class="QPushButton" name="btnShowXML">
        <property name="text">
         <string>View XML</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="btnFirst">
+       <property name="text">
+        <string>First</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="btnPrev">
+       <property name="text">
+        <string>Prev</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="btnNext">
+       <property name="text">
+        <string>Next</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QPushButton" name="btnLast">
+       <property name="text">
+        <string>Last</string>
        </property>
       </widget>
      </item>

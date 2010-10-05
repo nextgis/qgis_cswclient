@@ -32,12 +32,15 @@ from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
+import sys, os.path
+
 # Set up current path, so that we know where to look for mudules
 currentPath = os.path.dirname( __file__ )
-sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) + '/owslib' )
-#sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
+#sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) + '/owslib' )
+sys.path.append( os.path.abspath( os.path.dirname( __file__ ) + '/owslib' ) )
 
 from owslib.csw import CatalogueServiceWeb as csw
+#import owslib.csw.CatalogueServiceWeb as csw
 
 from cswresponsedialog import CSWResponseDialog
 
@@ -62,13 +65,17 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     QObject.connect( self.btnMetadata, SIGNAL( "clicked()" ), self.showMetadata )
     QObject.connect( self.btnShowXML, SIGNAL( "clicked()" ), self.showResponse )
 
+    # navigation buttons
+    QObject.connect( self.btnFirst, SIGNAL( "clicked()" ), self.navigate )
+    QObject.connect( self.btnPrev, SIGNAL( "clicked()" ), self.navigate )
+    QObject.connect( self.btnNext, SIGNAL( "clicked()" ), self.navigate )
+    QObject.connect( self.btnLast, SIGNAL( "clicked()" ), self.navigate )
+
     self.manageGui()
 
   def manageGui( self ):
-    #settings = QSettings()
-    #res = settings.value( "/CSWClient/results", QVariant( "10" ) )
-    #print "*****DEBUG*******", res
-    #self.spnRecords.setValue( settings.value( "/CSWClient/results", "10" ).toInt() [ 0 ] )
+    settings = QSettings()
+    self.spnRecords.setValue( settings.value( "/CSWClient/returnRecords", QVariant("10") ).toInt()[ 0 ] )
 
     self.setBboxFromCanvas()
 
@@ -76,6 +83,11 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.btnDownload.setEnabled( False )
     self.btnMetadata.setEnabled( False )
     self.btnShowXML.setEnabled( False )
+
+    self.btnFirst.setEnabled( False )
+    self.btnPrev.setEnabled( False )
+    self.btnNext.setEnabled( False )
+    self.btnLast.setEnabled( False )
 
   def setBboxFromCanvas( self ):
     extent = self.iface.mapCanvas().extent()
@@ -91,42 +103,68 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.leEast.setText( "180" )
 
   def startSearch( self ):
-    # clear all fields
-    self.lblrecords.setText( self.tr( "Found 0 from 0" ) )
+    self.catalog = None
+    self.bbox = None
+    self.keywords = None
+
+
+    # clear all fields and disable buttons
+    self.lblResults.setText( self.tr( "" ) )
     self.treeRecords.clear()
     self.txtAbstract.clear()
 
+    self.btnAddToMap.setEnabled( False )
+    self.btnDownload.setEnabled( False )
+    self.btnMetadata.setEnabled( False )
+    self.btnShowXML.setEnabled( False )
+
+    self.btnFirst.setEnabled( False )
+    self.btnPrev.setEnabled( False )
+    self.btnNext.setEnabled( False )
+    self.btnLast.setEnabled( False )
+
+    # also disable spinbox
+    self.spnRecords.setEnabled( False )
+
     # save some settings
     settings = QSettings()
-    settings.setValue( "/CSWClient/results", self.spnRecords.value() )
+    settings.setValue( "/CSWClient/returnRecords", self.spnRecords.cleanText() )
+
+    # start position and number of records to return
+    self.startFrom = 0
+    self.maxRecords = self.spnRecords.value()
 
     # bbox
     minX = self.leWest.text()
     minY = self.leSouth.text()
     maxX = self.leEast.text()
     maxY = self.leNorth.text()
-    bbox = [ minX, minY, maxX, maxY ]
+    self.bbox = [ minX, minY, maxX, maxY ]
 
     # keywords
     if self.leKeywords.text().isEmpty():
-      keywords = []
+      self.keywords = []
     else:
-      keywords = self.leKeywords.text().split( "," )
+      self.keywords = self.leKeywords.text().split( "," )
 
-    # records to return
-    maxRecords = self.spnRecords.value()
+    QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
 
     # build request
     self.catalog = csw( self.catalogUrl )
 
-    self.catalog.getrecords( qtype = None, keywords = keywords, bbox = bbox, sortby = None, maxrecords = maxRecords )
+    # TODO: allow users to select resources types to find. qtype = "service", "dataset"...
+    self.catalog.getrecords( qtype = None, keywords = self.keywords, bbox = self.bbox, sortby = None, maxrecords = self.maxRecords )
 
-    self.lblResults.setText( self.tr( "Returned: %1 from %2" ).arg( self.catalog.results[ "returned" ] ).arg( self.catalog.results[ "matches" ] ) )
+    QApplication.restoreOverrideCursor()
+
+    if self.catalog.results[ "matches" ] == 0:
+      QMessageBox.information( self, self.tr( "Search" ),
+                               self.tr( "There are no records matching your criteria." ) )
+      self.lblResults.setText( self.tr( "Nothing found" ) )
+      # TODO: enable some controls
+      return
 
     self.displayResults()
-
-    self.btnShowXML.setEnabled( True )
-    self.btnMetadata.setEnabled( True )
 
   def addDataToCanvas( self ):
     pass
@@ -144,9 +182,22 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     recordId = str( item.text( 2 ) )
 
+    QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
+
     cat = csw( self.catalogUrl )
     cat.getrecordbyid( [ self.catalog.records[ recordId ].identifier ] )
-    print cat.request
+    #print cat.request
+
+    QApplication.restoreOverrideCursor()
+
+    if cat.exceptionreport:
+      print cat.exceptionreport.exceptions
+      QMessageBox.warning( self, self.tr( "Metadata request error" ),
+                           self.tr( "Can't get metadata for record %1:\n%2: %3" )
+                           .arg( recordId )
+                           .arg( cat.exceptionreport.exceptions[ 0 ][ "exceptionCode" ])
+                           .arg( cat.exceptionreport.exceptions[ 0 ][ "ExceptionText" ] ) )
+      return
 
     dlg = CSWResponseDialog()
     dlg.textXML.setText( cat.response )
@@ -158,12 +209,31 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     dlg.exec_()
 
   def displayResults( self ):
+    self.treeRecords.clear()
+
+    position = self.catalog.results[ "returned" ] + self.startFrom
+
+    self.lblResults.setText( self.tr( "Show: %1 from %2" )
+                             .arg( position )
+                             .arg( self.catalog.results[ "matches" ] ) )
+
     for rec in self.catalog.records:
       item = QTreeWidgetItem( self.treeRecords )
-      item.setText( 0, self.catalog.records[ rec ].type )
+      if self.catalog.records[ rec ].type:
+        item.setText( 0, self.catalog.records[ rec ].type )
+      else:
+        item.setText( 0, "unknow" )
       item.setText( 1, self.catalog.records[ rec ].title )
-      print "*** DEBUG ***", self.catalog.records[ rec ].identifier
       item.setText( 2, self.catalog.records[ rec ].identifier )
+
+    self.btnShowXML.setEnabled( True )
+    self.btnMetadata.setEnabled( True )
+
+    self.btnFirst.setEnabled( True )
+    self.btnPrev.setEnabled( True )
+    self.btnNext.setEnabled( True )
+    self.btnLast.setEnabled( True )
+
 
   def recordClicked( self ):
     if not self.treeRecords.selectedItems():
@@ -175,4 +245,47 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     recordId = str( item.text( 2 ) )
     abstract = self.catalog.records[ recordId ].abstract
-    self.txtAbstract.setText( QString( abstract ).simplified() )
+    if abstract:
+      self.txtAbstract.setText( QString( abstract ).simplified() )
+    else:
+      self.txtAbstract.setText( self.tr( "There is no abstract for this record" ) )
+
+  def navigate( self ):
+    senderName = self.sender().objectName()
+    if senderName == "btnFirst":
+      self.startFrom = 0
+    elif senderName == "btnLast":
+      self.startFrom = self.catalog.results[ "matches" ] - self.maxRecords
+    elif senderName == "btnNext":
+      self.startFrom += self.maxRecords
+      if self.startFrom >= self.catalog.results[ "matches" ]:
+        res = QMessageBox.information( self, self.tr( "Navigation" ),
+                                       self.tr( "This is a last page. Go to the first page?" ),
+                                       QMessageBox.Ok | QMessageBox.Cancel )
+        if res == QMessageBox.Ok:
+          self.startFrom = 0
+        else:
+          return
+    elif senderName == "btnPrev":
+      self.startFrom -= self.maxRecords
+      if self.startFrom <= 0:
+        res = QMessageBox.information( self, self.tr( "Navigation" ),
+                                       self.tr( "This is a first page. Go to the last page?" ),
+                                       QMessageBox.Ok | QMessageBox.Cancel )
+        if res == QMessageBox.Ok:
+          self.startFrom = self.catalog.results[ "matches" ] - self.maxRecords
+        else:
+          return
+
+    QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
+
+    self.catalog.getrecords( qtype = None, keywords = self.keywords, bbox = self.bbox,
+                             sortby = None, maxrecords = self.maxRecords,
+                             startposition = self.startFrom )
+
+    QApplication.restoreOverrideCursor()
+
+    self.displayResults()
+
+    # TODO: enable Add to canvas and Download buttons for appropriated
+    # records types
