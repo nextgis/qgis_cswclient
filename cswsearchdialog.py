@@ -162,7 +162,15 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
 
     # TODO: allow users to select resources types to find. qtype = "service", "dataset"...
-    self.catalog.getrecords( qtype = None, keywords = self.keywords, bbox = self.bbox, sortby = None, maxrecords = self.maxRecords )
+    try:
+      self.catalog.getrecords( qtype = None, keywords = self.keywords, bbox = self.bbox, sortby = None, maxrecords = self.maxRecords )
+    except:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "GetRecords error" ),
+                           self.tr( "Error getting server response:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
 
     QApplication.restoreOverrideCursor()
 
