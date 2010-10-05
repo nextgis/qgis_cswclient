@@ -34,6 +34,9 @@ from qgis.gui import *
 
 import sys, os.path
 
+from urllib2 import HTTPError
+from xml.parsers.expat import ExpatError
+
 # Set up current path, so that we know where to look for modules
 sys.path.append( os.path.abspath( os.path.dirname( __file__ ) ) )
 
@@ -120,8 +123,8 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.btnNext.setEnabled( False )
     self.btnLast.setEnabled( False )
 
-    # also disable spinbox
-    self.spnRecords.setEnabled( False )
+    # also disable spinbox ?
+    #self.spnRecords.setEnabled( False )
 
     # save some settings
     settings = QSettings()
@@ -147,7 +150,16 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
 
     # build request
-    self.catalog = csw( self.catalogUrl )
+    try:
+      self.catalog = csw( self.catalogUrl )
+    except (HTTPError, AttributeError, ExpatError ):
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Connection error" ),
+                           self.tr( "Error connecting to server:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+
 
     # TODO: allow users to select resources types to find. qtype = "service", "dataset"...
     self.catalog.getrecords( qtype = None, keywords = self.keywords, bbox = self.bbox, sortby = None, maxrecords = self.maxRecords )
@@ -230,7 +242,6 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.btnPrev.setEnabled( True )
     self.btnNext.setEnabled( True )
     self.btnLast.setEnabled( True )
-
 
   def recordClicked( self ):
     if not self.treeRecords.selectedItems():
