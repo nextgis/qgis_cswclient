@@ -156,11 +156,20 @@ def http_post(url=None, request=None, lang='en-US'):
         r.add_header('Accept-Encoding', 'gzip,deflate')
         r.add_header('Host', u.netloc)
         up = urllib2.urlopen(r)
+        ui = up.info()  # headers
         response = up.read()
         up.close()
+
+        # check if response is gzip compressed
+        if ui.has_key('Content-Encoding'):
+            if ui['Content-Encoding'] == 'gzip':  # uncompress response
+                import gzip
+                cds = StringIO(response)
+                gz = gzip.GzipFile(fileobj=cds)
+                response = gz.read()
+
         return response
-       
-        
+
 def xml2string(xml):
     """
 
@@ -190,5 +199,5 @@ def xmlvalid(xml, xsd):
     xsd1 = etree.parse(xsd)
     xsd2 = etree.XMLSchema(xsd1)
 
-    doc = etree.parse(StringIO.StringIO(xml))
+    doc = etree.parse(StringIO(xml))
     return xsd2.validate(doc)

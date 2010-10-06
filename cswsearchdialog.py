@@ -222,6 +222,8 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     dlg.exec_()
 
   def showResponse( self ):
+    self.extractUrl( self.catalog.response )
+
     dlg = CSWResponseDialog()
     dlg.textXML.setText( self.catalog.response )
     dlg.exec_()
@@ -304,5 +306,22 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     self.displayResults()
 
-    # TODO: enable Add to canvas and Download buttons for appropriated
-    # records types
+  def extractUrl( self, response ):
+    doc = QDomDocument()
+    errorStr = QString()
+    errorLine = 0
+    errorColumn = 0
+
+    ( success, errorStr, errorLine, errorColumn ) = doc.setContent( response, True )
+    if not success:
+      QMessageBox.warning( self, self.tr( "Parsing error" ),
+                           self.tr( "Parse error at line %1, column %2:\n%3" )
+                           .arg( errorLine )
+                           .arg( errorColumn )
+                           .arg( errorStr ) )
+      return
+
+    root = doc.documentElement().firstChildElement( "SearchResults" )
+    child = root.firstChildElement( "Record" )
+    if child.isNull():
+      print "No child"
