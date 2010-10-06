@@ -127,20 +127,16 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
       else:
         self.cmbConnections.setCurrentIndex( self.cmbConnections.count() - 1 )
 
-  def saveSelection( self, index ):
+  def saveSelection( self ):
     settings = QSettings()
     settings.setValue( "/CSWClient/selected", self.cmbConnections.currentText() )
-
-  #def accept( self ):
-  #  QDialog.accept( self )
-
-  #def reject( self ):
-  #  QDialog.reject( self )
 
   def serverInfo( self ):
     settings = QSettings()
     key = "/CSWClient/" + self.cmbConnections.currentText()
     url = str( settings.value( key + "/url" ).toString() )
+
+    # TODO: setup proxy server
 
     try:
       QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
@@ -155,6 +151,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
       return
 
     QApplication.restoreOverrideCursor()
+
     if self.catalog.exceptionreport:
       print self.catalog.exceptionreport.exceptions
       QMessageBox.warning( self, self.tr( "Connection error" ),

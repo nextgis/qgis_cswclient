@@ -93,8 +93,8 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     extent = self.iface.mapCanvas().extent()
     self.leNorth.setText( str( extent.yMaximum() ) )
     self.leSouth.setText( str( extent.yMinimum() ) )
-    self.leWest.setText( str( extent.xMaximum() ) )
-    self.leEast.setText( str( extent.xMinimum() ) )
+    self.leWest.setText( str( extent.xMinimum() ) )
+    self.leEast.setText( str( extent.xMaximum() ) )
 
   def setDefaultBbox( self ):
     self.leNorth.setText( "90" )
@@ -106,7 +106,6 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.catalog = None
     self.bbox = None
     self.keywords = None
-
 
     # clear all fields and disable buttons
     self.lblResults.setText( self.tr( "" ) )
@@ -146,6 +145,8 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
       self.keywords = []
     else:
       self.keywords = self.leKeywords.text().split( "," )
+
+    # TODO: setup proxy server ?
 
     QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
 
