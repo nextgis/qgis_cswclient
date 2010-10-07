@@ -55,8 +55,6 @@ class NewCSWConnectionDialog( QDialog, Ui_NewCSWConnectionDialog ):
           return
 
       # on rename delete original entry first
-      print "ORIG", str( self.origName )
-      print "NEW", str( connName )
       if not self.origName.isEmpty() and self.origName != connName:
         settings.remove( "/CSWClient/" + self.origName )
 

@@ -222,7 +222,7 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     dlg.exec_()
 
   def showResponse( self ):
-    self.extractUrl( self.catalog.response )
+    # self.extractUrl( self.catalog.response )
 
     dlg = CSWResponseDialog()
     dlg.textXML.setText( self.catalog.response )
@@ -255,6 +255,10 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.btnLast.setEnabled( True )
 
   def recordClicked( self ):
+    # disable previosly enabled buttons
+    self.btnAddToMap.setEnabled( False )
+    self.btnDownload.setEnabled( False )
+
     if not self.treeRecords.selectedItems():
       return
 
@@ -262,12 +266,24 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     if not item:
       return
 
+    # get item's row
+    #row = self.treeRecords.indexFromItem( item ).row()
+    #print "**** ROW ****", row
+
     recordId = str( item.text( 2 ) )
     abstract = self.catalog.records[ recordId ].abstract
     if abstract:
       self.txtAbstract.setText( QString( abstract ).simplified() )
     else:
       self.txtAbstract.setText( self.tr( "There is no abstract for this record" ) )
+
+    if item.text( 0 ) == "liveData" or item.text( 0 ) == "downloadableData":
+      dataUrl = self.extractUrl( self.catalog.response, item.text( 2 ) )
+      if not dataUrl.isEmpty():
+        if item.text( 0 ) == "liveData":
+          self.btnAddToMap.setEnabled( True )
+        elif item.text( 0 ) == "downloadableData":
+          self.btnDownload.setEnabled( True )
 
   def navigate( self ):
     senderName = self.sender().objectName()
@@ -306,7 +322,7 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     self.displayResults()
 
-  def extractUrl( self, response ):
+  def extractUrl( self, response, id ):
     doc = QDomDocument()
     errorStr = QString()
     errorLine = 0
@@ -323,5 +339,26 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     root = doc.documentElement().firstChildElement( "SearchResults" )
     child = root.firstChildElement( "Record" )
-    if child.isNull():
-      print "No child"
+    found = False
+    while not child.isNull() and not found:
+      elem = child.firstChildElement()
+      while not elem.isNull():
+        e = elem.toElement()
+        if e.tagName() == "identifier" and e.text() == id:
+          print "ID", e.text()
+          found = True
+          break
+        elem = elem.nextSiblingElement()
+
+      child = child.nextSiblingElement()
+
+    # now in child we have selected record and can extract URL
+    elem = child.firstChildElement()
+    while not elem.isNull():
+      e = elem.toElement()
+      if e.tagName() == "references":
+        print "URL", e.text()
+        break
+      elem = elem.nextSiblingElement()
+
+    return e.text()
