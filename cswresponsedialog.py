@@ -6,7 +6,9 @@
 # ---------------------------------------------------------
 # QGIS Catalogue Service client.
 #
-# Copyright (C) 2010 Alexander Bruy (alexander.bruy@gmail.com)
+# Copyright (C) 2010 NextGIS (http://nextgis.org),
+#                    Alexander Bruy (alexander.bruy@gmail.com),
+#                    Maxim Dubinin (sim@gis-lab.info)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free

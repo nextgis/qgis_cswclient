@@ -6,7 +6,9 @@
 # ---------------------------------------------------------
 # QGIS Catalogue Service client.
 #
-# Copyright (C) 2010 Alexander Bruy (alexander.bruy@gmail.com)
+# Copyright (C) 2010 NextGIS (http://nextgis.org),
+#                    Alexander Bruy (alexander.bruy@gmail.com),
+#                    Maxim Dubinin (sim@gis-lab.info)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -101,10 +103,11 @@ class CSWClientPlugin( object ):
     version = QLabel( QApplication.translate( "CSW Client", "Version: %1" ).arg( mVersion ) )
     version.setAlignment( Qt.AlignHCenter | Qt.AlignVCenter )
     lines.addWidget( version )
-    lines.addWidget( QLabel( QApplication.translate( "CSW Client", "This plugin creates a point shapefile\nfrom a set of geotagged images" ) ) )
+    lines.addWidget( QLabel( QApplication.translate( "CSW Client", "Catalogue Services browser. Provide\ninterface for discovering and retrieval\nof spatial data and services metadata." ) ) )
     lines.addWidget( QLabel( QApplication.translate( "CSW Client", "<b>Developers:</b>" ) ) )
-    #lines.addWidget( QLabel( "  Tim Sutton" ) )
+    lines.addWidget( QLabel( "  NextGIS" ) )
     lines.addWidget( QLabel( "  Alexander Bruy" ) )
+    lines.addWidget( QLabel( "  Maxim Dubinin" ) )
     lines.addWidget( QLabel( QApplication.translate( "CSW Client", "<b>Homepage:</b>") ) )
 
     overrideLocale = QSettings().value( "locale/overrideFlag", QVariant( False ) ).toBool()

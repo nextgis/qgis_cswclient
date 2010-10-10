@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-mVersion = "0.0.3"
+mVersion = "0.0.4"
 
 #******************************************************************************
 #
@@ -8,7 +8,9 @@ mVersion = "0.0.3"
 # ---------------------------------------------------------
 # QGIS Catalogue Service client.
 #
-# Copyright (C) 2010 Alexander Bruy (alexander.bruy@gmail.com)
+# Copyright (C) 2010 NextGIS (http://nextgis.org),
+#                    Alexander Bruy (alexander.bruy@gmail.com),
+#                    Maxim Dubinin (sim@gis-lab.info)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -40,7 +42,7 @@ def qgisMinimumVersion():
   return "1.0"
 
 def authorName():
-  return "Alexander Bruy"
+  return "NextGIS, Alexander Bruy, Maxim Dubinin"
 
 def classFactory( iface ):
   from cswclient import CSWClientPlugin

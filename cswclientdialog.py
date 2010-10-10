@@ -6,7 +6,9 @@
 # ---------------------------------------------------------
 # QGIS Catalogue Service client.
 #
-# Copyright (C) 2010 Alexander Bruy (alexander.bruy@gmail.com)
+# Copyright (C) 2010 NextGIS (http://nextgis.org),
+#                    Alexander Bruy (alexander.bruy@gmail.com),
+#                    Maxim Dubinin (sim@gis-lab.info)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -141,16 +143,30 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     try:
       QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
       self.catalog = csw( url )
-    except (HTTPError, AttributeError, ExpatError ):
       QApplication.restoreOverrideCursor()
-      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+    except HTTPError:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient HTTP error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
       QMessageBox.warning( self, self.tr( "Connection error" ),
                            self.tr( "Error connecting to server %1:\n%2" )
                            .arg( self.cmbConnections.currentText() )
                            .arg( str( sys.exc_info()[ 1 ] ) ) )
       return
-
-    QApplication.restoreOverrideCursor()
+    except ExpatError:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient parse error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Parse error" ),
+                           self.tr( "Error parsing server response:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+    except:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Error" ),
+                           self.tr( "Error connecting to server %1:\n%2" )
+                           .arg( self.cmbConnections.currentText() )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
 
     if self.catalog.exceptionreport:
       print self.catalog.exceptionreport.exceptions
@@ -159,14 +175,17 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
                            .arg( self.cmbConnections.currentText() )
                            .arg( self.catalog.exceptionreport.exceptions[ 0 ][ "exceptionCode" ])
                            .arg( self.catalog.exceptionreport.exceptions[ 0 ][ "ExceptionText" ] ) )
-
+      return
 
     if self.catalog:
       self.btnShowCapabilities.setEnabled( True )
       self.btnSearch.setEnabled( True )
 
       metadata = utils.serverMetadata( self.catalog )
-      self.textCapabilities.setText( metadata )
+      myStyle = QgsApplication.reportStyleSheet()
+      self.textCapabilities.clear()
+      self.textCapabilities.document().setDefaultStyleSheet( myStyle )
+      self.textCapabilities.setHtml( metadata )
 
   def newServer( self ):
     dlgNew = NewCSWConnectionDialog()

@@ -6,7 +6,9 @@
 # ---------------------------------------------------------
 # QGIS Catalogue Service client.
 #
-# Copyright (C) 2010 Alexander Bruy (alexander.bruy@gmail.com)
+# Copyright (C) 2010 NextGIS (http://nextgis.org),
+#                    Alexander Bruy (alexander.bruy@gmail.com),
+#                    Maxim Dubinin (sim@gis-lab.info)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -41,6 +43,8 @@ from xml.parsers.expat import ExpatError
 sys.path.append( os.path.abspath( os.path.dirname( __file__ ) ) )
 
 from owslib.csw import CatalogueServiceWeb as csw
+
+import cswclient_utils as utils
 
 from cswresponsedialog import CSWResponseDialog
 
@@ -122,9 +126,6 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.btnNext.setEnabled( False )
     self.btnLast.setEnabled( False )
 
-    # also disable spinbox ?
-    #self.spnRecords.setEnabled( False )
-
     # save some settings
     settings = QSettings()
     settings.setValue( "/CSWClient/returnRecords", self.spnRecords.cleanText() )
@@ -148,19 +149,32 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     # TODO: setup proxy server ?
 
-    QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
 
     # build request
     try:
+      QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
       self.catalog = csw( self.catalogUrl )
-    except (HTTPError, AttributeError, ExpatError ):
+    except HTTPError:
       QApplication.restoreOverrideCursor()
-      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      print "CSWClient HTTP error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
       QMessageBox.warning( self, self.tr( "Connection error" ),
                            self.tr( "Error connecting to server:\n%1" )
                            .arg( str( sys.exc_info()[ 1 ] ) ) )
       return
-
+    except ExpatError:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient parse error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Parse error" ),
+                           self.tr( "Error parsing server response:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+    except:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Error" ),
+                           self.tr( "Error connecting to server:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
 
     # TODO: allow users to select resources types to find. qtype = "service", "dataset"...
     try:
@@ -175,20 +189,63 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     QApplication.restoreOverrideCursor()
 
+    if self.catalog.exceptionreport:
+      print self.catalog.exceptionreport.exceptions
+      QMessageBox.warning( self, self.tr( "Error" ),
+                           self.tr( "CSW exception %1:\n%2" )
+                           .arg( self.catalog.exceptionreport.exceptions[ 0 ][ "exceptionCode" ])
+                           .arg( self.catalog.exceptionreport.exceptions[ 0 ][ "ExceptionText" ] ) )
+      return
+
     if self.catalog.results[ "matches" ] == 0:
       QMessageBox.information( self, self.tr( "Search" ),
                                self.tr( "There are no records matching your criteria." ) )
       self.lblResults.setText( self.tr( "Nothing found" ) )
-      # TODO: enable some controls
       return
 
     self.displayResults()
 
   def addDataToCanvas( self ):
-    pass
+    url = QUrl( self.leDataUrl.text(), QUrl.TolerantMode )
+    dataUrl = str( url.toString( QUrl.RemoveQuery ) )
+    print "Trimmed URL", dataUrl
+
+    # test if URL is valid WMS server
+    from owslib.wms import WebMapService
+
+    try:
+      QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
+      wms = WebMapService( dataUrl )
+    except HTTPError:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient HTTP error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Connection error" ),
+                           self.tr( "Error connecting to server:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+    except ExpatError:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient parse error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Parsing error" ),
+                           self.tr( "Error parsing server response:\n%1\n\n%2" )
+                           .arg( str( sys.exc_info()[ 1 ] ) )
+                           .arg( self.tr( "May be URL is not valid or there is no WMS service on this server." ) ) )
+      return
+    except:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unknow error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Error" ),
+                           self.tr( "Error:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+
+    QApplication.restoreOverrideCursor()
+    if wms.identification and wms.identification.type == "OGC:WMS":
+      # store connection in WMS list
+      print "Valid WMS server"
 
   def downloadData( self ):
-    pass
+    QDesktopServices.openUrl( QUrl( self.leDataUrl.text(), QUrl.TolerantMode ) )
 
   def showMetadata( self ):
     if not self.treeRecords.selectedItems():
@@ -200,11 +257,40 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     recordId = str( item.text( 2 ) )
 
-    QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
+    try:
+      QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
+      cat = csw( self.catalogUrl )
+    except HTTPError:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient HTTP error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Connection error" ),
+                           self.tr( "Error connecting to server:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+    except ExpatError:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient parse error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Parse error" ),
+                           self.tr( "Error parsing server response:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
+    except:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "Error" ),
+                           self.tr( "Error connecting to server:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
 
-    cat = csw( self.catalogUrl )
-    cat.getrecordbyid( [ self.catalog.records[ recordId ].identifier ] )
-    #print cat.request
+    try:
+      cat.getrecordbyid( [ self.catalog.records[ recordId ].identifier ] )
+    except:
+      QApplication.restoreOverrideCursor()
+      print "CSWClient unexpected error:", sys.exc_info()[ 0 ], sys.exc_info()[ 1 ], sys.exc_info()[ 2 ]
+      QMessageBox.warning( self, self.tr( "GetRecords error" ),
+                           self.tr( "Error getting server response:\n%1" )
+                           .arg( str( sys.exc_info()[ 1 ] ) ) )
+      return
 
     QApplication.restoreOverrideCursor()
 
@@ -217,19 +303,21 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
                            .arg( cat.exceptionreport.exceptions[ 0 ][ "ExceptionText" ] ) )
       return
 
+    metadata = utils.recordMetadata( cat.records[ recordId ] )
+    myStyle = QgsApplication.reportStyleSheet()
     dlg = CSWResponseDialog()
-    dlg.textXML.setText( cat.response )
+    dlg.textXML.document().setDefaultStyleSheet( myStyle )
+    dlg.textXML.setHtml( metadata )
     dlg.exec_()
 
   def showResponse( self ):
-    # self.extractUrl( self.catalog.response )
-
     dlg = CSWResponseDialog()
     dlg.textXML.setText( self.catalog.response )
     dlg.exec_()
 
   def displayResults( self ):
     self.treeRecords.clear()
+    self.leDataUrl.clear()
 
     position = self.catalog.results[ "returned" ] + self.startFrom
 
@@ -259,16 +347,15 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     self.btnAddToMap.setEnabled( False )
     self.btnDownload.setEnabled( False )
 
+    # clear URL
+    self.leDataUrl.clear()
+
     if not self.treeRecords.selectedItems():
       return
 
     item = self.treeRecords.currentItem()
     if not item:
       return
-
-    # get item's row
-    #row = self.treeRecords.indexFromItem( item ).row()
-    #print "**** ROW ****", row
 
     recordId = str( item.text( 2 ) )
     abstract = self.catalog.records[ recordId ].abstract
@@ -279,7 +366,9 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
 
     if item.text( 0 ) == "liveData" or item.text( 0 ) == "downloadableData":
       dataUrl = self.extractUrl( self.catalog.response, item.text( 2 ) )
+      print "DATA URL", dataUrl
       if not dataUrl.isEmpty():
+        self.leDataUrl.setText( dataUrl )
         if item.text( 0 ) == "liveData":
           self.btnAddToMap.setEnabled( True )
         elif item.text( 0 ) == "downloadableData":
@@ -344,7 +433,7 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
       elem = child.firstChildElement()
       while not elem.isNull():
         e = elem.toElement()
-        if e.tagName() == "identifier" and e.text() == id:
+        if e.tagName() == "identifier" and e.attribute( "scheme" ).endsWith( "DocID" ) and e.text() == id:
           print "ID", e.text()
           found = True
           break
@@ -353,12 +442,17 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
       child = child.nextSiblingElement()
 
     # now in child we have selected record and can extract URL
+    found = False
     elem = child.firstChildElement()
     while not elem.isNull():
       e = elem.toElement()
-      if e.tagName() == "references":
+      if e.tagName() == "references" and e.attribute( "scheme" ).endsWith( "Onlink" ):
+        found = True
         print "URL", e.text()
         break
       elem = elem.nextSiblingElement()
 
-    return e.text()
+    if found:
+      return e.text()
+
+    return QString()

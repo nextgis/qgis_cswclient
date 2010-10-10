@@ -8,6 +8,7 @@
 # Contact email: tomkralidis@hotmail.com
 # =============================================================================
 
+import sys
 from owslib.etree import etree
 import urlparse, urllib2
 from urllib2 import urlopen, HTTPError, Request
@@ -131,7 +132,7 @@ def testXMLValue(val, attrib=False):
         return None
 
 
-def http_post(url=None, request=None, lang='en-US'):
+def http_post(url=None, request=None, lang='en-US', timeout=10):
     """
 
     Invoke an HTTP POST request 
@@ -142,6 +143,7 @@ def http_post(url=None, request=None, lang='en-US'):
     - url: the URL of the server
     - request: the request message
     - lang: the language
+    - timeout: timeout in seconds
 
     """
 
@@ -155,7 +157,14 @@ def http_post(url=None, request=None, lang='en-US'):
         r.add_header('Accept-Language', lang)
         r.add_header('Accept-Encoding', 'gzip,deflate')
         r.add_header('Host', u.netloc)
-        up = urllib2.urlopen(r)
+
+        try:
+            up = urllib2.urlopen(r,timeout=timeout);
+        except TypeError:
+            import socket
+            socket.setdefaulttimeout(timeout)
+            up = urllib2.urlopen(r)
+
         ui = up.info()  # headers
         response = up.read()
         up.close()
