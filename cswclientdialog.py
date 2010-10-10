@@ -40,7 +40,8 @@ from urllib2 import HTTPError
 from xml.parsers.expat import ExpatError
 
 # Set up current path, so that we know where to look for modules
-sys.path.append( os.path.abspath( os.path.dirname( __file__ ) ) )
+#sys.path.append( os.path.abspath( os.path.dirname( __file__ ) ) )
+sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) ) )
 
 from owslib.csw import CatalogueServiceWeb as csw
 

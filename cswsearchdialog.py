@@ -40,7 +40,8 @@ from urllib2 import HTTPError
 from xml.parsers.expat import ExpatError
 
 # Set up current path, so that we know where to look for modules
-sys.path.append( os.path.abspath( os.path.dirname( __file__ ) ) )
+#sys.path.append( os.path.abspath( os.path.dirname( __file__ ) ) )
+sys.path.insert( 0, os.path.abspath( os.path.dirname( __file__ ) ) )
 
 from owslib.csw import CatalogueServiceWeb as csw
 
@@ -197,11 +198,23 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
                            .arg( self.catalog.exceptionreport.exceptions[ 0 ][ "ExceptionText" ] ) )
       return
 
+    if not self.catalog.results:
+      print "There are no results"
+      QMessageBox.information( self, self.tr( "Search" ),
+                               self.tr( "There are no records in server response." ) )
+      return
+
     if self.catalog.results[ "matches" ] == 0:
       QMessageBox.information( self, self.tr( "Search" ),
                                self.tr( "There are no records matching your criteria." ) )
       self.lblResults.setText( self.tr( "Nothing found" ) )
       return
+
+    if self.catalog.results[ "matches" ] < self.maxRecords:
+      self.btnFirst.setEnabled( False )
+      self.btnPrev.setEnabled( False )
+      self.btnNext.setEnabled( False )
+      self.btnLast.setEnabled( False )
 
     self.displayResults()
 
@@ -240,9 +253,11 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
       return
 
     QApplication.restoreOverrideCursor()
-    if wms.identification and wms.identification.type == "OGC:WMS":
+    #if wms.identification and wms.identification.type == "OGC:WMS":
       # store connection in WMS list
-      print "Valid WMS server"
+    QMessageBox.information( self, self.tr( "Info" ), self.tr( "Valid WMS Server" ) )
+    print "Valid WMS server"
+    print wms.identification.type
 
   def downloadData( self ):
     QDesktopServices.openUrl( QUrl( self.leDataUrl.text(), QUrl.TolerantMode ) )
