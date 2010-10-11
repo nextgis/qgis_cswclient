@@ -259,6 +259,31 @@ class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
     print "Valid WMS server"
     print wms.identification.type
 
+    serverName, isOk = QInputDialog.getText( self, self.tr( "Enter name for WMS server" ),
+                                             self.tr( "Server name" ) )
+
+    # store connection
+    if isOk and not serverName.isEmpty():
+      # check if there is a connection with same name
+      settings = QSettings()
+      settings.beginGroup( "/Qgis/connections-wms" );
+      keys = settings.childGroups();
+      settings.endGroup();
+
+      # check for duplicates
+      if keys.contains( serverName ):
+        res = QMessageBox.warning( self, self.tr( "Saving server" ),
+                                   self.tr( "Connection with name %1 already exists. Overwrite?" )
+                                   .arg( connectionName ),
+                                   QMessageBox.Yes | QMessageBox.No )
+        if res != QMessageBox.Yes:
+          return
+
+      # no dups detected or overwrite is allowed
+      settings.beginGroup( "/Qgis/connections-wms" )
+      settings.setValue( "/" + serverName + "/url", dataUrl )
+      settings.endGroup()
+
   def downloadData( self ):
     QDesktopServices.openUrl( QUrl( self.leDataUrl.text(), QUrl.TolerantMode ) )
 
