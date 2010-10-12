@@ -51,25 +51,25 @@ class XmlHighlighter( QSyntaxHighlighter ):
     xmlAtttibuteValue = QTextCharFormat()
 
     # open tags
-    pattern = QRegExp( "\\b<" + xmlName + "\\b" + ">?$" )
+    pattern = QRegExp( "<" + xmlName + ">?" )
     xmlOpenTag.setForeground( Qt.darkBlue )
     xmlOpenTag.setFontWeight( QFont.Bold )
     rule = HighlightingRule( pattern, xmlOpenTag )
     self.highlightingRules.append( rule )
 
     # close tags
-    pattern = QRegExp("\\b</" + xmlName + ">" + "|/>|>$" )
+    pattern = QRegExp("</" + xmlName + ">" + "|/>|>$" )
     xmlCloseTag.setForeground( Qt.darkBlue )
     xmlCloseTag.setFontWeight( QFont.Bold )
     rule = HighlightingRule( pattern, xmlCloseTag )
     self.highlightingRules.append( rule )
 
     # comments
-    #pattern = QRegExp("^<!\\-\\-$.*^\\-\\->$")
-    #xmlComment.setForeground( Qt.gray )
-    #xmlComment.setFontItalic( True )
-    #rule = HighlightingRule( pattern, xmlComment )
-    #self.highlightingRules.append( rule )
+    pattern = QRegExp("<!\\-\\-.*\\-\\->")
+    xmlComment.setForeground( Qt.darkGray )
+    xmlComment.setFontItalic( True )
+    rule = HighlightingRule( pattern, xmlComment )
+    self.highlightingRules.append( rule )
 
     # doctype
     #pattern = QRegExp("^<!DOCTYPE.*>$")
@@ -79,13 +79,14 @@ class XmlHighlighter( QSyntaxHighlighter ):
     #self.highlightingRules.append( rule )
 
     # attributes
-    #pattern = QRegExp("\s" + xmlName + "\b")
+    #pattern = QRegExp("\\s" + xmlName )
     #xmlAttribute.setForeground( Qt.darkYellow )
     #rule = HighlightingRule( pattern, xmlAttribute )
     #self.highlightingRules.append( rule )
 
     # attribute values
     #pattern = QRegExp("\".*\"" )
+    #pattern.setPatternSyntax( QRegExp.RegExp2 )
     #pattern.setMinimal( True )
     #xmlCloseTag.setForeground( Qt.darkGreen )
     #xmlCloseTag.setFontWeight( QFont.Bold )
