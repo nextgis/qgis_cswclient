@@ -51,6 +51,7 @@ from cswsearchdialog import CSWSearchDialog
 from cswresponsedialog import CSWResponseDialog
 from newcswconnectiondialog import NewCSWConnectionDialog
 from managecswconnectionsdialog import ManageCSWConnectionsDialog
+from xmlhighlighter import XmlHighlighter
 
 from cswclientdialogbase import Ui_CSWClientDialog
 
@@ -139,7 +140,25 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     key = "/CSWClient/" + self.cmbConnections.currentText()
     url = str( settings.value( key + "/url" ).toString() )
 
-    # TODO: setup proxy server
+    # if there is proxy server in settings
+    settings.beginGroup( "proxy" )
+    if settings.value( "/proxyEnabled" ).toBool():
+      proxyType = settings.value( "/proxyType", QVariant( 0 ) ).toString()
+      if proxyType == "HttpProxy":
+        proxyHost = settings.value( "/proxyHost" ).toString()
+        proxyPost = settings.value( "/proxyPort" ).toUInt()[ 0 ]
+        proxyUser = settings.value( "/proxyUser" ).toString()
+        proxyPass = settings.value( "/proxyPassword" ).toString()
+
+        # setup urllib2 proxy handler
+        connectionString = "http://%s:%s@%s:%s" % ( proxyUser, proxyPass,
+                                                    proxyHost, proxyPort )
+        #authHandler = urllib2.ProxyBasicAuthHandler()
+        #authHandler.add_password( None, None, user, password )
+        proxyHandler = urllib2.ProxyHandler( { "http" : connectionString } )
+        opener = urllib2.build_opener( proxyHandler )
+        urllib2.install_opener( opener )
+    settings.endGroup()
 
     try:
       QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
@@ -282,6 +301,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
   def showCapabilities( self ):
     dlg = CSWResponseDialog()
+    highlighter = XmlHighlighter( dlg.textXML )
     dlg.textXML.setText( self.catalog.response )
     dlg.exec_()
 
