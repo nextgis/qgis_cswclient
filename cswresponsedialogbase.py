@@ -2,7 +2,8 @@
 
 # Form implementation generated from reading ui file 'cswresponsedialogbase.ui'
 #
-# Created by: PyQt4 UI code generator 4.7.3
+# Created: Sat Oct 16 16:56:38 2010
+#      by: PyQt4 UI code generator 4.5.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -14,10 +15,10 @@ class Ui_CSWResponseDialog(object):
         CSWResponseDialog.resize(467, 363)
         self.verticalLayout = QtGui.QVBoxLayout(CSWResponseDialog)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.textXML = QtGui.QTextEdit(CSWResponseDialog)
-        self.textXML.setLineWrapMode(QtGui.QTextEdit.NoWrap)
-        self.textXML.setObjectName("textXML")
-        self.verticalLayout.addWidget(self.textXML)
+        self.textXml = QtGui.QTextEdit(CSWResponseDialog)
+        self.textXml.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        self.textXml.setObjectName("textXml")
+        self.verticalLayout.addWidget(self.textXml)
         self.buttonBox = QtGui.QDialogButtonBox(CSWResponseDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Close)

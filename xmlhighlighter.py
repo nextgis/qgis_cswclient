@@ -51,14 +51,14 @@ class XmlHighlighter( QSyntaxHighlighter ):
     xmlAtttibuteValue = QTextCharFormat()
 
     # open tags
-    pattern = QRegExp( "<" + xmlName + ">?" )
+    pattern = QRegExp( "<" + xmlName + ">?" + "|<\?xml" )
     xmlOpenTag.setForeground( Qt.darkBlue )
     xmlOpenTag.setFontWeight( QFont.Bold )
     rule = HighlightingRule( pattern, xmlOpenTag )
     self.highlightingRules.append( rule )
 
     # close tags
-    pattern = QRegExp("</" + xmlName + ">" + "|/>|>$" )
+    pattern = QRegExp("</" + xmlName + ">" + "|/>|>|\?>$" )
     xmlCloseTag.setForeground( Qt.darkBlue )
     xmlCloseTag.setFontWeight( QFont.Bold )
     rule = HighlightingRule( pattern, xmlCloseTag )

@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTextEdit" name="textXML">
+    <widget class="QTextEdit" name="textXml">
      <property name="lineWrapMode">
       <enum>QTextEdit::NoWrap</enum>
      </property>
