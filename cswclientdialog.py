@@ -55,6 +55,8 @@ from xmlhighlighter import XmlHighlighter
 
 from cswclientdialogbase import Ui_CSWClientDialog
 
+currentPath = os.path.abspath( os.path.dirname( __file__ ) )
+
 class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
   def __init__( self, iface ):
     QDialog.__init__( self )
