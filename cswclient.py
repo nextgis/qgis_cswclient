@@ -105,7 +105,7 @@ class CSWClientPlugin( object ):
     lines.addWidget( version )
     lines.addWidget( QLabel( QApplication.translate( "CSW Client", "Catalogue Services browser. Provide\ninterface for discovering and retrieval\nof spatial data and services metadata." ) ) )
     lines.addWidget( QLabel( QApplication.translate( "CSW Client", "<b>Developers:</b>" ) ) )
-    lines.addWidget( QLabel( "  NextGIS" ) )
+    lines.addWidget( QLabel( "&nbsp;&nbsp;<a href=\"http://nextgis.ru\">NextGIS</a>" ) )
     lines.addWidget( QLabel( "  Alexander Bruy" ) )
     lines.addWidget( QLabel( "  Maxim Dubinin" ) )
     lines.addWidget( QLabel( QApplication.translate( "CSW Client", "<b>Homepage:</b>") ) )
