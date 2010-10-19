@@ -689,8 +689,8 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
     myStyle = QgsApplication.reportStyleSheet()
     dlg = CSWResponseDialog()
-    dlg.textXML.document().setDefaultStyleSheet( myStyle )
-    dlg.textXML.setHtml( metadata )
+    dlg.textXml.document().setDefaultStyleSheet( myStyle )
+    dlg.textXml.setHtml( metadata )
     dlg.exec_()
 
 # ************* Common stuff *******************************************

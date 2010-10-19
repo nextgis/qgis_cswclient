@@ -192,9 +192,9 @@ class ManageCSWConnectionsDialog( QDialog, Ui_ManageCSWConnectionsDialog ):
       file = QFile( self.fileName )
       if not file.open( QIODevice.WriteOnly | QIODevice.Text ):
         QMessageBox.warning( self, self.tr( "Saving connections" ),
-                              tr( "Cannot write file %1:\n%2." )
-                              .arg( self.fileName )
-                              .arg( file.errorString() ) )
+                             self.tr( "Cannot write file %1:\n%2." )
+                             .arg( self.fileName )
+                             .arg( file.errorString() ) )
         return
 
       out = QTextStream( file )
@@ -203,9 +203,9 @@ class ManageCSWConnectionsDialog( QDialog, Ui_ManageCSWConnectionsDialog ):
       file = QFile( self.fileName )
       if not file.open( QIODevice.ReadOnly | QIODevice.Text ):
         QMessageBox.warning( self, self.tr( "Loading connections" ),
-                              tr( "Cannot write file %1:\n%2." )
-                              .arg( self.fileName )
-                              .arg( file.errorString() ) )
+                             self.tr( "Cannot write file %1:\n%2." )
+                             .arg( self.fileName )
+                             .arg( file.errorString() ) )
         return
 
       doc = QDomDocument()

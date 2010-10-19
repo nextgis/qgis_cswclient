@@ -387,7 +387,8 @@ def extractUrl( parent, xmlDoc, recordId ):
         break
       elem = elem.nextSiblingElement()
 
-    child = child.nextSiblingElement()
+    if not found:
+      child = child.nextSiblingElement()
 
   # now in child we have selected record and can extract URL
   found = False
