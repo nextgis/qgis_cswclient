@@ -51,6 +51,7 @@ import cswclient_utils as utils
 from cswresponsedialog import CSWResponseDialog
 from newcswconnectiondialog import NewCSWConnectionDialog
 from managecswconnectionsdialog import ManageCSWConnectionsDialog
+#from addwmsconnectiondialog import AddWMSConnectionDialog
 from xmlhighlighter import XmlHighlighter
 
 from cswclientdialogbase import Ui_CSWClientDialog
@@ -600,9 +601,10 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
     QApplication.restoreOverrideCursor()
 
-    #QMessageBox.information( self, self.tr( "Info" ), self.tr( "Valid WMS Server" ) )
-    #print "Valid WMS server"
-    #print wms.identification.type
+#    dlgNew = NewCSWConnectionDialog()
+#    dlgNew.setWindowTitle( self.tr( "New CSW server" ) )
+#    if dlgNew.exec_() == QDialog.Accepted:
+#      self.populateConnectionList()
 
     serverName, isOk = QInputDialog.getText( self, self.tr( "Enter name for WMS server" ),
                                              self.tr( "Server name" ) )

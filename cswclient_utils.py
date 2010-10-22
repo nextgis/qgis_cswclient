@@ -337,7 +337,10 @@ def recordMetadata( record ):
   myMetadata += QCoreApplication.translate( "CSWClient", "Rights" )
   myMetadata += "</td bgcolor=\"gray\">"
   myMetadata += "<td>"
-  if len( record.rights ) > 0:
+  print "****RIGHTS***", record.rights
+  print record.rights is None
+  print len( record.rights )
+  if record.rights and record.rights[0] and len( record.rights ) > 0:
     myMetadata += QStringList( record.rights ).join( ", " )
   myMetadata += "</td></tr>"
 
