@@ -63,7 +63,7 @@ class ManageCSWConnectionsDialog( QDialog, Ui_ManageCSWConnectionsDialog ):
     if self.dialogMode == 0:
       self.fileName = QFileDialog.getSaveFileName( self, self.tr( "Save connections" ), ".", self.tr( "eXtensible Markup Language (*.xml *.XML)" ) )
     else:
-      self.fileName = QFileDialog.getOpenFileName( self, self.tr( "Load connections" ), ".", self.tr( "eXtensible Markup Language (*.xml *XML)" ) )
+      self.fileName = QFileDialog.getOpenFileName( self, self.tr( "Load connections" ), ".", self.tr( "eXtensible Markup Language (*.xml *.XML)" ) )
 
     if self.fileName.isEmpty():
       return
