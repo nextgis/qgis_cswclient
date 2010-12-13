@@ -44,6 +44,9 @@ def qgisMinimumVersion():
 def authorName():
   return "NextGIS, Alexander Bruy, Maxim Dubinin"
 
+def icon():
+  return "cswclient.png"
+
 def classFactory( iface ):
   from cswclient import CSWClientPlugin
   return CSWClientPlugin( iface )
