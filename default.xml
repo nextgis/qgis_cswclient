@@ -2,7 +2,6 @@
 <qgsCSWConnections version="1.0" >
     <csw url="http://gptogc.esri.com/GPT931/csw/discovery" name="ESRI Geoportal" />
     <csw url="http://geomatics.nlr.nl/excat/csw" name="Geomatics" />
-    <csw url="http://gos2.geodata.gov/Portal/csw202/discovery" name="Geospatial One Stop" />
     <csw url="http://geonetwork.sopac.org/geonetwork/srv/en/csw" name="SOPAC GeoNetwork" />
     <csw url="http://www.geocat.ch/geonetwork/srv/eng/csw" name="geocat.ch" />
 </qgsCSWConnections>
