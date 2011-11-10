@@ -1,0 +1,7 @@
+[general]
+name=CSW Client
+description=QGIS Catalogue Service client
+version=Version 0.0.10
+authorName=NextGIS, Alexander Bruy, Maxim Dubinin
+icon=cswclient.png
+qgisMinimumVersion=1.0.0
