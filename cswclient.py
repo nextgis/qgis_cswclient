@@ -83,15 +83,24 @@ class CSWClientPlugin( object ):
     QObject.connect( self.actionRun, SIGNAL( "triggered()" ), self.run )
     QObject.connect( self.actionAbout, SIGNAL( "triggered()" ), self.about )
 
-    self.iface.addPluginToMenu( "CSW Client", self.actionRun )
-    self.iface.addPluginToMenu( "CSW Client", self.actionAbout )
-
-    self.iface.addToolBarIcon( self.actionRun )
+    if hasattr( self.iface, "addPluginToWebMenu" ):
+      self.iface.addPluginToWebMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionRun )
+      self.iface.addPluginToWebMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionAbout )
+      self.iface.addWebToolBarIcon( self.actionRun )
+    else:
+      self.iface.addPluginToMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionRun )
+      self.iface.addPluginToMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionAbout )
+      self.iface.addToolBarIcon( self.actionRun )
 
   def unload( self ):
-    self.iface.removePluginMenu( "CSW Client", self.actionRun )
-    self.iface.removePluginMenu( "CSW Client", self.actionAbout )
-    self.iface.removeToolBarIcon( self.actionRun )
+    if hasattr( self.iface, "addPluginToWebMenu" ):
+      self.iface.removePluginWebMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionRun )
+      self.iface.removePluginWebMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionAbout )
+      self.iface.removeWebToolBarIcon( self.actionRun )
+    else:
+      self.iface.removePluginMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionRun )
+      self.iface.removePluginMenu( QCoreApplication.translate( "CSW Client", "CSW Client" ), self.actionAbout )
+      self.iface.removeToolBarIcon( self.actionRun )
 
   def about( self ):
     dlgAbout = QDialog()

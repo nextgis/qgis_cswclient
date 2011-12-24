@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-mVersion = "0.0.10"
+mVersion = "0.0.11"
 
 #******************************************************************************
 #
@@ -34,6 +34,9 @@ def name():
 
 def description():
   return "QGIS Catalogue Service client"
+
+def category():
+  return "Web"
 
 def version():
   return mVersion
