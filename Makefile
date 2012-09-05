@@ -36,12 +36,12 @@ $(RES_FILES): $(RES_PATH)/%_rc.py: $(RES_PATH)/%.qrc
 	pyrcc4 -o $@ $<
 
 clean:
-	rm -f $(ALL_FILES)
-	rm -f *.pyc
-	rm -f *.zip
+	rm -rf $(ALL_FILES)
+	rm -rf *.pyc
+	rm -rf *.zip
 
 package:
-	cd .. && rm -f *.zip && zip -r cswclient.zip cswclient -x \*.pyc -x \*~ -x \*.git\*
+	cd .. && rm -f *.zip && zip -r cswclient.zip cswclient -x \*.pyc \*.ts \*.ui \*.qrc \*.pro \*~ \*.git\* \*.svn\* \*Makefile*
 	mv ../cswclient.zip .
 
 upload:

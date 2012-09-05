@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: ISO-8859-15 -*-
 # =============================================================================
 # Copyright (c) 2008 Tom Kralidis
@@ -15,6 +14,8 @@ from urllib2 import urlopen, HTTPError, Request
 from urllib2 import HTTPPasswordMgrWithDefaultRealm
 from urllib2 import HTTPBasicAuthHandler
 from StringIO import StringIO
+import cgi
+from urllib import urlencode
 
 """
 Utility functions and classes
@@ -54,11 +55,20 @@ def openURL(url_base, data, method='Get', cookies=None, username=None, password=
         opener = urllib2.build_opener(auth_handler)
         openit = opener.open
     else:
+        # NOTE: optionally set debuglevel>0 to debug HTTP connection
+        #opener = urllib2.build_opener(urllib2.HTTPHandler(debuglevel=0))
+        #openit = opener.open
         openit = urlopen
    
     try:
         if method == 'Post':
             req = Request(url_base, data)
+            # set appropriate header if posting XML
+            try:
+                xml = etree.fromstring(data)
+                req.add_header('Content-Type', "text/xml")
+            except:
+                pass
         else:
             req=Request(url_base + data)
         if cookies is not None:
@@ -111,6 +121,14 @@ def nspath(path, ns=OWS_NAMESPACE):
         components.append(component)
     return '/'.join(components)
 
+def nspath_eval(xpath, namespaces):
+    ''' Return an etree friendly xpath '''
+    out = []
+    for chunks in xpath.split('/'):
+        namespace, element = chunks.split(':')
+        out.append('{%s}%s' % (namespaces[namespace], element))
+    return '/'.join(out)
+
 def testXMLValue(val, attrib=False):
     """
 
@@ -150,7 +168,7 @@ def http_post(url=None, request=None, lang='en-US', timeout=10):
     if url is not None:
         u = urlparse.urlsplit(url)
         r = urllib2.Request(url, request)
-        r.add_header('User-Agent', 'OWSLib (http://trac.gispython.org/lab/wiki/OwsLib)')
+        r.add_header('User-Agent', 'OWSLib (https://sourceforge.net/apps/trac/owslib)')
         r.add_header('Content-type', 'text/xml')
         r.add_header('Content-length', '%d' % len(request))
         r.add_header('Accept', 'text/xml')
@@ -210,3 +228,52 @@ def xmlvalid(xml, xsd):
 
     doc = etree.parse(StringIO(xml))
     return xsd2.validate(doc)
+
+def xmltag_split(tag):
+    ''' Return XML element bare tag name (without prefix) '''
+    try:
+        return tag.split('}')[1]
+    except:
+        return tag
+
+def getNamespace(element):
+    ''' Utility method to extract the namespace from an XML element tag encoded as {namespace}localname. '''
+    if element.tag[0]=='{':
+        return element.tag[1:].split("}")[0]
+    else:
+        return ""
+
+def build_get_url(base_url, params):
+    ''' Utility function to build a full HTTP GET URL from the service base URL and a dictionary of HTTP parameters. '''
+    
+    qs = []
+    if base_url.find('?') != -1:
+        qs = cgi.parse_qsl(base_url.split('?')[1])
+
+    pars = [x[0] for x in qs]
+
+    for key,value in params.iteritems():
+        if key not in pars:
+            qs.append( (key,value) )
+
+    urlqs = urlencode(tuple(qs))
+    return base_url.split('?')[0] + '?' + urlqs
+
+def dump(obj, prefix=''):
+    '''Utility function to print to standard output a generic object with all its attributes.'''
+    
+    print "%s %s : %s" % (prefix, obj.__class__, obj.__dict__)
+    
+def getTypedValue(type, value):
+    ''' Utility function to cast a string value to the appropriate XSD type. '''
+    
+    if type=='boolean':
+       return bool(value)
+    elif type=='integer':
+       return int(value)
+    elif type=='float':
+        return float(value)
+    elif type=='string':
+        return str(value)
+    else:
+        return value # no type casting

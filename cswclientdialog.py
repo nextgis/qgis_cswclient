@@ -47,14 +47,12 @@ from owslib.csw import CatalogueServiceWeb as csw
 
 import cswclient_utils as utils
 
-#from cswsearchdialog import CSWSearchDialog
 from cswresponsedialog import CSWResponseDialog
 from newcswconnectiondialog import NewCSWConnectionDialog
 from managecswconnectionsdialog import ManageCSWConnectionsDialog
-#from addwmsconnectiondialog import AddWMSConnectionDialog
 from xmlhighlighter import XmlHighlighter
 
-from cswclientdialogbase import Ui_CSWClientDialog
+from ui_cswclientdialogbase import Ui_CSWClientDialog
 
 class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
   def __init__( self, iface ):
@@ -772,4 +770,3 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
       return e.text()
 
     return QString()
-

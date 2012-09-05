@@ -49,7 +49,7 @@ import cswclient_utils as utils
 
 from cswresponsedialog import CSWResponseDialog
 
-from cswsearchdialogbase import Ui_CSWSearchDialog
+from ui_cswsearchdialogbase import Ui_CSWSearchDialog
 
 class CSWSearchDialog( QDialog, Ui_CSWSearchDialog ):
   def __init__( self, iface, url ):

@@ -35,9 +35,9 @@ from qgis.gui import *
 
 import cswclientdialog
 
-from __init__ import mVersion
+from __init__ import version
 
-import resources
+import resources_rc
 
 class CSWClientPlugin( object ):
   def __init__( self, iface ):
@@ -109,7 +109,7 @@ class CSWClientPlugin( object ):
     title = QLabel( QApplication.translate( "CSW Client", "<b>CSW Client</b>" ) )
     title.setAlignment( Qt.AlignHCenter | Qt.AlignVCenter )
     lines.addWidget( title )
-    version = QLabel( QApplication.translate( "CSW Client", "Version: %1" ).arg( mVersion ) )
+    version = QLabel( QApplication.translate( "CSW Client", "Version: %1" ).arg( version() ) )
     version.setAlignment( Qt.AlignHCenter | Qt.AlignVCenter )
     lines.addWidget( version )
     lines.addWidget( QLabel( QApplication.translate( "CSW Client", "Catalogue Services browser. Provide\ninterface for discovering and retrieval\nof spatial data and services metadata." ) ) )

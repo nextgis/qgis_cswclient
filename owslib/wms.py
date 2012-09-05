@@ -16,10 +16,12 @@ Currently supports only version 1.1.1 of the WMS protocol.
 """
 
 import cgi
+import urllib2
 from urllib import urlencode
 from etree import etree
-from .util import openURL
-
+from .util import openURL, testXMLValue
+from fgdc import Metadata
+from iso import MD_Metadata
 
 class ServiceException(Exception):
     """WMS ServiceException
@@ -56,7 +58,7 @@ class WebMapService(object):
 
     
     def __init__(self, url, version='1.1.1', xml=None, 
-                username=None, password=None
+                username=None, password=None, parse_remote_metadata=False
                 ):
         """Initialize."""
         self.url = url
@@ -69,15 +71,19 @@ class WebMapService(object):
         reader = WMSCapabilitiesReader(
                 self.version, url=self.url, un=self.username, pw=self.password
                 )
-        if xml:
-            #read from stored xml
+        if xml:  # read from stored xml
             self._capabilities = reader.readString(xml)
-        else:
-            #read from server
+        else:  # read from server
             self._capabilities = reader.read(self.url)
 
-        #build metadata objects
-        self._buildMetadata()
+        # avoid building capabilities metadata if the response is a ServiceExceptionReport
+        se = self._capabilities.find('ServiceException') 
+ 	if se is not None: 
+ 	    err_message = str(se.text).strip() 
+            raise ServiceException(err_message, xml) 
+
+        # build metadata objects
+        self._buildMetadata(parse_remote_metadata)
 
     def _getcapproperty(self):
         if not self._capabilities:
@@ -87,7 +93,7 @@ class WebMapService(object):
             self._capabilities = ServiceMetadata(reader.read(self.url))
         return self._capabilities
 
-    def _buildMetadata(self):         
+    def _buildMetadata(self, parse_remote_metadata=False):
         ''' set up capabilities metadata objects '''
         
         #serviceIdentification metadata
@@ -106,12 +112,18 @@ class WebMapService(object):
         #layer as a metadata organizer, nothing more.
         self.contents={}
         caps = self._capabilities.find('Capability')
-        for elem in caps.findall('Layer'):
-            cm=ContentMetadata(elem)
-            self.contents[cm.id]=cm       
-            for subelem in elem.findall('Layer'):
-                subcm=ContentMetadata(subelem, cm)
-                self.contents[subcm.id]=subcm 
+        
+        #recursively gather content metadata for all layer elements.
+        #To the WebMapService.contents store only metadata of named layers.
+        def gather_layers(parent_elem, parent_metadata):
+            for index, elem in enumerate(parent_elem.findall('Layer')):
+                cm = ContentMetadata(elem, parent=parent_metadata, index=index+1, parse_remote_metadata=parse_remote_metadata)
+                if cm.id:
+                    if cm.id in self.contents:
+                        raise KeyError('Content metadata for layer "%s" already exists' % cm.id)
+                    self.contents[cm.id] = cm
+                gather_layers(elem, cm)
+        gather_layers(caps, None)
         
         #exceptions
         self.exceptions = [f.text for f \
@@ -145,7 +157,8 @@ class WebMapService(object):
                format=None, size=None, time=None, transparent=False,
                bgcolor='#FFFFFF',
                exceptions='application/vnd.ogc.se_xml',
-               method='Get'
+               method='Get',
+               **kwargs
                ):
         """Request and return an image from the WMS as a file-like object.
         
@@ -170,6 +183,8 @@ class WebMapService(object):
             Optional. Image background color.
         method : string
             Optional. HTTP DCP method name: Get or Post.
+        **kwargs : extra arguments
+            anything else e.g. vendor specific parameters
         
         Example
         -------
@@ -203,7 +218,7 @@ class WebMapService(object):
         request['height'] = str(size[1])
         
         request['srs'] = str(srs)
-        request['bbox'] = ','.join([str(x) for x in bbox])
+        request['bbox'] = ','.join([repr(x) for x in bbox])
         request['format'] = str(format)
         request['transparent'] = str(transparent).upper()
         request['bgcolor'] = '0x' + bgcolor[1:7]
@@ -212,6 +227,10 @@ class WebMapService(object):
         if time is not None:
             request['time'] = str(time)
         
+        if kwargs:
+            for kw in kwargs:
+                request[kw]=kwargs[kw]
+
         data = urlencode(request)
         
         u = openURL(base_url, data, method, username = self.username, password = self.password)
@@ -220,7 +239,7 @@ class WebMapService(object):
         if u.info()['Content-Type'] == 'application/vnd.ogc.se_xml':
             se_xml = u.read()
             se_tree = etree.fromstring(se_xml)
-            err_message = str(se_tree.find('ServiceException').text).strip()
+            err_message = unicode(se_tree.find('ServiceException').text).strip()
             raise ServiceException(err_message, se_xml)
         return u
         
@@ -245,22 +264,14 @@ class ServiceIdentification(object):
     
     def __init__(self, infoset, version):
         self._root=infoset
-        self.type = self._root.find('Name').text
+        self.type = testXMLValue(self._root.find('Name'))
         self.version = version
-        self.title = self._root.find('Title').text
-        abstract = self._root.find('Abstract')
-        if abstract is not None:
-            self.abstract = abstract.text
-        else:
-            self.abstract = None
+        self.title = testXMLValue(self._root.find('Title'))
+        self.abstract = testXMLValue(self._root.find('Abstract'))
         self.keywords = [f.text for f in self._root.findall('KeywordList/Keyword')]
-        accessconstraints=self._root.find('AccessConstraints')
-        if accessconstraints is not None:
-            self.accessconstraints = accessconstraints.text
-        fees = self._root.find('Fees')
-        if fees is not None:
-            self.fees = fees.text
-             
+        self.accessconstraints = testXMLValue(self._root.find('AccessConstraints'))
+        self.fees = testXMLValue(self._root.find('Fees'))
+
 class ServiceProvider(object):
     ''' Implements IServiceProviderMetatdata '''
     def __init__(self, infoset):
@@ -300,17 +311,21 @@ class ContentMetadata:
 
     Implements IContentMetadata.
     """
-    def __init__(self, elem, parent=None):
-        self.parent = parent
+    def __init__(self, elem, parent=None, index=0, parse_remote_metadata=False):
         if elem.tag != 'Layer':
             raise ValueError('%s should be a Layer' % (elem,))
-        for key in ('Name', 'Title'):
-            val = elem.find(key)
-            if val is not None:
-                setattr(self, key.lower(), val.text.strip())
-            else:
-                setattr(self, key.lower(), None)
-            self.id=self.name #conform to new interface
+        
+        self.parent = parent
+        if parent:
+            self.index = "%s.%d" % (parent.index, index)
+        else:
+            self.index = str(index)
+        
+        self.id = self.name = testXMLValue(elem.find('Name'))
+        # title is mandatory property
+        self.title = testXMLValue(elem.find('Title')).strip()
+        self.abstract = testXMLValue(elem.find('Abstract'))
+        
         # bboxes
         b = elem.find('BoundingBox')
         self.boundingBox = None
@@ -329,6 +344,12 @@ class ContentMetadata:
         elif self.parent:
             if hasattr(self.parent, 'boundingBox'):
                 self.boundingBox = self.parent.boundingBox
+
+        # ScaleHint 
+ 	sh = elem.find('ScaleHint') 
+ 	self.scaleHint = None 
+ 	if sh is not None: 
+ 	    self.scaleHint = {'min': sh.attrib['min'], 'max': sh.attrib['max']} 
 
         attribution = elem.find('Attribution')
         if attribution is not None:
@@ -411,8 +432,41 @@ class ContentMetadata:
         self.timepositions=None
         for extent in elem.findall('Extent'):
             if extent.attrib.get("name").lower() =='time':
-                self.timepositions=extent.text.split(',')
-                break
+                if extent.text:
+                    self.timepositions=extent.text.split(',')
+                    break
+
+        # MetadataURLs
+        self.metadataUrls = []
+        for m in elem.findall('MetadataURL'):
+            metadataUrl = {
+                'type': testXMLValue(m.attrib['type'], attrib=True),
+                'format': testXMLValue(m.find('Format')),
+                'url': testXMLValue(m.find('OnlineResource').attrib['{http://www.w3.org/1999/xlink}href'], attrib=True)
+            }
+
+            if metadataUrl['url'] is not None and parse_remote_metadata:  # download URL
+                try:
+                    content = urllib2.urlopen(metadataUrl['url'])
+                    doc = etree.parse(content)
+                    if metadataUrl['type'] is not None:
+                        if metadataUrl['type'] == 'FGDC':
+                            metadataUrl['metadata'] = Metadata(doc)
+                        if metadataUrl['type'] == 'TC211':
+                            metadataUrl['metadata'] = MD_Metadata(doc)
+                except Exception, err:
+                    metadataUrl['metadata'] = None
+
+            self.metadataUrls.append(metadataUrl)
+
+        # DataURLs
+        self.dataUrls = []
+        for m in elem.findall('DataURL'):
+            dataUrl = {
+                'format': m.find('Format').text.strip(),
+                'url': m.find('OnlineResource').attrib['{http://www.w3.org/1999/xlink}href']
+            }
+            self.dataUrls.append(dataUrl)
                 
         self.layers = []
         for child in elem.findall('Layer'):

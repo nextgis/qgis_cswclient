@@ -1,8 +1,19 @@
 [general]
-name=CSW Client
-description=QGIS Catalogue Service client
-category=Web
-version=Version 0.0.11
-authorName=NextGIS, Alexander Bruy, Maxim Dubinin
-icon=cswclient.png
-qgisMinimumVersion=1.0.0
+name = CSW Client
+description = QGIS Catalogue Service client
+category = Web
+version = 0.0.12
+qgisMinimumVersion = 1.5.0
+
+icon = cswclient.png
+
+authorName = NextGIS
+
+tags = web, catalogue, service
+
+homepage = http://gis-lab.info/qa/cswclient-eng.html
+tracker = http://hub.qgis.org/projects/cswclient
+repository = http://svn.gis-lab.info/cswclient
+
+experimental = False
+deprecated = False

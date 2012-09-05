@@ -18,6 +18,7 @@ from urllib2 import urlopen
 from owslib.etree import etree
 import os, errno
 from owslib.coverage import wcsdecoder
+from owslib.crs import Crs
 
 def ns(tag):
     return '{http://www.opengis.net/wcs/1.1}'+tag
@@ -52,6 +53,8 @@ class WebCoverageService_1_1_0(WCSBase):
         
         #serviceIdentification metadata
         elem=self._capabilities.find('{http://www.opengis.net/wcs/1.1/ows}ServiceIdentification')
+        if elem is None:
+            elem=self._capabilities.find('{http://www.opengis.net/ows}ServiceIdentification')
         self.identification=ServiceIdentification(elem)
         
         #serviceProvider
@@ -117,10 +120,10 @@ class WebCoverageService_1_1_0(WCSBase):
         note: additional **kwargs helps with multi-version implementation
         core keyword arguments should be supported cross version
         example:
-        cvg=wcs.getCoverageRequest(identifier=['TuMYrRQ4'], timeSequence=['2792-06-01T00:00:00.0'], bbox=(-112,36,-106,41),format='application/netcdf', store='true')
+        cvg=wcs.getCoverageRequest(identifier=['TuMYrRQ4'], time=['2792-06-01T00:00:00.0'], bbox=(-112,36,-106,41),format='application/netcdf', store='true')
 
         is equivalent to:
-        http://myhost/mywcs?SERVICE=WCS&REQUEST=GetCoverage&IDENTIFIER=TuMYrRQ4&VERSION=1.1.0&BOUNDINGBOX=-180,-90,180,90&TIMESEQUENCE=[bb&FORMAT=application/netcdf
+        http://myhost/mywcs?SERVICE=WCS&REQUEST=GetCoverage&IDENTIFIER=TuMYrRQ4&VERSION=1.1.0&BOUNDINGBOX=-180,-90,180,90&TIMESEQUENCE=2792-06-01T00:00:00.0&FORMAT=application/netcdf
         
         if store = true, returns a coverages XML file
         if store = false, returns a multipart mime
@@ -139,7 +142,7 @@ class WebCoverageService_1_1_0(WCSBase):
         request['identifier']=identifier
         #request['identifier'] = ','.join(identifier)
         if bbox:
-            request['boundingbox']=','.join([str(x) for x in bbox])
+            request['boundingbox']=','.join([repr(x) for x in bbox])
         if time:
             request['timesequence']=','.join(time)
         request['format']=format
@@ -340,7 +343,7 @@ class ContentMetadata(object):
         #SupportedCRS
         self.supportedCRS=[]
         for crs in elem.findall('{http://www.opengis.net/wcs/1.1}SupportedCRS'):
-            self.supportedCRS.append(crs.text)
+            self.supportedCRS.append(Crs(crs.text))
             
             
         #SupportedFormats         

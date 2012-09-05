@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-mVersion = "0.0.11"
-
 #******************************************************************************
 #
 # CSW Client
@@ -39,13 +37,13 @@ def category():
   return "Web"
 
 def version():
-  return mVersion
+  return "0.0.12"
 
 def qgisMinimumVersion():
-  return "1.0"
+  return "1.5.0"
 
 def authorName():
-  return "NextGIS, Alexander Bruy, Maxim Dubinin"
+  return "NextGIS"
 
 def icon():
   return "cswclient.png"

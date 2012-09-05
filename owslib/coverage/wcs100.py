@@ -13,6 +13,7 @@ from wcsBase import WCSBase, WCSCapabilitiesReader
 from urllib import urlencode
 from owslib.util import openURL, testXMLValue
 from owslib.etree import etree
+from owslib.crs import Crs
 import os, errno
 
 #  function to save writing out WCS namespace in full each time
@@ -82,7 +83,13 @@ class WebCoverageService_1_0_0(WCSBase):
             items.append((item,self.contents[item]))
         return items
     
-      
+    def __makeString(self,value):
+        #using repr unconditionally breaks things in some circumstances if a value is already a string
+        if type(value) is not str:
+            sval=repr(value)
+        else:
+            sval = value
+        return sval
   
     def getCoverage(self, identifier=None, bbox=None, time=None, format = None,  crs=None, width=None, height=None, resx=None, resy=None, resz=None,parameter=None,method='Get',**kwargs):
         """Request and return a coverage from the WCS as a file-like object
@@ -92,7 +99,7 @@ class WebCoverageService_1_0_0(WCSBase):
         cvg=wcs.getCoverage(identifier=['TuMYrRQ4'], timeSequence=['2792-06-01T00:00:00.0'], bbox=(-112,36,-106,41),format='cf-netcdf')
 
         is equivalent to:
-        http://myhost/mywcs?SERVICE=WCS&REQUEST=GetCoverage&IDENTIFIER=TuMYrRQ4&VERSION=1.1.0&BOUNDINGBOX=-180,-90,180,90&TIMESEQUENCE=['2792-06-01T00:00:00.0']&FORMAT=cf-netcdf
+        http://myhost/mywcs?SERVICE=WCS&REQUEST=GetCoverage&IDENTIFIER=TuMYrRQ4&VERSION=1.1.0&BOUNDINGBOX=-180,-90,180,90&TIME=2792-06-01T00:00:00.0&FORMAT=cf-netcdf
            
         """
         
@@ -108,7 +115,7 @@ class WebCoverageService_1_0_0(WCSBase):
         request['Coverage']=identifier
         #request['identifier'] = ','.join(identifier)
         if bbox:
-            request['BBox']=','.join([str(x) for x in bbox])
+            request['BBox']=','.join([self.__makeString(x) for x in bbox])
         else:
             request['BBox']=None
         if time:
@@ -140,6 +147,8 @@ class WebCoverageService_1_0_0(WCSBase):
         u=openURL(base_url, data, method, self.cookies)
 
         return u
+    
+
                
     def getOperationByName(self, name):
         """Return a named operation item."""
@@ -244,6 +253,7 @@ class ContentMetadata(object):
         self._service=service
         self.id=elem.find(ns('name')).text
         self.title =elem.find(ns('label')).text       
+        self.abstract=elem.find(ns('description')).text       
         self.keywords = [f.text for f in elem.findall(ns('keywords')+'/'+ns('keyword'))]        
         self.boundingBox=None #needed for iContentMetadata harmonisation
         self.boundingBoxWGS84 = None        
@@ -302,10 +312,25 @@ class ContentMetadata(object):
             
     def _getOtherBoundingBoxes(self):
         ''' incomplete, should return other bounding boxes not in WGS84
-            #TODO: find any other bounding boxes. Need to check for CoverageOffering/domainSet/spatialDomain/gml:Envelope & gml:EnvelopeWithTimePeriod.'''
+            #TODO: find any other bounding boxes. Need to check for gml:EnvelopeWithTimePeriod.'''
+
         bboxes=[]
+
         if not hasattr(self, 'descCov'):
             self.descCov=self._service.getDescribeCoverage(self.id)
+
+        for envelope in self.descCov.findall(ns('CoverageOffering/')+ns('domainSet/')+ns('spatialDomain/')+'{http://www.opengis.net/gml}Envelope'):
+            bbox = {}
+            bbox['nativeSrs'] = envelope.attrib['srsName']
+            gmlpositions = envelope.findall('{http://www.opengis.net/gml}pos')
+            lc=gmlpositions[0].text.split()
+            uc=gmlpositions[1].text.split()
+            bbox['bbox'] = (
+                float(lc[0]),float(lc[1]),
+                float(uc[0]), float(uc[1])
+            )
+            bboxes.append(bbox)
+
         return bboxes        
     boundingboxes=property(_getOtherBoundingBoxes,None)
     
@@ -314,13 +339,13 @@ class ContentMetadata(object):
         crss=[]
         for elem in self._service.getDescribeCoverage(self.id).findall(ns('CoverageOffering/')+ns('supportedCRSs/')+ns('responseCRSs')):
             for crs in elem.text.split(' '):
-                crss.append(crs)
+                crss.append(Crs(crs))
         for elem in self._service.getDescribeCoverage(self.id).findall(ns('CoverageOffering/')+ns('supportedCRSs/')+ns('requestResponseCRSs')):
             for crs in elem.text.split(' '):
-                crss.append(crs)
+                crss.append(Crs(crs))
         for elem in self._service.getDescribeCoverage(self.id).findall(ns('CoverageOffering/')+ns('supportedCRSs/')+ns('nativeCRSs')):
             for crs in elem.text.split(' '):
-                crss.append(crs)
+                crss.append(Crs(crs))
         return crss
     supportedCRS=property(_getSupportedCRSProperty, None)
        
