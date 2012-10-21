@@ -174,6 +174,8 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
   def saveSelection( self ):
     settings = QSettings()
     settings.setValue( "/CSWClient/selected", self.cmbConnections.currentText() )
+    key = "/CSWClient/" + self.cmbConnections.currentText()
+    self.catalogUrl = str( settings.value( key + "/url" ).toString() )
 
   def serverInfo( self ):
     settings = QSettings()
@@ -317,13 +319,6 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     self.populateConnectionList()
     QMessageBox.information( self, self.tr( "CSW servers" ),
                              self.tr( "Several CSW servers have been added to the server list." ) )
-
-  def searchServer( self ):
-    settings = QSettings()
-    url = settings.value( "/CSWClient/" + self.cmbConnections.currentText() + "/url" ).toString()
-
-    dlgSearch = CSWSearchDialog( self.iface, url )
-    dlgSearch.exec_()
 
 # ************* Search tab *********************************************
 
