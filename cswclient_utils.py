@@ -85,7 +85,12 @@ def serverMetadata( srv ):
     myMetadata += "</td>"
     myMetadata += "<td bgcolor=\"gray\">"
     if len( srv.identification.keywords ) > 0:
-      myMetadata += QStringList( srv.identification.keywords ).join( ", " )
+      md = ""
+      for k in srv.identification.keywords:
+        if k is None:
+          continue
+        md += k + ", "
+      myMetadata += QString(md[:-2])
     myMetadata += "</td></tr>"
 
     myMetadata += "<tr><td bgcolor=\"gray\">"
