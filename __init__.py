@@ -37,7 +37,7 @@ def category():
   return "Web"
 
 def version():
-  return "0.0.13"
+  return "0.0.14"
 
 def qgisMinimumVersion():
   return "1.5.0"

@@ -176,6 +176,8 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     settings.setValue( "/CSWClient/selected", self.cmbConnections.currentText() )
     key = "/CSWClient/" + self.cmbConnections.currentText()
     self.catalogUrl = str( settings.value( key + "/url" ).toString() )
+    # clear server metadata
+    self.textMetadata.clear()
 
   def serverInfo( self ):
     settings = QSettings()

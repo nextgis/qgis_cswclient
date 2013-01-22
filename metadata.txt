@@ -2,7 +2,7 @@
 name=CSW Client
 description=QGIS Catalogue Service client
 category=Web
-version=0.0.13
+version=0.0.14
 qgisMinimumVersion=1.5.0
 
 author=Alexander Bruy (NextGIS)
@@ -10,7 +10,7 @@ email=alexander.bruy@gmail.com
 
 icon=cswclient.png
 
-tags=web, catalogue, service
+tags=web,catalogue,service
 
 homepage=http://gis-lab.info/qa/cswclient-eng.html
 tracker=http://hub.qgis.org/projects/cswclient
