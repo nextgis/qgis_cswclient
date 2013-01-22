@@ -36,9 +36,9 @@ $(RES_FILES): $(RES_PATH)/%_rc.py: $(RES_PATH)/%.qrc
 	pyrcc4 -o $@ $<
 
 clean:
-	rm -rf $(ALL_FILES)
-	rm -rf *.pyc
-	rm -rf *.zip
+	rm -f $(ALL_FILES)
+	find -name "*.pyc" -exec rm -f {} \;
+	rm -f *.zip
 
 package:
 	cd .. && rm -f *.zip && zip -r cswclient.zip cswclient -x \*.pyc \*.ts \*.ui \*.qrc \*.pro \*~ \*.git\* \*.svn\* \*Makefile*
