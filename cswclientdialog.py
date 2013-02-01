@@ -462,9 +462,10 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
         item.setText( 0, self.catalog.records[ rec ].type )
       else:
         item.setText( 0, "unknow" )
-      item.setText( 1, self.catalog.records[ rec ].title )
-      #print self.catalog.records[ rec ].identifier
-      item.setText( 2, self.catalog.records[ rec ].identifier )
+      if self.catalog.records[ rec ].title:
+        item.setText( 1, self.catalog.records[ rec ].title )
+      if self.catalog.records[ rec ].identifier:
+        item.setText( 2, self.catalog.records[ rec ].identifier )
 
       #if self.catalog.records[ rec ].identifiers and len ( self.catalog.records[ rec ].identifiers ) > 1:
       #  for id in self.catalog.records[ rec ].identifiers:
