@@ -8,7 +8,8 @@
 #
 # Copyright (C) 2010 NextGIS (http://nextgis.org),
 #                    Alexander Bruy (alexander.bruy@gmail.com),
-#                    Maxim Dubinin (sim@gis-lab.info)
+#                    Maxim Dubinin (sim@gis-lab.info),
+#                    Tom Kralidis (tomkralidis@hotmail.com)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -27,10 +28,12 @@
 #
 #******************************************************************************
 
+import ConfigParser
+import os
+
 curpath = os.path.dirname(os.path.abspath(__file__))
 
 config = ConfigParser.ConfigParser()
-config.readfp(open('metadata.txt'))
 config.readfp(open(os.path.join(curpath, 'metadata.txt')))
 
 __version__ = config.get('general', 'version')
