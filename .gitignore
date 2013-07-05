@@ -3,3 +3,12 @@
 *~
 *.diff
 *.log*
+
+# PyQT4 artifacts
+*.qrc
+*_rc.py
+*.ui
+ui_*.py
+*.ts
+*.qm
+
