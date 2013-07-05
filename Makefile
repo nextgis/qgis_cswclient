@@ -1,3 +1,11 @@
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), MINGW32_NT-6.1)
+PYUIC4=cmd //c pyuic4
+else
+PYUIC4=pyuic4
+endif
+
 UI_PATH=.
 UI_SOURCES=$(wildcard $(UI_PATH)/*.ui)
 UI_FILES=$(patsubst $(UI_PATH)/%.ui, $(UI_PATH)/ui_%.py, $(UI_SOURCES))
@@ -27,7 +35,7 @@ lang: $(LANG_FILES)
 res: $(RES_FILES)
 
 $(UI_FILES): $(UI_PATH)/ui_%.py: $(UI_PATH)/%.ui
-	pyuic4 -o $@ $<
+	$(PYUIC4) -o $@ $<
 
 $(LANG_FILES): $(LANG_PATH)/%.qm: $(LANG_PATH)/%.ts
 	lrelease $<
