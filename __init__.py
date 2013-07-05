@@ -27,29 +27,41 @@
 #
 #******************************************************************************
 
+curpath = os.path.dirname(os.path.abspath(__file__))
+
+config = ConfigParser.ConfigParser()
+config.readfp(open('metadata.txt'))
+config.readfp(open(os.path.join(curpath, 'metadata.txt')))
+
+__version__ = config.get('general', 'version')
+
+def getmdval(option):
+  """Convenience function"""
+  return config.get('general', option)
+
 def name():
-  return "CSW Client"
+  return getmdval('name')
 
 def description():
-  return "QGIS Catalogue Service client"
+  return getmdval('description')
 
 def category():
-  return "Web"
+  return getmdval('category')
 
 def version():
-  return "0.0.14"
+  return __version__
 
 def qgisMinimumVersion():
-  return "1.5.0"
+  return getmdval('qgisMinimumVersion')
 
 def author():
-  return "Alexander Bruy (NextGIS)"
+  return getmdval('author')
 
 def email():
-  return "alexander.bruy@gmail.com"
+  return getmdval('email')
 
 def icon():
-  return "cswclient.png"
+  return getmdval('icon')
 
 def classFactory( iface ):
   from cswclient import CSWClientPlugin
