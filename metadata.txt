@@ -8,7 +8,7 @@ qgisMinimumVersion=1.5.0
 author=Alexander Bruy (NextGIS)
 email=alexander.bruy@gmail.com
 
-icon=cswclient.png
+icon=images/cswclient.png
 
 tags=web,catalogue,service
 

@@ -1,7 +1,7 @@
 <RCC>
   <qresource>
-    <file>cswclient.png</file>
-    <file>about.png</file>
+    <file>images/cswclient.png</file>
+    <file>images/about.png</file>
   </qresource>
 </RCC>
 
