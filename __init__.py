@@ -43,30 +43,39 @@ def getmdval(option):
   return config.get('general', option)
 
 def name():
+  """plugin name"""
   return getmdval('name')
 
 def description():
+  """plugin description"""
   return getmdval('description')
 
 def category():
+  """plugin category"""
   return getmdval('category')
 
 def version():
+  """plugin version"""
   return __version__
 
 def qgisMinimumVersion():
+  """plugin QGIS minimum version"""
   return getmdval('qgisMinimumVersion')
 
 def author():
+  """plugin author"""
   return getmdval('author')
 
 def email():
+  """plugin email"""
   return getmdval('email')
 
 def icon():
+  """plugin icon"""
   return getmdval('icon')
 
 def classFactory( iface ):
+  """invoke plugin"""
   from cswclient import CSWClientPlugin
   return CSWClientPlugin( iface )
 
