@@ -34,7 +34,7 @@ from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
-from ui_managecswconnectionsdialogbase import Ui_ManageCSWConnectionsDialog
+from ui.ui_managecswconnectionsdialogbase import Ui_ManageCSWConnectionsDialog
 
 class ManageCSWConnectionsDialog( QDialog, Ui_ManageCSWConnectionsDialog ):
   def __init__( self, mode ):

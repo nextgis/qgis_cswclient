@@ -52,7 +52,7 @@ from newcswconnectiondialog import NewCSWConnectionDialog
 from managecswconnectionsdialog import ManageCSWConnectionsDialog
 from xmlhighlighter import XmlHighlighter
 
-from ui_cswclientdialogbase import Ui_CSWClientDialog
+from ui.ui_cswclientdialogbase import Ui_CSWClientDialog
 
 class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
   def __init__( self, iface ):

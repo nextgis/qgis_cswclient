@@ -2,11 +2,15 @@ UNAME := $(shell uname)
 
 ifeq ($(UNAME), MINGW32_NT-6.1)
 PYUIC4=cmd //c pyuic4
+PYRCC4=cmd //c pyrcc4
+PYLUPDATE4=cmd //c pylupdate4
 else
 PYUIC4=pyuic4
+PYRCC4=pyrcc4
+PYLUPDATE4=pylupdate4
 endif
 
-UI_PATH=.
+UI_PATH=ui
 UI_SOURCES=$(wildcard $(UI_PATH)/*.ui)
 UI_FILES=$(patsubst $(UI_PATH)/%.ui, $(UI_PATH)/ui_%.py, $(UI_SOURCES))
 
@@ -28,7 +32,7 @@ all: $(ALL_FILES)
 ui: $(UI_FILES)
 
 ts: $(PRO_FILES)
-	pylupdate4 -verbose $<
+	$(PYLUPDATE4) -verbose $<
 
 lang: $(LANG_FILES)
 
@@ -41,7 +45,7 @@ $(LANG_FILES): $(LANG_PATH)/%.qm: $(LANG_PATH)/%.ts
 	lrelease $<
 
 $(RES_FILES): $(RES_PATH)/%_rc.py: $(RES_PATH)/%.qrc
-	pyrcc4 -o $@ $<
+	$(PYRCC4) -o $@ $<
 
 clean:
 	rm -f $(ALL_FILES)
@@ -49,8 +53,8 @@ clean:
 	rm -f *.zip
 
 package:
-	cd .. && rm -f *.zip && zip -r cswclient.zip cswclient -x \*.pyc \*.ts \*.ui \*.qrc \*.pro \*~ \*.git\* \*.svn\* \*Makefile*
-	mv ../cswclient.zip .
+	cd .. && rm -f *.zip && zip -r metasearch.zip metasearch -x \*.pyc \*.ui \*.qrc \*.pro \*~ \*.git\* \*Makefile*
+	mv ../metasearch.zip .
 
 upload:
-	plugin_uploader.py cswclient.zip
+	plugin_uploader.py metasearch.zip
