@@ -1,16 +1,14 @@
 [general]
-name=CSW Client
-description=QGIS Catalogue Service client
+name=MetaSearch Client
+description=QGIS Metadata Catalogue Service client
 category=Web
 version=0.1
 qgisMinimumVersion=2.0
 icon=images/cswclient.png
-author=Alexander Bruy (NextGIS)
-email=alexander.bruy@gmail.com
 author=Tom Kralidis
-email=tomkralidis@hotmail.com
+email=tomkralidis@gmail.com
 tags=web,catalogue,service,metadata,csw
-homepage=http://geopython.github.io/MetaSearch
+homepage=https://geopython.github.io/MetaSearch
 tracker=https://github.com/geopython/MetaSearch/issues
 repository=https://github.com/geopython/MetaSearch.git
 experimental=False
