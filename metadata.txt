@@ -2,7 +2,7 @@
 name=MetaSearch Client
 description=QGIS Metadata Catalogue Service client
 category=Web
-version=0.1
+version=0.1-dev
 qgisMinimumVersion=2.0
 icon=images/cswclient.png
 author=Tom Kralidis
