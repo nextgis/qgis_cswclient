@@ -1,6 +1,6 @@
 [general]
-name=MetaSearch Client
-description=QGIS Metadata Catalogue Service client
+name=MetaSearch Catalogue Client
+description=MetaSearch is a QGIS plugin to interact with CSW services.
 category=Web
 version=0.1-dev
 qgisMinimumVersion=2.0
@@ -8,7 +8,7 @@ icon=images/cswclient.png
 author=Tom Kralidis
 email=tomkralidis@gmail.com
 tags=web,catalogue,service,metadata,csw
-homepage=https://geopython.github.io/MetaSearch
+homepage=http://geopython.github.io/MetaSearch
 tracker=https://github.com/geopython/MetaSearch/issues
 repository=https://github.com/geopython/MetaSearch.git
 experimental=False
