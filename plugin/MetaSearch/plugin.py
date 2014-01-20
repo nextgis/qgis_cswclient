@@ -33,6 +33,13 @@ class MetaSearchPlugin(object):
         self.iface = iface
         self.context = StaticContext()
 
+    def initGui(self):
+        """startup"""
+
+    def unload(self):
+        """teardown"""
+        self.menu.deleteLater()
+
     def help(self):
         """open help in user's default web browser"""
         webbrowser.open(self.context.metadata.get('general', 'homepage'))
