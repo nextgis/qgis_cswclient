@@ -1,3 +1,5 @@
 Sphinx==1.2.1
 sphinx_bootstrap_theme==0.3.6
 Paver==1.2.2
+pep8
+pylint
