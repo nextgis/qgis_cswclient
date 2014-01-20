@@ -23,12 +23,12 @@
 import ConfigParser
 import os
 
-CURPATH = os.path.dirname(os.path.abspath(__file__))
 
 class StaticContext(object):
     """base configuration / scaffolding"""
 
     def __init__(self):
         """init"""
+        self.curpath = os.path.dirname(os.path.abspath(__file__))
         self.metadata = ConfigParser.ConfigParser()
-        self.metadata.readfp(open(os.path.join(CURPATH, 'metadata.txt')))
+        self.metadata.readfp(open(os.path.join(self.curpath, 'metadata.txt')))
