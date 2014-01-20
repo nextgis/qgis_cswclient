@@ -24,6 +24,10 @@
 ###############################################################################
 
 import webbrowser
+
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
 from config import StaticContext
  
 class MetaSearchPlugin(object):
@@ -36,9 +40,21 @@ class MetaSearchPlugin(object):
     def initGui(self):
         """startup"""
 
+        icon = QIcon(self.context.curpath + "/images/cswclient.png")
+        self.helpAction = QAction(icon, "Help with MetaSearch", self.iface.mainWindow())
+        self.helpAction.setWhatsThis("1Configuration for test plugin")
+        self.helpAction.setStatusTip("1This is status tip")
+        QObject.connect(self.helpAction, SIGNAL('triggered()'), self.help)
+
+        self.iface.addToolBarIcon(self.helpAction)
+        self.iface.addPluginToWebMenu("&Test plugins", self.helpAction)
+
+
     def unload(self):
         """teardown"""
-        self.menu.deleteLater()
+        # remove the plugin menu item and icon
+        self.iface.removePluginWebMenu("&WebTest plugins",self.action)
+        self.iface.removeToolBarIcon(self.action)
 
     def help(self):
         """open help in user's default web browser"""
