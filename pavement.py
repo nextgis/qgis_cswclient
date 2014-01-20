@@ -21,10 +21,22 @@
 ###############################################################################
 
 import os
+import shutil
 
 from paver.easy import task, cmdopts, needs, pushd, sh, call_task, path, info
 
 DOCS = 'docs'
+
+
+@task
+def install():
+    """install plugin into QGIS environment"""
+    src = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                       'plugin', 'MetaSearch')
+    dst = os.path.join(os.path.expanduser('~'), '.qgis2',
+                       'python', 'plugins', 'MetaSearch')
+    shutil.rmtree(dst, True)
+    shutil.copytree(src, dst)
 
 
 @task
@@ -34,9 +46,11 @@ def refresh_docs():
         sh('make clean')
         sh('make html')
 
+
 @task
 def publish_docs(options):
     """this script publish Sphinx outputs to github pages"""
+
     call_task('refresh_docs')
     sh('git clone git@github.com:geopython/OWSLib.git /tmp/OWSLib')
     with pushd(DOCS):
@@ -50,14 +64,6 @@ def publish_docs(options):
 
 
 @task
-def publish_plugin():
-    pass  # TODO
-
-@task
 def upload():
+    """uploads .zip file of plugin to repository"""
     pass  # TODO
-
-
-@task
-def install():
-    pass
