@@ -2,8 +2,8 @@
 <xs:schema targetNamespace="http://qgis.org/MetaSearch/0.1-dev" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:MetaSearch="http://qgis.org/MetaSearch/0.1-dev" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="0.1-dev">
     <xs:annotation>
         <xs:appinfo>https://github.com/geopython/MetaSearch/blob/master/MetaSearch.xsd</xs:appinfo>
-        <xs:documentation>XML Schema for MetaSearch plugin connections in QGIS. http://geopython.github.io/MetaSearch
-        </xs:documentation>
+        <xs:documentation>XML Schema for MetaSearch plugin connections in QGIS</xs:documentation>
+        <xs:documentation>http://geopython.github.io/MetaSearch</xs:documentation>
     </xs:annotation>
     <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="http://www.w3.org/1999/xlink.xsd"/>
     <xs:element name="qgsConnections" type="MetaSearch:qgsConnectionsType"/>
@@ -13,7 +13,7 @@
         </xs:sequence>
         <xs:attribute name="version" type="xs:string" use="required" fixed="0.1-dev"/>
     </xs:complexType>
-    <complexType name="cswType">
-        <attributeGroup ref="xlink:simpleAttrs"/>
-    </complexType>
+    <xs:complexType name="cswType">
+        <xs:attributeGroup ref="xlink:simpleAttrs"/>
+    </xs:complexType>
 </xs:schema>
