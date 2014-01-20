@@ -4,7 +4,7 @@
 # Copyright (C) 2010 NextGIS (http://nextgis.org),
 #                    Alexander Bruy (alexander.bruy@gmail.com),
 #                    Maxim Dubinin (sim@gis-lab.info),
-#                    Tom Kralidis (tomkralidis@hotmail.com)
+#                    Tom Kralidis (tomkralidis@gmail.com)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -23,54 +23,7 @@
 #
 ###############################################################################
 
-import ConfigParser
-import os
-
-curpath = os.path.dirname(os.path.abspath(__file__))
-
-config = ConfigParser.ConfigParser()
-config.readfp(open(os.path.join(curpath, 'metadata.txt')))
-
-__version__ = config.get('general', 'version')
-
-def getmdval(option):
-  """Convenience function"""
-  return config.get('general', option)
-
-def name():
-  """plugin name"""
-  return getmdval('name')
-
-def description():
-  """plugin description"""
-  return getmdval('description')
-
-def category():
-  """plugin category"""
-  return getmdval('category')
-
-def version():
-  """plugin version"""
-  return __version__
-
-def qgisMinimumVersion():
-  """plugin QGIS minimum version"""
-  return getmdval('qgisMinimumVersion')
-
-def author():
-  """plugin author"""
-  return getmdval('author')
-
-def email():
-  """plugin email"""
-  return getmdval('email')
-
-def icon():
-  """plugin icon"""
-  return getmdval('icon')
-
-def classFactory( iface ):
-  """invoke plugin"""
-  from cswclient import CSWClientPlugin
-  return CSWClientPlugin( iface )
-
+def classFactory(iface):
+    """invoke plugin"""
+    from plugin import MetaSearchPlugin
+    return MetaSearchPlugin(iface)
