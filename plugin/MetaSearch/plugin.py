@@ -34,6 +34,7 @@ from MetaSearch.cswclientdialog import CSWClientDialog
 from MetaSearch.config import StaticContext
 from MetaSearch.util import translate
 
+
 LOGGER = logging.getLogger('MetaSearch')
 
 

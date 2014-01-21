@@ -135,7 +135,7 @@ class ManageCSWConnectionsDialog( QDialog, Ui_ManageCSWConnectionsDialog ):
     for conn in connections:
       el = doc.createElement( "csw" )
       el.setAttribute( "name", conn )
-      el.setAttribute( "url", settings.value( key + conn + "/url", "" ).toString() )
+      el.setAttribute( "url", settings.value( key + conn + "/url", "" ) )
       root.appendChild( el )
 
     return doc
@@ -182,7 +182,7 @@ class ManageCSWConnectionsDialog( QDialog, Ui_ManageCSWConnectionsDialog ):
     if len( selection ) == 0:
       return
 
-    items = QStringList()
+    items = []
     for sel in selection:
       items.append( sel.text() )
 

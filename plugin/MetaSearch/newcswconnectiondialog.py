@@ -32,8 +32,8 @@ from PyQt4.QtGui import *
 
 from ui.newcswconnectiondialogbase import Ui_NewCSWConnectionDialog
 
-class NewCSWConnectionDialog( QDialog, Ui_NewCSWConnectionDialog ):
-  def __init__( self, connectionName = QString( "" ) ):
+class NewCSWConnectionDialog(QDialog, Ui_NewCSWConnectionDialog):
+  def __init__( self, connectionName=''):
     QDialog.__init__( self )
     self.setupUi( self )
 

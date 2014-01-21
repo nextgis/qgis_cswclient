@@ -90,7 +90,7 @@ def serverMetadata( srv ):
         if k is None:
           continue
         md += k + ", "
-      myMetadata += QString(md[:-2])
+      myMetadata += md[:-2]
     myMetadata += "</td></tr>"
 
     myMetadata += "<tr><td bgcolor=\"gray\">"
@@ -287,7 +287,7 @@ def recordMetadata( record ):
   myMetadata += "</td>"
   myMetadata += "<td bgcolor=\"gray\">"
   if len( record.subjects ) > 0:
-    myMetadata += QStringList( record.subjects ).join( ", " )
+    myMetadata += ', '.join(record.subjects)
   myMetadata += "</td></tr>"
 
   myMetadata += "<tr><td bgcolor=\"gray\">"
@@ -346,7 +346,7 @@ def recordMetadata( record ):
   print record.rights is None
   print len( record.rights )
   if record.rights and record.rights[0] and len( record.rights ) > 0:
-    myMetadata += QStringList( record.rights ).join( ", " )
+    myMetadata += ', '.join(record.rights)
   myMetadata += "</td></tr>"
 
   myMetadata += "<tr><td bgcolor=\"gray\">"
@@ -368,7 +368,7 @@ def recordMetadata( record ):
 
 def extractUrl( parent, xmlDoc, recordId ):
   doc = QDomDocument()
-  errorStr = QString()
+  errorStr = ''
   errorLine = 0
   errorColumn = 0
 
@@ -412,4 +412,4 @@ def extractUrl( parent, xmlDoc, recordId ):
   if found:
     return e.text()
 
-  return QString()
+  return str()

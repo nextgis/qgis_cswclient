@@ -50,7 +50,6 @@ import cswclient_utils as utils
 from cswresponsedialog import CSWResponseDialog
 from newcswconnectiondialog import NewCSWConnectionDialog
 from managecswconnectionsdialog import ManageCSWConnectionsDialog
-from xmlhighlighter import XmlHighlighter
 
 from ui.cswclientdialogbase import Ui_CSWClientDialog
 
@@ -107,7 +106,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     self.spnRecords.setValue( settings.value( "/CSWClient/returnRecords", QVariant("10") ).toInt()[ 0 ] )
 
     key = "/CSWClient/" + self.cmbConnections.currentText()
-    self.catalogUrl = str( settings.value( key + "/url" ).toString() )
+    self.catalogUrl = str( settings.value( key + "/url" ))
 
     self.setCanvasBbox()
 
@@ -147,7 +146,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
   def setConnectionListPosition( self ):
     settings = QSettings()
-    toSelect = settings.value( "/CSWClient/selected", QVariant("") ).toString()
+    toSelect = settings.value( "/CSWClient/selected", QVariant("") )
 
     # does toSelect exist in cmbConnections?
     exists = False
@@ -175,14 +174,14 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     settings = QSettings()
     settings.setValue( "/CSWClient/selected", self.cmbConnections.currentText() )
     key = "/CSWClient/" + self.cmbConnections.currentText()
-    self.catalogUrl = str( settings.value( key + "/url" ).toString() )
+    self.catalogUrl = str( settings.value( key + "/url" ))
     # clear server metadata
     self.textMetadata.clear()
 
   def serverInfo( self ):
     settings = QSettings()
     key = "/CSWClient/" + self.cmbConnections.currentText()
-    self.catalogUrl = str( settings.value( key + "/url" ).toString() )
+    self.catalogUrl = str( settings.value( key + "/url" ) )
 
     try:
       QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
@@ -238,7 +237,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
   def editServer( self ):
     settings = QSettings()
-    url = settings.value( "/CSWClient/" + self.cmbConnections.currentText() + "/url" ).toString()
+    url = settings.value( "/CSWClient/" + self.cmbConnections.currentText() + "/url" )
 
     dlgEdit = NewCSWConnectionDialog( self.cmbConnections.currentText() )
     dlgEdit.setWindowTitle( self.tr( "Edit CSW server" ) )
@@ -276,7 +275,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
       return
 
     doc = QDomDocument( "connections" )
-    errorStr = QString()
+    errorStr = ''
     errorLine = 0
     errorColumn = 0
 
@@ -506,7 +505,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     recordId = str( item.text( 2 ) )
     abstract = self.catalog.records[ recordId ].abstract
     if abstract:
-      self.textAbstract.setText( QString( abstract ).simplified() )
+      self.textAbstract.setText(abstract.strip())
     else:
       self.textAbstract.setText( self.tr( "There is no abstract for this record" ) )
 
@@ -562,8 +561,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     QDesktopServices.openUrl( QUrl( self.leDataUrl.text(), QUrl.TolerantMode ) )
 
   def addToWms( self ):
-    url = QUrl( self.leDataUrl.text(), QUrl.TolerantMode )
-    dataUrl = str( url.toString( QUrl.RemoveQuery ) )
+    dataUrl = self.leDataUrl.text()
     #print "Trimmed URL", dataUrl
 
     # test if URL is valid WMS server
@@ -697,12 +695,12 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     # if there is proxy server in QGIS settings - use it
     settings.beginGroup( "proxy" )
     if settings.value( "/proxyEnabled" ).toBool():
-      proxyType = settings.value( "/proxyType", QVariant( 0 ) ).toString()
+      proxyType = settings.value( "/proxyType", QVariant( 0 ) )
       if proxyType == "HttpProxy":
-        proxyHost = settings.value( "/proxyHost" ).toString()
+        proxyHost = settings.value( "/proxyHost" )
         proxyPost = settings.value( "/proxyPort" ).toUInt()[ 0 ]
-        proxyUser = settings.value( "/proxyUser" ).toString()
-        proxyPass = settings.value( "/proxyPassword" ).toString()
+        proxyUser = settings.value( "/proxyUser" )
+        proxyPass = settings.value( "/proxyPassword" )
 
         # setup urllib2 proxy handler
         connectionString = "http://%s:%s@%s:%s" % ( proxyUser, proxyPass,
@@ -722,7 +720,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
   def extractUrl( self, response, id ):
     doc = QDomDocument()
-    errorStr = QString()
+    errorStr = ''
     errorLine = 0
     errorColumn = 0
 
@@ -767,4 +765,4 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     if found:
       return e.text()
 
-    return QString()
+    return str()
