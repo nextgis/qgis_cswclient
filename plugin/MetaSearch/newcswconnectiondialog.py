@@ -30,7 +30,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from ui.ui_newcswconnectiondialogbase import Ui_NewCSWConnectionDialog
+from ui.newcswconnectiondialogbase import Ui_NewCSWConnectionDialog
 
 class NewCSWConnectionDialog( QDialog, Ui_NewCSWConnectionDialog ):
   def __init__( self, connectionName = QString( "" ) ):

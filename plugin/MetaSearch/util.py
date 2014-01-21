@@ -21,7 +21,7 @@
 ###############################################################################
 
 import logging
-from PyQt4 import QCoreApplication
+from PyQt4.QtCore import QCoreApplication
 
 LOGGER = logging.getLogger('MetaSearch')
 

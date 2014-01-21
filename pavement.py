@@ -25,19 +25,64 @@ import shutil
 
 from paver.easy import task, cmdopts, needs, pushd, sh, call_task, path, info
 
-DOCS = 'docs'
+DEPS = [
+    'astroid',
+    'colorama',
+    'dateutil',
+    'docutils',
+    'jinja2',
+    'markupsafe',
+    'owslib',
+    'pygments',
+    'pytz',
+]
 
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+PLUGINDIR = os.path.join(BASEDIR, 'plugin', 'MetaSearch')
+
+DOCS = os.path.join(BASEDIR, 'docs')
+
+TMPDIR = os.path.join(os.path.expanduser('~'), 'MetaSearch-dist')
+
+QT_BIN = '/c/OSGeo4W/bin'
+PYUIC4 = os.path.join(QT_BIN, 'pyuic4')
+PYRCC4 = '%s/pyrcc4' % QT_BIN
+
+UI_FILES = [
+    'cswclientdialogbase.ui',
+    'cswresponsedialogbase.ui',
+    'managecswconnectionsdialogbase.ui',
+    'newcswconnectiondialogbase.ui',
+]
+
+
+@task
+def build_qt_files():
+    """build ui and resource files"""
+    os.system('/c/OSGeo4W/bin/pyrcc4 -o %s/resources.py %s/resources.qrc' % (PLUGINDIR, PLUGINDIR))
+    for ui_file in UI_FILES:
+        ui_file_basename = os.path.splitext(ui_file)[0]
+        os.system('/c/OSGeo4W/bin/pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (PLUGINDIR, ui_file_basename, PLUGINDIR, ui_file_basename))
+    
 
 @task
 def install():
     """install plugin into QGIS environment"""
-    src = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                       'plugin', 'MetaSearch')
+
+    #call_task('build_qt_files')
+
     dst = os.path.join(os.path.expanduser('~'), '.qgis2',
                        'python', 'plugins', 'MetaSearch')
-    shutil.rmtree(dst, True)
-    shutil.copytree(src, dst)
 
+    src_deps = os.path.join(BASEDIR, '..', 'lib', 'site-packages')
+
+    shutil.rmtree(dst, True)
+    shutil.copytree(PLUGINDIR, dst)
+
+    # copy dependency packages locally
+    for dep in DEPS:
+        shutil.copytree(os.path.join(src_deps, dep), os.path.join(dst, dep))
+    shutil.copy(os.path.join(src_deps, 'six.py'), os.path.join(dst, 'six.py'))
 
 @task
 def refresh_docs():
@@ -52,18 +97,18 @@ def publish_docs(options):
     """this script publish Sphinx outputs to github pages"""
 
     call_task('refresh_docs')
-    sh('git clone git@github.com:geopython/OWSLib.git /tmp/OWSLib')
-    with pushd(DOCS):
+    sh('git clone git@github.com:geopython/OWSLib.git %s' % TMPDIR)
+    with pushd(TMPDIR):
         sh('git checkout gh-pages')
-        sh('cp -rp $THIS_DIR/build/html/en/* .')
+        sh('cp -rp %s/docs/build/html/en/* .' % BASEDIR)
         sh('git add .')
         sh('git commit -am "Update docs"')
         sh('git push origin gh-pages')
 
-    sh('rm -fr /tmp/OWSLib')
+    sh('rm -fr %s' % TMPDIR)
 
 
 @task
 def upload():
     """uploads .zip file of plugin to repository"""
-    pass  # TODO
+    call_task('install')

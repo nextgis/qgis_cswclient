@@ -34,7 +34,7 @@ from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
-from ui.ui_cswresponsedialogbase import Ui_CSWResponseDialog
+from ui.cswresponsedialogbase import Ui_CSWResponseDialog
 
 class CSWResponseDialog( QDialog, Ui_CSWResponseDialog ):
   def __init__( self ):

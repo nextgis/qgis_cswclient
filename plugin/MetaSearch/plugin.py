@@ -30,6 +30,7 @@ import webbrowser
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from MetaSearch.cswclientdialog import CSWClientDialog
 from MetaSearch.config import StaticContext
 from MetaSearch.util import translate
 
@@ -44,6 +45,7 @@ class MetaSearchPlugin(object):
         self.context = StaticContext()
         self.action_run = None
         self.action_help = None
+	self.web_menu = '&MetaSearch'
 
         LOGGER.debug('Setting up i18n')
 
@@ -74,30 +76,32 @@ class MetaSearchPlugin(object):
                                     'images/MetaSearch.png'))
         self.action_run = QAction(run_icon, 'MetaSearch',
                                   self.iface.mainWindow())
-        self.action_run.setWhatsThis('MetaSearch plugin')
-        self.action_run.setStatusTip('Search Metadata Catalogues')
+        self.action_run.setWhatsThis(translate('MetaSearch plugin'))
+        self.action_run.setStatusTip(translate('Search Metadata Catalogues'))
         QObject.connect(self.action_run, SIGNAL('triggered()'), self.run)
 
         self.iface.addToolBarIcon(self.action_run)
-        self.iface.addPluginToWebMenu('&MetaSearch', self.action_run)
+        self.iface.addPluginToWebMenu(self.web_menu, self.action_run)
 
         # help
         help_icon = QIcon('%s/%s' % (self.context.ppath, 'images/help.png'))
         self.action_help = QAction(help_icon, 'Help', self.iface.mainWindow())
-        self.action_help.setWhatsThis('MetaSearch plugin')
-        self.action_help.setStatusTip('Search Metadata Catalogues')
+        self.action_help.setWhatsThis(translate('MetaSearch plugin help'))
+        self.action_help.setStatusTip(translate('Get Help on MetaSearch'))
         QObject.connect(self.action_help, SIGNAL('triggered()'), self.help)
 
-        self.iface.addPluginToWebMenu('&MetaSearch', self.action_help)
+        self.iface.addPluginToWebMenu(self.web_menu, self.action_help)
 
     def unload(self):
         """teardown"""
         # remove the plugin menu item and icon
-        self.iface.removePluginWebMenu("&WebTest plugins", self.action)
-        self.iface.removeToolBarIcon(self.action)
+        self.iface.removePluginWebMenu(self.web_menu, self.action_run)
+        self.iface.removeToolBarIcon(self.action_run)
+        self.iface.removeToolBarIcon(self.action_help)
 
     def run(self):
         """open MetaSearch"""
+	CSWClientDialog(self.iface)
 
     def help(self):
         """open help in user's default web browser"""
