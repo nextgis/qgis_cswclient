@@ -20,18 +20,12 @@
 #
 ###############################################################################
 
-import ConfigParser
 import logging
-import os
+from PyQt4 import QCoreApplication
 
 LOGGER = logging.getLogger('MetaSearch')
 
 
-class StaticContext(object):
-    """base configuration / scaffolding"""
-
-    def __init__(self):
-        """init"""
-        self.ppath = os.path.dirname(os.path.abspath(__file__))
-        self.metadata = ConfigParser.ConfigParser()
-        self.metadata.readfp(open(os.path.join(self.ppath, 'metadata.txt')))
+def translate(text):
+    """translates text"""
+    return QCoreApplication.translate('MetaSearch', text)
