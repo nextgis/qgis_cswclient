@@ -9,5 +9,8 @@ $ git clone https://github.com/geopython/MetaSearch.git
 $ pip install -r requirements.txt
 # install developer requirements
 $ pip install -r requirements-dev.txt
-# ln -s path/to/MetaSearch/plugin $HOME/.qgis2/python/plugins
+# link plugin to qgis2 runtime
+$ ln -s path/to/MetaSearch/plugin $HOME/.qgis2/python/plugins
+# or copy the entire plugin
+$ paver install
 ```
