@@ -11,6 +11,7 @@ $ pip install -r requirements.txt
 $ pip install -r requirements-dev.txt
 # link plugin to qgis2 runtime
 $ ln -s path/to/MetaSearch/plugin $HOME/.qgis2/python/plugins
-# or copy the entire plugin
+
+# or copy the entire plugin to $HOME/.qgis2/python/plugins
 $ paver install
 ```
