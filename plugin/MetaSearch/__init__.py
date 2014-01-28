@@ -24,6 +24,11 @@
 #
 ###############################################################################
 
+import os
+import site
+
+site.addsitedir(os.path.abspath('%s/ext-libs' % os.path.dirname(__file__)))
+
 def classFactory(iface):
     """invoke plugin"""
     from plugin import MetaSearchPlugin

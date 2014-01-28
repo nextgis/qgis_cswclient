@@ -63,7 +63,7 @@ def build_qt_files():
     for ui_file in UI_FILES:
         ui_file_basename = os.path.splitext(ui_file)[0]
         os.system('/c/OSGeo4W/bin/pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (PLUGINDIR, ui_file_basename, PLUGINDIR, ui_file_basename))
-    
+
 
 @task
 def install():
@@ -72,7 +72,7 @@ def install():
     #call_task('build_qt_files')
 
     dst = os.path.join(os.path.expanduser('~'), '.qgis2',
-                       'python', 'plugins', 'MetaSearch')
+                       'python', 'plugins', 'MetaSearch', 'ext-libs')
 
     src_deps = os.path.join(BASEDIR, '..', 'lib', 'site-packages')
 
@@ -83,6 +83,7 @@ def install():
     for dep in DEPS:
         shutil.copytree(os.path.join(src_deps, dep), os.path.join(dst, dep))
     shutil.copy(os.path.join(src_deps, 'six.py'), os.path.join(dst, 'six.py'))
+
 
 @task
 def refresh_docs():
