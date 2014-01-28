@@ -5,6 +5,7 @@ MetaSearch is a QGIS plugin to interact with CSW services.
 
 ```
 $ git clone https://github.com/geopython/MetaSearch.git
+$ cd MetaSearch
 # install plugin dependencies
 $ pip install -r requirements.txt --target=ext-libs
 # install developer requirements
