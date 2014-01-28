@@ -25,18 +25,6 @@ import shutil
 
 from paver.easy import task, cmdopts, needs, pushd, sh, call_task, path, info
 
-DEPS = [
-    'astroid',
-    'colorama',
-    'dateutil',
-    'docutils',
-    'jinja2',
-    'markupsafe',
-    'owslib',
-    'pygments',
-    'pytz',
-]
-
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 PLUGINDIR = os.path.join(BASEDIR, 'plugin', 'MetaSearch')
 
@@ -71,18 +59,13 @@ def install():
 
     #call_task('build_qt_files')
 
-    dst = os.path.join(os.path.expanduser('~'), '.qgis2',
-                       'python', 'plugins', 'MetaSearch', 'ext-libs')
+    src = os.path.join(PLUGINDIR, 'ext-libs')
 
-    src_deps = os.path.join(BASEDIR, '..', 'lib', 'site-packages')
+    dst = os.path.join(os.path.expanduser('~'), '.qgis2',
+                       'python', 'plugins', 'MetaSearch')
 
     shutil.rmtree(dst, True)
-    shutil.copytree(PLUGINDIR, dst)
-
-    # copy dependency packages locally
-    for dep in DEPS:
-        shutil.copytree(os.path.join(src_deps, dep), os.path.join(dst, dep))
-    shutil.copy(os.path.join(src_deps, 'six.py'), os.path.join(dst, 'six.py'))
+    shutil.copytree(src, dst)
 
 
 @task
