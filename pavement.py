@@ -23,34 +23,39 @@
 import os
 import shutil
 
-from paver.easy import task, cmdopts, needs, pushd, sh, call_task, path, info
+from paver.easy import task, cmdopts, needs, pushd, sh, call_task, path, \
+    info, options, Bunch
 
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
-PLUGINDIR = os.path.join(BASEDIR, 'plugin', 'MetaSearch')
+BASEDIR = path('.').dirname()
+USERDIR = os.path.join(os.path.expanduser('~'), 'MetaSearch-dist')
 
-DOCS = os.path.join(BASEDIR, 'docs')
-
-TMPDIR = os.path.join(os.path.expanduser('~'), 'MetaSearch-dist')
-
-QT_BIN = '/c/OSGeo4W/bin'
-PYUIC4 = os.path.join(QT_BIN, 'pyuic4')
-PYRCC4 = '%s/pyrcc4' % QT_BIN
-
-UI_FILES = [
-    'cswclientdialogbase.ui',
-    'cswresponsedialogbase.ui',
-    'managecswconnectionsdialogbase.ui',
-    'newcswconnectiondialogbase.ui',
-]
+options(
+    base=Bunch(
+        home=BASEDIR,
+        docs=path('%s/docs' % BASEDIR),
+        plugin=path('%s/plugin/MetaSearch' % BASEDIR),
+        install=path('%s/.qgis2/python/plugins/MetaSearch' % USERDIR),
+        tmp=path(path('%s/MetaSearch-dist' % USERDIR))
+    ),
+    ui=Bunch(
+        qt_bin='/c/OSGeo4W/bin',
+        ui_files=[
+            'cswclientdialogbase.ui',
+            'cswresponsedialogbase.ui',
+            'managecswconnectionsdialogbase.ui',
+            'newcswconnectiondialogbase.ui'
+        ]
+    )
+)
 
 
 @task
 def build_qt_files():
     """build ui and resource files"""
-    os.system('/c/OSGeo4W/bin/pyrcc4 -o %s/resources.py %s/resources.qrc' % (PLUGINDIR, PLUGINDIR))
-    for ui_file in UI_FILES:
+    os.system('/c/OSGeo4W/bin/pyrcc4 -o %s/resources.py %s/resources.qrc' % (options.base.plugin, options.base.plugin))
+    for ui_file in options.ui.ui_files:
         ui_file_basename = os.path.splitext(ui_file)[0]
-        os.system('/c/OSGeo4W/bin/pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (PLUGINDIR, ui_file_basename, PLUGINDIR, ui_file_basename))
+        os.system('/c/OSGeo4W/bin/pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (options.base.plugin, ui_file_basename, options.base.plugin, ui_file_basename))
 
 
 @task
@@ -59,37 +64,32 @@ def install():
 
     #call_task('build_qt_files')
 
-    src = os.path.join(PLUGINDIR, 'ext-libs')
-
-    dst = os.path.join(os.path.expanduser('~'), '.qgis2',
-                       'python', 'plugins', 'MetaSearch')
-
-    shutil.rmtree(dst, True)
-    shutil.copytree(src, dst)
+    options.base.install.rmtree()
+    shutil.copytree(options.base.plugin, options.base.install)
 
 
 @task
 def refresh_docs():
     """Build sphinx docs from scratch"""
-    with pushd(DOCS):
+    with pushd(options.base.docs):
         sh('make clean')
         sh('make html')
 
 
 @task
-def publish_docs(options):
+def publish_docs():
     """this script publish Sphinx outputs to github pages"""
 
     call_task('refresh_docs')
-    sh('git clone git@github.com:geopython/OWSLib.git %s' % TMPDIR)
-    with pushd(TMPDIR):
+    sh('git clone git@github.com:geopython/OWSLib.git %s' % options.base.tmp)
+    with pushd(options.base.tmp):
         sh('git checkout gh-pages')
-        sh('cp -rp %s/docs/build/html/en/* .' % BASEDIR)
+        sh('cp -rp %s/docs/build/html/en/* .' % options.base.home)
         sh('git add .')
         sh('git commit -am "Update docs"')
         sh('git push origin gh-pages')
 
-    sh('rm -fr %s' % TMPDIR)
+    options.base.tmp.rmtree()
 
 
 @task
