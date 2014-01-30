@@ -266,7 +266,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     dlg.exec_()
 
   def addDefaultServers( self ):
-    filePath = QDir.toNativeSeparators( os.path.join( currentPath, "default.xml" ) )
+    filePath = QDir.toNativeSeparators( os.path.join( currentPath, 'resources', 'connections.xml' ) )
     file = QFile( filePath )
     if not file.open( QIODevice.ReadOnly | QIODevice.Text ):
       QMessageBox.warning( self, self.tr( "Loading connections" ),

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<qgsConnections xmlns="http://qgis.org/MetaSearch/0.1-dev" version="0.1-dev" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://qgis.org/MetaSearch/0.1-dev MetaSearch.xsd">
-    <csw xlink:title="pycsw services demo" xlink:href="http://demo.pycsw.org/services/csw"/>
-    <csw xlink:title="UK Location Catalogue Publishing Service" xlink:href="http://csw.data.gov.uk/geonetwork/srv/en/csw"/>
-    <csw xlink:title="LINZ Data Service" xlink:href="http://data.linz.govt.nz/feeds/csw"/>
-    <csw xlink:title="NLR CSW" xlink:href="http://geomatics.nlr.nl/excat/csw"/>
-</qgsConnections>
+<qgsCSWConnections version="1.0">
+    <csw name="pycsw services demo" url="http://demo.pycsw.org/services/csw"/>
+    <csw name="UK Location Catalogue Publishing Service" url="http://csw.data.gov.uk/geonetwork/srv/en/csw"/>
+    <csw name="LINZ Data Service" url="http://data.linz.govt.nz/feeds/csw"/>
+    <csw name="NLR CSW" url="http://geomatics.nlr.nl/excat/csw"/>
+</qgsCSWConnections>
