@@ -55,8 +55,12 @@ def build_qt_files():
 def install():
     """install plugin into user QGIS environment"""
 
-    options.base.install.rmtree()
-    shutil.copytree(options.base.plugin, options.base.install)
+    if not hasattr(os, 'symlink'):
+        options.base.install.rmtree()
+        shutil.copytree(options.base.plugin, options.base.install)
+        #options.base.plugin.copytree(options.base.install)
+    elif not options.base.install.exists():
+        options.base.plugin.symlink(options.base.install)
 
 
 @task
@@ -73,7 +77,8 @@ def refresh_docs():
 def publish_docs():
     """this script publish Sphinx outputs to github pages"""
 
-    sh('git clone git@github.com:geopython/OWSLib.git %s' % options.base.tmp)
+    sh('git clone git@github.com:geopython/MetaSearch.git %s' %
+       options.base.tmp)
     with pushd(options.base.tmp):
         sh('git checkout gh-pages')
         sh('cp -rp %s/docs/build/html/en/* .' % options.base.home)
