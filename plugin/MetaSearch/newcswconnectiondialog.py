@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-#******************************************************************************
+###############################################################################
 #
 # CSW Client
 # ---------------------------------------------------------
@@ -9,6 +8,8 @@
 # Copyright (C) 2010 NextGIS (http://nextgis.org),
 #                    Alexander Bruy (alexander.bruy@gmail.com),
 #                    Maxim Dubinin (sim@gis-lab.info)
+#
+# Copyright (C) 2014 Tom Kralidis (tomkralidis@gmail.com)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -25,45 +26,52 @@
 # to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
 #
-#******************************************************************************
+###############################################################################
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QMessageBox, QSettings
+from PyQt4.QtGui import QDialog
 
 from ui.newcswconnectiondialogbase import Ui_NewCSWConnectionDialog
 
+
 class NewCSWConnectionDialog(QDialog, Ui_NewCSWConnectionDialog):
-  def __init__( self, connectionName=''):
-    QDialog.__init__( self )
-    self.setupUi( self )
+    """Dialogue to add a new CSW entry"""
+    def __init__(self, conn_name=None):
+        """init"""
+        QDialog.__init__(self)
+        self.setupUi(self)
+        self.conn_name = None
+        self.conn_name_orig = conn_name
 
-    self.origName = connectionName
+    def accept(self):
+        """add CSW entry"""
+        settings = QSettings()
+        conn_name = self.leName.text()
 
-  def accept( self ):
-    settings = QSettings()
+        if conn_name:
+            key = '/CSWClient/%s' % conn_name
+            keyurl = '%s/url' % key
+            key_orig = '/CSWClient/%s' % self.conn_name_orig
 
-    connName = self.leName.text()
+            # warn if entry was renamed to an existing connection
+            if self.conn_name_orig != conn_name and settings.contains(keyurl):
+                res = QMessageBox.warning(self, self.tr('Save connection'),
+                                          self.tr('Overwrite %1?')
+                                          .arg(conn_name),
+                                          QMessageBox.Ok | QMessageBox.Cancel)
+                if res == QMessageBox.Cancel:
+                    return
 
-    if not connName.isEmpty():
-      key = "/CSWClient/" + connName
+            # on rename delete original entry first
+            if all([self.conn_name_orig is not None,
+                    self.conn_name_orig != conn_name]):
+                settings.remove(key_orig)
 
-      # warn if entry was renamed to an existing connection
-      if self.origName != connName and settings.contains( key + "/url" ):
-        res = QMessageBox.warning( self, self.tr( "Save connection" ),
-                               self.tr( "Should the existing connection %1 be overwritten?" )
-                               .arg( connName ),
-                               QMessageBox.Ok | QMessageBox.Cancel )
-        if res == QMessageBox.Cancel:
-          return
+            settings.setValue(keyurl, self.leURL.text().trimmed())
 
-      # on rename delete original entry first
-      if not self.origName.isEmpty() and self.origName != connName:
-        settings.remove( "/CSWClient/" + self.origName )
+            QDialog.accept(self)
 
-      settings.setValue( key + "/url", self.leURL.text().trimmed() );
-
-      QDialog.accept( self )
-
-  @pyqtSignature("reject()")
-  def reject( self ):
-    QDialog.reject( self )
+    @pyqtSignature('reject()')
+    def reject(self):
+        """back out of dialogue"""
+        QDialog.reject(self)
