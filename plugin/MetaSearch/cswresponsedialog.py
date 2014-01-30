@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-#******************************************************************************
+###############################################################################
 #
 # CSW Client
 # ---------------------------------------------------------
@@ -9,6 +8,8 @@
 # Copyright (C) 2010 NextGIS (http://nextgis.org),
 #                    Alexander Bruy (alexander.bruy@gmail.com),
 #                    Maxim Dubinin (sim@gis-lab.info)
+#
+# Copyright (C) 2014 Tom Kralidis (tomkralidis@gmail.com)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -25,18 +26,16 @@
 # to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
 #
-#******************************************************************************
+###############################################################################
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
-
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtGui import QDialog
 
 from ui.cswresponsedialogbase import Ui_CSWResponseDialog
 
-class CSWResponseDialog( QDialog, Ui_CSWResponseDialog ):
-  def __init__( self ):
-    QDialog.__init__( self )
-    self.setupUi( self )
+
+class CSWResponseDialog(QDialog, Ui_CSWResponseDialog):
+    """CSW Response Dialogue"""
+    def __init__(self):
+        """init"""
+        QDialog.__init__(self)
+        self.setupUi(self)
