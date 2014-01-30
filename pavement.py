@@ -23,46 +23,37 @@
 import os
 import shutil
 
-from paver.easy import task, cmdopts, needs, pushd, sh, call_task, path, \
-    info, options, Bunch
+from paver.easy import call_task, needs, options, path, pushd, sh, task, Bunch
 
-BASEDIR = path('.').dirname()
 USERDIR = os.path.join(os.path.expanduser('~'), 'MetaSearch-dist')
 
 options(
     base=Bunch(
-        home=BASEDIR,
-        docs=path('%s/docs' % BASEDIR),
-        plugin=path('%s/plugin/MetaSearch' % BASEDIR),
+        home=(os.path.abspath(os.path.dirname(__file__))),
+        docs=path('docs'),
+        plugin=path('plugin/MetaSearch'),
         install=path('%s/.qgis2/python/plugins/MetaSearch' % USERDIR),
         tmp=path(path('%s/MetaSearch-dist' % USERDIR))
-    ),
-    ui=Bunch(
-        qt_bin='/c/OSGeo4W/bin',
-        ui_files=[
-            'cswclientdialogbase.ui',
-            'cswresponsedialogbase.ui',
-            'managecswconnectionsdialogbase.ui',
-            'newcswconnectiondialogbase.ui'
-        ]
     )
 )
 
 
 @task
 def build_qt_files():
-    """build ui and resource files"""
-    os.system('/c/OSGeo4W/bin/pyrcc4 -o %s/resources.py %s/resources.qrc' % (options.base.plugin, options.base.plugin))
-    for ui_file in options.ui.ui_files:
-        ui_file_basename = os.path.splitext(ui_file)[0]
-        os.system('/c/OSGeo4W/bin/pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (options.base.plugin, ui_file_basename, options.base.plugin, ui_file_basename))
+    """build ui files"""
+
+    for ui_file in os.listdir('plugin/MetaSearch/ui'):
+        if ui_file.endswith('.ui'):
+            print ui_file
+            ui_file_basename = os.path.splitext(ui_file)[0]
+            sh('pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (options.base.plugin,
+               ui_file_basename, options.base.plugin, ui_file_basename))
 
 
 @task
+@needs('build_qt_files')
 def install():
-    """install plugin into QGIS environment"""
-
-    #call_task('build_qt_files')
+    """install plugin into user QGIS environment"""
 
     options.base.install.rmtree()
     shutil.copytree(options.base.plugin, options.base.install)
@@ -71,16 +62,17 @@ def install():
 @task
 def refresh_docs():
     """Build sphinx docs from scratch"""
+
     with pushd(options.base.docs):
         sh('make clean')
         sh('make html')
 
 
 @task
+@needs('refresh_docs')
 def publish_docs():
     """this script publish Sphinx outputs to github pages"""
 
-    call_task('refresh_docs')
     sh('git clone git@github.com:geopython/OWSLib.git %s' % options.base.tmp)
     with pushd(options.base.tmp):
         sh('git checkout gh-pages')
@@ -95,4 +87,5 @@ def publish_docs():
 @task
 def upload():
     """uploads .zip file of plugin to repository"""
+
     call_task('install')

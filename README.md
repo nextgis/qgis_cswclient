@@ -10,9 +10,11 @@ $ cd MetaSearch
 $ pip install -r requirements.txt --target=plugin/MetaSearch/ext-libs
 # install developer requirements
 $ pip install -r requirements-dev.txt
-# link plugin to qgis2 runtime
+#
+# option 1: compile .ui files and link plugin to qgis2 runtime
+$ paver build_qt_files
 $ ln -s path/to/MetaSearch/plugin $HOME/.qgis2/python/plugins
-
-# or copy the entire plugin to $HOME/.qgis2/python/plugins
+#
+# option 2: copy the entire plugin to $HOME/.qgis2/python/plugins
 $ paver install
 ```
