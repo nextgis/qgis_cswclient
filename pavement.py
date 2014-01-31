@@ -25,17 +25,49 @@ import shutil
 
 from paver.easy import call_task, needs, options, path, pushd, sh, task, Bunch
 
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
 USERDIR = os.path.expanduser('~')
 
 options(
     base=Bunch(
-        home=(os.path.abspath(os.path.dirname(__file__))),
-        docs=path('docs'),
-        plugin=path('plugin/MetaSearch'),
+        home=BASEDIR,
+        docs=path('%s/docs' % BASEDIR),
+        plugin=path('%s/plugin/MetaSearch' % BASEDIR),
         install=path('%s/.qgis2/python/plugins/MetaSearch' % USERDIR),
+        ext_libs=path('plugin/MetaSearch/ext-libs'),
         tmp=path(path('%s/MetaSearch-dist' % USERDIR))
     )
 )
+
+
+@task
+def setup():
+    """setup plugin dependencies"""
+
+    if not os.path.exists(options.base.ext_libs):
+        sh('pip install -r requirements.txt --target=%s' %
+           options.base.ext_libs)
+
+
+@task
+def clean():
+    """clean environment"""
+
+    if os.path.exists(options.base.install):
+        if os.path.islink(options.base.install):
+            os.unlink(options.base.install)
+        else:
+            shutil.rmtree(options.base.install)
+    if os.path.exists(options.base.tmp):
+        shutil.rmtree(options.base.tmp)
+    if os.path.exists(options.base.ext_libs):
+        shutil.rmtree(options.base.ext_libs)
+    with pushd(options.base.docs):
+        sh('make clean')
+    for ui_file in os.listdir('plugin/MetaSearch/ui'):
+        if ui_file.endswith('.py') and ui_file != '__init__.py':
+            os.remove(ui_file)
+    sh('git clean -dxf')
 
 
 @task
@@ -51,13 +83,21 @@ def build_qt_files():
 
 
 @task
-@needs('build_qt_files')
+#@needs('build_qt_files')
 def install():
     """install plugin into user QGIS environment"""
 
-    if not hasattr(os, 'symlink'):
-        if os.path.isdir(options.base.install):
+    plugins_dir = path(USERDIR) / '.qgis2/python/plugins'
+
+    if os.path.exists(options.base.install):
+        if os.path.islink(options.base.install):
+            os.unlink(options.base.install)
+        else:
             shutil.rmtree(options.base.install)
+
+    if not os.path.exists(plugins_dir):
+        raise OSError('The directory %s does not exist.' % plugins_dir)
+    if not hasattr(os, 'symlink'):
         shutil.copytree(options.base.plugin, options.base.install)
     elif not os.path.exists(options.base.install):
         os.symlink(options.base.plugin, options.base.install)
