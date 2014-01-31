@@ -83,7 +83,7 @@ def build_qt_files():
 
 
 @task
-#@needs('build_qt_files')
+@needs('build_qt_files')
 def install():
     """install plugin into user QGIS environment"""
 
