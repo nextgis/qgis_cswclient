@@ -9,6 +9,8 @@
 #                    Alexander Bruy (alexander.bruy@gmail.com),
 #                    Maxim Dubinin (sim@gis-lab.info)
 #
+# Copyright (C) 2014 Tom Kralidis (tomkralidis@gmail.com)
+#
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
 # Software Foundation; either version 2 of the License, or (at your option)
@@ -26,203 +28,175 @@
 #
 ###############################################################################
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
+import xml.etree.ElementTree as etree
 
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtCore import QSettings
+from PyQt4.QtGui import QDialog, QDialogButtonBox, QFileDialog, \
+    QListWidgetItem, QMessageBox
 
 from MetaSearch.ui.manageconnectionsdialog import Ui_ManageConnectionsDialog
 
-class ManageConnectionsDialog( QDialog, Ui_ManageConnectionsDialog ):
-  def __init__( self, mode ):
-    QDialog.__init__( self )
-    self.setupUi( self )
+MSGS = {
+    'loading': 'Loading connections',
+}
 
-    # 0 - save, 1 - load
-    self.dialogMode = mode
 
-    QObject.connect( self.btnBrowse, SIGNAL( "clicked()" ), self.selectFile )
+class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
+    """manage connections"""
+    def __init__(self, mode):
+        """init dialog"""
+        QDialog.__init__(self)
+        self.setupUi(self)
+        self.filename = None
+        self.mode = mode  # 0 - save, 1 - load
+        self.btnBrowse.clicked.connect(self.select_file)
+        self.manage_gui()
 
-    self.manageGui()
+    def manage_gui(self):
+        """manage interface"""
+        if self.mode == 1:
+            self.label.setText(self.tr('Load from file'))
+            self.buttonBox.button(QDialogButtonBox.Ok).setText(self.tr('Load'))
+        else:
+            self.label.setText(self.tr('Save to file'))
+            self.buttonBox.button(QDialogButtonBox.Ok).setText(self.tr('Save'))
+            self.populate()
 
-  def manageGui( self ):
-    if self.dialogMode == 1:
-      self.label.setText( self.tr( "Load from file" ) )
-      self.buttonBox.button( QDialogButtonBox.Ok ).setText( self.tr( "Load" ) )
-    else:
-      self.label.setText( self.tr( "Save to file" ) )
-      self.buttonBox.button( QDialogButtonBox.Ok ).setText( self.tr( "Save" ) )
-      self.populateConnections()
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
 
-    self.buttonBox.button( QDialogButtonBox.Ok ).setEnabled( False )
+    def select_file(self):
+        """select file ops"""
 
-  def selectFile( self ):
-    if self.dialogMode == 0:
-      self.fileName = QFileDialog.getSaveFileName( self, self.tr( "Save connections" ), ".", self.tr( "eXtensible Markup Language (*.xml *.XML)" ) )
-    else:
-      self.fileName = QFileDialog.getOpenFileName( self, self.tr( "Load connections" ), ".", self.tr( "eXtensible Markup Language (*.xml *.XML)" ) )
+        label = self.tr('eXtensible Markup Language (*.xml *.XML)')
 
-    if self.fileName.isEmpty():
-      return
+        if self.mode == 0:
+            slabel = self.tr('Save connections')
+            self.filename = QFileDialog.getSaveFileName(self, slabel,
+                                                        '.', label)
+        else:
+            slabel = self.tr('Load connections')
+            self.filename = QFileDialog.getOpenFileName(self, slabel,
+                                                        '.', label)
 
-    # ensure the user never ommited the extension from the file name
-    if not self.fileName.toLower().endsWith( ".xml" ) :
-      self.fileName += ".xml"
+        if not self.filename:
+            return
 
-    self.leFileName.setText( self.fileName )
+        # ensure the user never ommited the extension from the file name
+        if not self.filename.toLower().endsWith('.xml'):
+            self.filename = '%s.xml' % self.filename
 
-    if self.dialogMode == 1:
-      self.populateConnections()
+        self.leFileName.setText(self.filename)
 
-    self.buttonBox.button( QDialogButtonBox.Ok ).setEnabled( True )
+        if self.mode == 1:
+            self.populate()
 
-  def populateConnections( self ):
-    # Save mode. Populate connections list from settings
-    if self.dialogMode == 0:
-      settings = QSettings()
-      settings.beginGroup( "/CSWClient/" )
-      keys = settings.childGroups()
-      for key in keys:
-        item = QListWidgetItem( self.listConnections )
-        item.setText( key )
-      settings.endGroup()
-    # Load mode. Populate connections list from file
-    else:
-      file = QFile( self.fileName )
-      if not file.open( QIODevice.ReadOnly | QIODevice.Text ):
-        QMessageBox.warning( self, self.tr( "Loading connections" ),
-                             self.tr( "Cannot read file %1:\n%2." )
-                             .arg( mFileName )
-                             .arg( file.errorString() ) )
-        return
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
 
-      doc = QDomDocument()
-      (success, errorStr, errorLine, errorColumn) = doc.setContent( file, True )
-      if not success:
-        QMessageBox.warning( self, self.tr( "Loading connections" ),
-                             self.tr( "Parse error at line %1, column %2:\n%3" )
-                             .arg( errorLine )
-                             .arg( errorColumn )
-                             .arg( errorStr ) )
-        return
+    def populate(self):
+        """populate connections list from settings"""
 
-      root = doc.documentElement()
-      if root.tagName() != "qgsCSWConnections":
-        QMessageBox.information( self, self.tr( "Loading connections" ),
-                                 self.tr( "The file is not an CSW connections exchange file." ) )
-        self.fileName = ""
+        if self.mode == 0:
+            settings = QSettings()
+            settings.beginGroup('/CSWClient/')
+            keys = settings.childGroups()
+            for key in keys:
+                item = QListWidgetItem(self.listConnections)
+                item.setText(key)
+            settings.endGroup()
+
+        else:  # populate connections list from file
+            try:
+                doc = etree.parse(self.filenamelqfile).getroot()
+            except etree.ParseError, err:
+                label = self.tr('Cannot parse XML file: %1.').arg(err)
+                QMessageBox.warning(self, self.tr(MSGS['loading']), label)
+                return
+            except IOError, err:
+                label = self.tr('Cannot open file: %1.').arg(err)
+                QMessageBox.warning(self, self.tr(MSGS['loading']), label)
+                return
+
+        if doc.tag != 'qgcCSWConnections':
+            QMessageBox.information(self, self.tr(MSGS['loading']),
+                                    self.tr('Invalid CSW connections XML.'))
+            self.filename = None
+            self.leFileName.clear()
+            self.listConnections.clear()
+            return
+
+        for csw in doc.findall('csw'):
+            item = QListWidgetItem(self.listConnections)
+            item.setText(csw.attrib.get('name'))
+
+    def save(self, connections):
+        """save connections ops"""
+
+        settings = QSettings()
+
+        doc = etree.Element('qgsCSWConnections')
+        doc.attrib.set('version', '1.0')
+
+        for conn in connections:
+            connection = etree.SubElement(doc, 'csw')
+            connection.attrib.set('name', conn)
+            url = settings.value('/CSWClient/%s/url' % conn)
+            connection.attrib.set('url', url)
+
+        # write to disk
+        etree.ElementTree(doc).write(self.filename)
+
+    def load(self, items):
+        """load connections"""
+
+        settings = QSettings()
+        settings.beginGroup('/CSWClient/')
+        keys = settings.childGroups()
+        settings.endGroup()
+
+        exml = etree.parse(self.filename).getroot()
+
+        for csw in exml.findall('csw'):
+            conn_name = csw.attrib.get('name')
+
+            # process only selected connections
+            if not items.contains(conn_name):
+                continue
+
+            # check for duplicates
+            if keys.contains(conn_name):
+                label = self.tr('File %1 exists. Overwrite?').arg(conn_name)
+                res = QMessageBox.warning(self, self.tr(MSGS['loading']),
+                                          label,
+                                          QMessageBox.Yes | QMessageBox.No)
+                if res != QMessageBox.Yes:
+                    continue
+
+            # no dups detected or overwrite is allowed
+            url = '/CSWClient/%s/url' % conn_name
+            settings.setValue(url, csw.attrib.get('url'))
+
+    def accept(self):
+        """accept connections"""
+
+        selection = self.listConnections.selectedItems()
+        if len(selection) == 0:
+            return
+
+        items = []
+        for sel in selection:
+            items.append(sel.text())
+
+        if self.mode == 0:  # save
+            self.save(items)
+        else:  # load
+            self.load(items)
+
+        self.filename = None
         self.leFileName.clear()
         self.listConnections.clear()
-        return
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
 
-      child = root.firstChildElement()
-      while not child.isNull():
-        item = QListWidgetItem( self.listConnections )
-        item.setText( child.attribute( "name" ) )
-        child = child.nextSiblingElement()
+    def reject(self):
+        """back out of manage connections dialogue"""
 
-  def saveCSWConnections( self, connections ):
-    doc = QDomDocument( "connections" )
-    root = doc.createElement( "qgsCSWConnections" )
-    root.setAttribute( "version", "1.0" )
-    doc.appendChild( root )
-
-    settings = QSettings()
-    key = "/CSWClient/"
-    for conn in connections:
-      el = doc.createElement( "csw" )
-      el.setAttribute( "name", conn )
-      el.setAttribute( "url", settings.value( key + conn + "/url", "" ) )
-      root.appendChild( el )
-
-    return doc
-
-  def loadCSWConnections( self, doc, items ):
-    root = doc.documentElement()
-    if root.tagName() != "qgsCSWConnections":
-      QMessageBox.information( self, self.tr( "Loading connections" ),
-                               self.tr( "The file is not an CSW connections exchange file." ) )
-      return
-
-    settings = QSettings()
-    settings.beginGroup( "/CSWClient/" )
-    keys = settings.childGroups()
-    settings.endGroup()
-
-    child = root.firstChildElement()
-
-    while not child.isNull():
-      connectionName = child.attribute( "name" )
-
-      # process only selected connections
-      if not items.contains( connectionName ):
-        child = child.nextSiblingElement()
-        continue
-
-      # check for duplicates
-      if keys.contains( connectionName ):
-        res = QMessageBox.warning( self, self.tr( "Loading connections" ),
-                                   self.tr( "Connection with name %1 already exists. Overwrite?" )
-                                   .arg( connectionName ),
-                                   QMessageBox.Yes | QMessageBox.No )
-        if res != QMessageBox.Yes:
-          child = child.nextSiblingElement()
-          continue
-
-      # no dups detected or overwrite is allowed
-      key = "/CSWClient/" + connectionName
-      settings.setValue( key + "/url", child.attribute( "url" ) )
-      child = child.nextSiblingElement()
-
-  def accept( self ):
-    selection = self.listConnections.selectedItems()
-    if len( selection ) == 0:
-      return
-
-    items = []
-    for sel in selection:
-      items.append( sel.text() )
-
-    if self.dialogMode == 0: # save
-      doc = self.saveCSWConnections( items )
-
-      file = QFile( self.fileName )
-      if not file.open( QIODevice.WriteOnly | QIODevice.Text ):
-        QMessageBox.warning( self, self.tr( "Saving connections" ),
-                             self.tr( "Cannot write file %1:\n%2." )
-                             .arg( self.fileName )
-                             .arg( file.errorString() ) )
-        return
-
-      out = QTextStream( file )
-      doc.save( out, 4 )
-    else: #load
-      file = QFile( self.fileName )
-      if not file.open( QIODevice.ReadOnly | QIODevice.Text ):
-        QMessageBox.warning( self, self.tr( "Loading connections" ),
-                             self.tr( "Cannot write file %1:\n%2." )
-                             .arg( self.fileName )
-                             .arg( file.errorString() ) )
-        return
-
-      doc = QDomDocument()
-      (success, errorStr, errorLine, errorColumn) = doc.setContent( file, True )
-      if not success:
-        QMessageBox.warning( self, self.tr( "Loading connections" ),
-                             self.tr( "Parse error at line %1, column %2:\n%3" )
-                             .arg( errorLine )
-                             .arg( errorColumn )
-                             .arg( errorStr ) )
-        return
-
-      self.loadCSWConnections( doc, items )
-
-    self.fileName = ""
-    self.leFileName.clear()
-    self.listConnections.clear()
-    self.buttonBox.button( QDialogButtonBox.Ok ).setEnabled( False )
-
-  def reject( self ):
-    QDialog.reject( self )
+        QDialog.reject(self)
