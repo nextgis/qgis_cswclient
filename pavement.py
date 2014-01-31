@@ -25,7 +25,7 @@ import shutil
 
 from paver.easy import call_task, needs, options, path, pushd, sh, task, Bunch
 
-USERDIR = os.path.join(os.path.expanduser('~'), 'MetaSearch-dist')
+USERDIR = os.path.expanduser('~')
 
 options(
     base=Bunch(
@@ -56,7 +56,8 @@ def install():
     """install plugin into user QGIS environment"""
 
     if not hasattr(os, 'symlink'):
-        options.base.install.rmtree()
+        if os.path.isdir(options.base.install):
+            shutil.rmtree(options.base.install)
         shutil.copytree(options.base.plugin, options.base.install)
         #options.base.plugin.copytree(options.base.install)
     elif not options.base.install.exists():
