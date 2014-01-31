@@ -224,6 +224,5 @@ class ManageConnectionsDialog( QDialog, Ui_ManageConnectionsDialog ):
     self.listConnections.clear()
     self.buttonBox.button( QDialogButtonBox.Ok ).setEnabled( False )
 
-  @pyqtSignature("reject()")
   def reject( self ):
     QDialog.reject( self )

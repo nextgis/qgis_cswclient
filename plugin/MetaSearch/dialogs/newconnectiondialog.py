@@ -71,7 +71,6 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
 
             QDialog.accept(self)
 
-    @pyqtSignature('reject()')
     def reject(self):
         """back out of dialogue"""
         QDialog.reject(self)
