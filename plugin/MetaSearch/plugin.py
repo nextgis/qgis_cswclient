@@ -28,8 +28,8 @@ import logging
 import os
 import webbrowser
 
-from PyQt4.QtCore import QAction, QCoreApplication, QIcon, QLocale, QObject, \
-    QTranslator
+from PyQt4.QtCore import QCoreApplication, QLocale, QObject, QTranslator
+from PyQt4.QtGui import QAction, QIcon
 
 from MetaSearch.dialogs.maindialog import MetaSearchDialog
 from MetaSearch.config import StaticContext
