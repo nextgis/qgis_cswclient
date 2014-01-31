@@ -1,3 +1,2 @@
-OWSLib==0.8.3
+OWSLib==0.8.4
 pygments==1.6
-six
