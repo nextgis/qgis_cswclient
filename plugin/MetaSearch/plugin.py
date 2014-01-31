@@ -79,7 +79,7 @@ class MetaSearchPlugin(object):
                                   self.iface.mainWindow())
         self.action_run.setWhatsThis(translate('MetaSearch plugin'))
         self.action_run.setStatusTip(translate('Search Metadata Catalogues'))
-        QObject.connect(self.action_run, SIGNAL('triggered()'), self.run)
+        self.action_run.triggered.connect(self.run)
 
         self.iface.addToolBarIcon(self.action_run)
         self.iface.addPluginToWebMenu(self.web_menu, self.action_run)
@@ -89,7 +89,7 @@ class MetaSearchPlugin(object):
         self.action_help = QAction(help_icon, 'Help', self.iface.mainWindow())
         self.action_help.setWhatsThis(translate('MetaSearch plugin help'))
         self.action_help.setStatusTip(translate('Get Help on MetaSearch'))
-        QObject.connect(self.action_help, SIGNAL('triggered()'), self.help)
+        self.action_help.triggered.connect(self.help)
 
         self.iface.addPluginToWebMenu(self.web_menu, self.action_help)
 
