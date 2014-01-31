@@ -33,9 +33,9 @@ from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
-from MetaSearch.ui.manageconnectionsdialog import ui_ManageConnectionsDialog
+from MetaSearch.ui.manageconnectionsdialog import Ui_ManageConnectionsDialog
 
-class ManageConnectionsDialog( QDialog, ui_ManageConnectionsDialog ):
+class ManageConnectionsDialog( QDialog, Ui_ManageConnectionsDialog ):
   def __init__( self, mode ):
     QDialog.__init__( self )
     self.setupUi( self )

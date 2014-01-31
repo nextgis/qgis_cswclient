@@ -30,10 +30,10 @@
 
 from PyQt4.QtGui import QDialog
 
-from MetaSearch.ui.responsedialog import ui_ResponseDialog
+from MetaSearch.ui.responsedialog import Ui_ResponseDialog
 
 
-class ResponseDialog(QDialog, ui_ResponseDialog):
+class ResponseDialog(QDialog, Ui_ResponseDialog):
     """CSW Response Dialogue"""
     def __init__(self):
         """init"""

@@ -52,9 +52,9 @@ from MetaSearch.dialogs.responsedialog import ResponseDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 
-from MetaSearch.ui.maindialog import ui_MetaSearchDialog
+from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
 
-class MetaSearchDialog( QDialog, ui_MetaSearchDialog ):
+class MetaSearchDialog( QDialog, Ui_MetaSearchDialog ):
   def __init__( self, iface ):
     QDialog.__init__( self )
     self.setupUi( self )
