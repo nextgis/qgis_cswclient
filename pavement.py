@@ -59,9 +59,8 @@ def install():
         if os.path.isdir(options.base.install):
             shutil.rmtree(options.base.install)
         shutil.copytree(options.base.plugin, options.base.install)
-        #options.base.plugin.copytree(options.base.install)
-    elif not options.base.install.exists():
-        options.base.plugin.symlink(options.base.install)
+    elif not os.path.exists(options.base.install):
+        os.symlink(options.base.plugin, options.base.install)
 
 
 @task
