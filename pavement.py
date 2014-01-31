@@ -66,7 +66,7 @@ def clean():
         sh('make clean')
     for ui_file in os.listdir('plugin/MetaSearch/ui'):
         if ui_file.endswith('.py') and ui_file != '__init__.py':
-            os.remove(ui_file)
+            os.remove(options.base.plugin / 'ui' / ui_file)
     sh('git clean -dxf')
 
 
