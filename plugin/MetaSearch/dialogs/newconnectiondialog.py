@@ -28,13 +28,13 @@
 #
 ###############################################################################
 
-from PyQt4.QtCore import QMessageBox, QSettings
-from PyQt4.QtGui import QDialog
+from PyQt4.QtCore import QSettings
+from PyQt4.QtGui import QDialog, QMessageBox
 
-from ui.newcswconnectiondialogbase import Ui_NewCSWConnectionDialog
+from MetaSearch.ui.newconnectiondialog import ui_NewConnectionDialog
 
 
-class NewCSWConnectionDialog(QDialog, Ui_NewCSWConnectionDialog):
+class NewConnectionDialog(QDialog, ui_NewConnectionDialog):
     """Dialogue to add a new CSW entry"""
     def __init__(self, conn_name=None):
         """init"""

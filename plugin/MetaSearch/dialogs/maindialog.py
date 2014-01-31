@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-#******************************************************************************
+###############################################################################
 #
 # CSW Client
 # ---------------------------------------------------------
@@ -9,6 +8,8 @@
 # Copyright (C) 2010 NextGIS (http://nextgis.org),
 #                    Alexander Bruy (alexander.bruy@gmail.com),
 #                    Maxim Dubinin (sim@gis-lab.info)
+#
+# Copyright (C) 2014 Tom Kralidis (tomkralidis@gmail.com)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -25,7 +26,7 @@
 # to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
 #
-#******************************************************************************
+###############################################################################
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -45,15 +46,15 @@ sys.path.insert( 0, currentPath )
 
 from owslib.csw import CatalogueServiceWeb as csw
 
-import cswclient_utils as utils
+import MetaSearch.util as util
 
-from cswresponsedialog import CSWResponseDialog
-from newcswconnectiondialog import NewCSWConnectionDialog
-from managecswconnectionsdialog import ManageCSWConnectionsDialog
+from MetaSearch.dialogs.responsedialog import ResponseDialog
+from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
+from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 
-from ui.cswclientdialogbase import Ui_CSWClientDialog
+from MetaSearch.ui.maindialog import ui_MetaSearchDialog
 
-class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
+class MetaSearchDialog( QDialog, ui_MetaSearchDialog ):
   def __init__( self, iface ):
     QDialog.__init__( self )
     self.setupUi( self )
@@ -223,14 +224,14 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     if self.catalog:
       self.btnCapabilities.setEnabled( True )
 
-      metadata = utils.serverMetadata( self.catalog )
+      metadata = util.serverMetadata( self.catalog )
       myStyle = QgsApplication.reportStyleSheet()
       self.textMetadata.clear()
       self.textMetadata.document().setDefaultStyleSheet( myStyle )
       self.textMetadata.setHtml( metadata )
 
   def newServer( self ):
-    dlgNew = NewCSWConnectionDialog()
+    dlgNew = NewConnectionDialog()
     dlgNew.setWindowTitle( self.tr( "New CSW server" ) )
     if dlgNew.exec_() == QDialog.Accepted:
       self.populateConnectionList()
@@ -239,7 +240,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
     settings = QSettings()
     url = settings.value( "/CSWClient/" + self.cmbConnections.currentText() + "/url" )
 
-    dlgEdit = NewCSWConnectionDialog( self.cmbConnections.currentText() )
+    dlgEdit = NewConnectionDialog( self.cmbConnections.currentText() )
     dlgEdit.setWindowTitle( self.tr( "Edit CSW server" ) )
     dlgEdit.leName.setText( self.cmbConnections.currentText() )
     dlgEdit.leURL.setText( url )
@@ -257,12 +258,12 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
       self.setConnectionListPosition()
 
   def loadServers( self ):
-    dlg = ManageCSWConnectionsDialog( 1 )
+    dlg = ManageConnectionsDialog( 1 )
     dlg.exec_()
     self.populateConnectionList()
 
   def saveServers( self ):
-    dlg = ManageCSWConnectionsDialog( 0 )
+    dlg = ManageConnectionsDialog( 0 )
     dlg.exec_()
 
   def addDefaultServers( self ):
@@ -511,7 +512,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
     if item.text( 0 ) == "liveData" or item.text( 0 ) == "downloadableData":
       #dataUrl = self.extractUrl( self.catalog.response, item.text( 2 ) )
-      dataUrl = utils.extractUrl( self, self.catalog.response, item.text( 2 ) )
+      dataUrl = util.extractUrl( self, self.catalog.response, item.text( 2 ) )
       #print "DATA URL", dataUrl
       if not dataUrl.isEmpty():
         self.leDataUrl.setText( dataUrl )
@@ -595,7 +596,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
 
     QApplication.restoreOverrideCursor()
 
-#    dlgNew = NewCSWConnectionDialog()
+#    dlgNew = NewConnectionDialog()
 #    dlgNew.setWindowTitle( self.tr( "New CSW server" ) )
 #    if dlgNew.exec_() == QDialog.Accepted:
 #      self.populateConnectionList()
@@ -681,7 +682,7 @@ class CSWClientDialog( QDialog, Ui_CSWClientDialog ):
                            .arg( cat.exceptionreport.exceptions[ 0 ][ "ExceptionText" ] ) )
       return
 
-    metadata = utils.recordMetadata( cat.records[ recordId ] )
+    metadata = util.recordMetadata( cat.records[ recordId ] )
 
     myStyle = QgsApplication.reportStyleSheet()
     dlg = CSWResponseDialog()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CSWClientDialog</class>
- <widget class="QDialog" name="CSWClientDialog">
+ <class>MetaSearchDialog</class>
+ <widget class="QDialog" name="MetaSearchDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CSW client</string>
+   <string>MetaSearch client</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -360,7 +360,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>CSWClientDialog</receiver>
+   <receiver>MetaSearchDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -376,7 +376,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>CSWClientDialog</receiver>
+   <receiver>MetaSearchDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

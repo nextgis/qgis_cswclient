@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-#******************************************************************************
+###############################################################################
 #
 # CSW Client
 # ---------------------------------------------------------
@@ -25,7 +24,7 @@
 # to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 # MA 02111-1307, USA.
 #
-#******************************************************************************
+###############################################################################
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -34,9 +33,9 @@ from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
-from ui.managecswconnectionsdialogbase import Ui_ManageCSWConnectionsDialog
+from MetaSearch.ui.manageconnectionsdialog import ui_ManageConnectionsDialog
 
-class ManageCSWConnectionsDialog( QDialog, Ui_ManageCSWConnectionsDialog ):
+class ManageConnectionsDialog( QDialog, ui_ManageConnectionsDialog ):
   def __init__( self, mode ):
     QDialog.__init__( self )
     self.setupUi( self )

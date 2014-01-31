@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# Copyright (C) 2010 NextGIS (http://nextgis.org),
-#                    Alexander Bruy (alexander.bruy@gmail.com),
-#                    Maxim Dubinin (sim@gis-lab.info),
-#
 # Copyright (C) 2014 Tom Kralidis (tomkralidis@gmail.com)
 #
 # This source is free software; you can redistribute it and/or modify it under
@@ -23,14 +19,3 @@
 # MA 02111-1307, USA.
 #
 ###############################################################################
-
-import os
-import site
-
-site.addsitedir(os.path.abspath('%s/ext-libs' % os.path.dirname(__file__)))
-
-
-def classFactory(iface):
-    """invoke plugin"""
-    from MetaSearch.plugin import MetaSearchPlugin
-    return MetaSearchPlugin(iface)
