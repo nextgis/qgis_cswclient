@@ -24,355 +24,42 @@
 #
 ###############################################################################
 
+import ConfigParser
 import logging
+import os
+
+from jinja2 import Template
 from PyQt4.QtCore import QCoreApplication
 
 LOGGER = logging.getLogger('MetaSearch')
 
 
+class StaticContext(object):
+    """base configuration / scaffolding"""
+
+    def __init__(self):
+        """init"""
+        self.ppath = os.path.dirname(os.path.abspath(__file__))
+        self.metadata = ConfigParser.ConfigParser()
+        self.metadata.readfp(open(os.path.join(self.ppath, 'metadata.txt')))
+
+
+def get_labels(context):
+    """get template labels as JSON"""
+    pass
+
+def render_template(language, context, labels, data, template):
+    """Renders HTML display of metadata XML"""
+
+    template_file = '%s/resources/templates/%s' % (context.ppath, template)
+    template = Template(open(template_file).read())
+    return template.render(language=language, labels=labels, obj=data)
+
 def translate(text):
     """translates text"""
     return QCoreApplication.translate('MetaSearch', text)
 
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 from PyQt4.QtXml import *
-
-def serverMetadata( srv ):
-  myMetadata = "<html><body>"
-  myMetadata += "<table width=\"100%\">"
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Server properties" )
-  myMetadata += "</td></tr>"
-
-  try:
-    id = srv.identification
-  except:
-    return "Failed to get server capabilities"
-
-  # server identification
-  if srv.identification:
-    # start nested table
-    myMetadata += "<table width=\"100%\" border=\"1\">"
-
-    # table header
-    myMetadata += "<tr><th bgcolor=\"black\">"
-    myMetadata += "<font color=\"white\">" + QCoreApplication.translate( "CSWClient", "Property" ) + "</font>"
-    myMetadata += "</th>"
-    myMetadata += "<th bgcolor=\"black\">"
-    myMetadata += "<font color=\"white\">" + QCoreApplication.translate( "CSWClient", "Value" ) +"</font>"
-    myMetadata += "</th></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Title" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.identification.title:
-      myMetadata += srv.identification.title
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Type" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.identification.type:
-      myMetadata += srv.identification.type
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Version" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.identification.version:
-      myMetadata += srv.identification.version
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Keywords" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if len( srv.identification.keywords ) > 0:
-      md = ""
-      for k in srv.identification.keywords:
-        if k is None:
-          continue
-        md += k + ", "
-      myMetadata += md[:-2]
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Fees" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.identification.fees:
-      myMetadata += srv.identification.fees
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Access constraints" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.identification.accessconstraints:
-      myMetadata += srv.identification.accessconstraints
-    myMetadata += "</td></tr>"
-
-    # close the nested table
-    myMetadata += "</table>"
-
-  # provider info
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += "Provider information"
-  myMetadata += "</td></tr>"
-
-
-  if srv.provider:
-    # start nested table
-    myMetadata += "<table width=\"100%\" border=\"1\">"
-
-    # table header
-    myMetadata += "<tr><th bgcolor=\"black\">"
-    myMetadata += "<font color=\"white\">" + QCoreApplication.translate( "CSWClient", "Property" ) + "</font>"
-    myMetadata += "</th>"
-    myMetadata += "<th bgcolor=\"black\">"
-    myMetadata += "<font color=\"white\">" + QCoreApplication.translate( "CSWClient", "Value" ) + "</font>"
-    myMetadata += "</th></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Provider name" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.name:
-      myMetadata += srv.provider.name
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Provider URL" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.url:
-      myMetadata += srv.provider.url
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact name" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.name:
-      myMetadata += srv.provider.contact.name
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact organization" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.organization:
-      myMetadata += srv.provider.contact.organization
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact address" )
-    myMetadata += "</td bgcolor=\"gray\">"
-    myMetadata += "<td>"
-    if srv.provider.contact.address:
-      myMetadata += srv.provider.contact.address
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact city" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.city:
-      myMetadata += srv.provider.contact.city
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact region" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.region:
-      myMetadata += srv.provider.contact.region
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact postcode" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.postcode:
-      myMetadata += srv.provider.contact.postcode
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact country" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.country:
-      myMetadata += srv.provider.contact.country
-    myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact email" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.email:
-      myMetadata += srv.provider.contact.email
-    myMetadata += "</td></tr>"
-
-    #myMetadata += "<tr><td bgcolor=\"gray\">"
-    #myMetadata += QCoreApplication.translate( "CSWClient", "Contact hoursofservice" )
-    #myMetadata += "</td>"
-    #myMetadata += "<td bgcolor=\"gray\">"
-    #if srv.provider.contact.hoursofservice:
-    #  myMetadata += srv.provider.contact.hoursofservice
-    #myMetadata += "</td></tr>"
-
-    myMetadata += "<tr><td bgcolor=\"gray\">"
-    myMetadata += QCoreApplication.translate( "CSWClient", "Contact role" )
-    myMetadata += "</td>"
-    myMetadata += "<td bgcolor=\"gray\">"
-    if srv.provider.contact.role:
-      myMetadata += srv.provider.contact.role
-    myMetadata += "</td></tr>"
-
-    # close the nested table
-    myMetadata += "</table>"
-
-  # close main table
-  myMetadata += "</table>"
-  myMetadata += "</body></html>"
-
-  return myMetadata
-
-def recordMetadata( record ):
-  myMetadata = "<html><body>"
-  myMetadata += "<table width=\"100%\">"
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Record properties" )
-  myMetadata += "</td></tr>"
-
-#  try:
-#    id = record[ id ].identifier
-#  except:
-#    return "Failed to get server capabilities"
-
-  # start nested table
-  myMetadata += "<table width=\"100%\" border=\"1\">"
-
-  # table header
-  myMetadata += "<tr><th bgcolor=\"black\">"
-  myMetadata += "<font color=\"white\">" + QCoreApplication.translate( "CSWClient", "Property" ) + "</font>"
-  myMetadata += "</th>"
-  myMetadata += "<th bgcolor=\"black\">"
-  myMetadata += "<font color=\"white\">" + QCoreApplication.translate( "CSWClient", "Value" ) +"</font>"
-  myMetadata += "</th></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Identifier" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.identifier:
-    myMetadata += record.identifier
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Title" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.title:
-    myMetadata += record.title
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Abstract" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.abstract:
-    myMetadata += record.abstract
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Subjects" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if len( record.subjects ) > 0:
-    myMetadata += ', '.join(record.subjects)
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Creator" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.creator:
-    myMetadata += record.creator
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Contributor" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.contributor:
-    myMetadata += record.contributor
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Publisher" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.publisher:
-    myMetadata += record.publisher
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Modified" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.modified:
-    myMetadata += record.modified
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Language" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.language:
-    myMetadata += record.language
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Format" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.format:
-    myMetadata += record.format
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Rights" )
-  myMetadata += "</td bgcolor=\"gray\">"
-  myMetadata += "<td>"
-  print "****RIGHTS***", record.rights
-  print record.rights is None
-  print len( record.rights )
-  if record.rights and record.rights[0] and len( record.rights ) > 0:
-    myMetadata += ', '.join(record.rights)
-  myMetadata += "</td></tr>"
-
-  myMetadata += "<tr><td bgcolor=\"gray\">"
-  myMetadata += QCoreApplication.translate( "CSWClient", "Bounding box" )
-  myMetadata += "</td>"
-  myMetadata += "<td bgcolor=\"gray\">"
-  if record.bbox:
-    myMetadata += record.bbox.minx + ", " + record.bbox.miny + ", " + record.bbox.maxx + ", " + record.bbox.maxy
-  myMetadata += "</td></tr>"
-
-  # close the nested table
-  myMetadata += "</table>"
-
-  # close main table
-  myMetadata += "</table>"
-  myMetadata += "</body></html>"
-
-  return myMetadata
 
 def extractUrl( parent, xmlDoc, recordId ):
   doc = QDomDocument()

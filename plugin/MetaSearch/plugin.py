@@ -32,8 +32,7 @@ from PyQt4.QtCore import QCoreApplication, QLocale, QObject, QTranslator
 from PyQt4.QtGui import QAction, QIcon
 
 from MetaSearch.dialogs.maindialog import MetaSearchDialog
-from MetaSearch.config import StaticContext
-from MetaSearch.util import translate
+from MetaSearch.util import StaticContext, translate
 
 LOGGER = logging.getLogger('MetaSearch')
 
@@ -97,12 +96,13 @@ class MetaSearchPlugin(object):
         """teardown"""
         # remove the plugin menu item and icon
         self.iface.removePluginWebMenu(self.web_menu, self.action_run)
+        self.iface.removePluginWebMenu(self.web_menu, self.action_help)
         self.iface.removeToolBarIcon(self.action_run)
         self.iface.removeToolBarIcon(self.action_help)
 
     def run(self):
         """open MetaSearch"""
-        MetaSearchDialog(self.iface)
+        MetaSearchDialog(self.iface).exec_()
 
     def help(self):
         """open help in user's default web browser"""

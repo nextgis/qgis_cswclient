@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="{{ language }}">
+    <head>
+        <meta charset="utf-8"/>
+        <title>{{ labels['service-metadata'] }}</title>
+        <style type="text/css">
+            body {
+                background-color: #ffffff;
+                font-family: arial, verdana, sans-serif;
+                text-align: left;
+                float: left;
+            }
+            header {
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h3>{{ labels['service-metadata'] }}</h3>
+        </header>
+        <section id="service-metadata">
+            <h4>{{ labels['service-identification']</h4>
+            <table>
+                <tr>
+                    <th>{{ labels['property'] }}</th>
+                    <th>{{ labels['value'] }}</th>
+                </tr>
+                <tr>
+                    <td>{{ labels['title'] }}</td>
+                    <td>{{ obj.identification.title }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['abstract'] }}</td>
+                    <td>{{ obj.identification.abstract }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['keywords'] }}</td>
+                    <td>{{ obj.identification.keywords|join(',') }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['type'] }}</td>
+                    <td>{{ obj.identification.type }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['version'] }}</td>
+                    <td>{{ obj.identification.version }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['fees'] }}</td>
+                    <td>{{ obj.identification.fees }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['accessconstraints'] }}</td>
+                    <td>{{ obj.identification.accessconstraints }}</td>
+                </tr>
+            </table>"
+        </section>
+        <section>
+            <h4>{{ labels['service-provider'] }}</h4>
+             <table>
+                <tr>
+                    <th>{{ labels['property'] }}</th>
+                    <th>{{ labels['value'] }}</th>
+                </tr>
+                <tr>
+                    <td>{{ labels['provider-name'] }}</td>
+                    <td>{{ obj.provider.name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['provider-site'] }}</td>
+                    <td><a href="{{ obj.provider.url }}">{{ obj.provider.url }}</a></td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-name'] }}</td>
+                    <td>{{ obj.provider.contact.name }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-position'] }}</td>
+                    <td>{{ obj.provider.contact.position}}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-role'] }}</td>
+                    <td>{{ obj.provider.contact.role }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-address'] }}</td>
+                    <td>
+                        {{ obj.provider.contact.address }}<br/>
+                        {{ obj.provider.contact.city }}, {{ obj.provider.contact.region }}<br/>
+                        {{ obj.provider.contact.postcode }}<br/>
+                        {{ obj.provider.contact.country }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-email'] }}</td>
+                    <td>{{ obj.provider.contact.email }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-phone'] }}</td>
+                    <td>{{ obj.provider.contact.phone }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-fax'] }}</td>
+                    <td>{{ obj.provider.contact.fax }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-url'] }}</td>
+                    <td>{{ obj.provider.contact.url }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-hoursofservice'] }}</td>
+                    <td>{{ obj.provider.contact.hoursofservice }}</td>
+                </tr>
+                <tr>
+                    <td>{{ labels['contact-instructions'] }}</td>
+                    <td>{{ obj.provider.contact.instructions }}</td>
+                </tr>
+             </table>
+        </section>
+    </body>
+</html>
