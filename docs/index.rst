@@ -11,6 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   MetaSearch Documentation <metasearch>
+
 
 
 Indices and tables
