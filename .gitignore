@@ -9,3 +9,5 @@
 ui_*.py
 *.qm
 
+plugin/MetaSearch/ext-libs
+
