@@ -25,10 +25,11 @@
 ###############################################################################
 
 import ConfigParser
+from gettext import gettext, ngettext
 import logging
 import os
 
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
 from PyQt4.QtCore import QCoreApplication
 
 LOGGER = logging.getLogger('MetaSearch')
@@ -43,20 +44,19 @@ class StaticContext(object):
         self.metadata = ConfigParser.ConfigParser()
         self.metadata.readfp(open(os.path.join(self.ppath, 'metadata.txt')))
 
-
-def get_labels(context):
-    """get template labels as JSON"""
-    pass
-
-def render_template(language, context, labels, data, template):
+def render_template(language, context, data, template):
     """Renders HTML display of metadata XML"""
 
-    template_file = '%s/resources/templates/%s' % (context.ppath, template)
-    template = Template(open(template_file).read())
-    return template.render(language=language, labels=labels, obj=data)
+    env = Environment(extensions=['jinja2.ext.i18n'],
+                      loader=FileSystemLoader(context.ppath))
+    env.install_gettext_callables(gettext, ngettext, newstyle=True)
 
-def translate(text):
-    """translates text"""
+    template_file = 'resources/templates/%s' % template
+    template = env.get_template(template_file)
+    return template.render(language=language, obj=data)
+
+def tr(text):
+    """translates text for objects which do not inherit QObject"""
     return QCoreApplication.translate('MetaSearch', text)
 
 from PyQt4.QtXml import *

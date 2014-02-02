@@ -104,7 +104,7 @@ class MetaSearchDialog( QDialog, Ui_MetaSearchDialog ):
     self.btnCapabilities.setEnabled( False )
 
     settings = QSettings()
-    self.spnRecords.setValue( settings.value( "/CSWClient/returnRecords", QVariant("10") ).toInt()[ 0 ] )
+    self.spnRecords.setValue(settings.value('/CSWClient/returnRecords', 10, int))
 
     key = "/CSWClient/" + self.cmbConnections.currentText()
     self.catalogUrl = str( settings.value( key + "/url" ))
@@ -147,7 +147,7 @@ class MetaSearchDialog( QDialog, Ui_MetaSearchDialog ):
 
   def setConnectionListPosition( self ):
     settings = QSettings()
-    toSelect = settings.value( "/CSWClient/selected", QVariant("") )
+    toSelect = settings.value('/CSWClient/selected')
 
     # does toSelect exist in cmbConnections?
     exists = False
@@ -224,7 +224,8 @@ class MetaSearchDialog( QDialog, Ui_MetaSearchDialog ):
     if self.catalog:
       self.btnCapabilities.setEnabled( True )
 
-      metadata = util.serverMetadata( self.catalog )
+      metadata = util.render_template('en', util.StaticContext(),
+                                      self.catalog, 'service_metadata.html')
       myStyle = QgsApplication.reportStyleSheet()
       self.textMetadata.clear()
       self.textMetadata.document().setDefaultStyleSheet( myStyle )
@@ -267,7 +268,7 @@ class MetaSearchDialog( QDialog, Ui_MetaSearchDialog ):
     dlg.exec_()
 
   def addDefaultServers( self ):
-    filePath = QDir.toNativeSeparators( os.path.join( currentPath, 'resources', 'connections.xml' ) )
+    filePath = QDir.toNativeSeparators( os.path.join( currentPath, 'resources', 'connections-default.xml' ) )
     file = QFile( filePath )
     if not file.open( QIODevice.ReadOnly | QIODevice.Text ):
       QMessageBox.warning( self, self.tr( "Loading connections" ),

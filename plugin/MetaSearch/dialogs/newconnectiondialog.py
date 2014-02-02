@@ -56,8 +56,7 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
             # warn if entry was renamed to an existing connection
             if self.conn_name_orig != conn_name and settings.contains(keyurl):
                 res = QMessageBox.warning(self, self.tr('Save connection'),
-                                          self.tr('Overwrite %1?')
-                                          .arg(conn_name),
+                                          self.tr('Overwrite %1?' % conn_name),
                                           QMessageBox.Ok | QMessageBox.Cancel)
                 if res == QMessageBox.Cancel:
                     return
@@ -67,7 +66,7 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
                     self.conn_name_orig != conn_name]):
                 settings.remove(key_orig)
 
-            settings.setValue(keyurl, self.leURL.text().trimmed())
+            settings.setValue(keyurl, self.leURL.text().strip())
 
             QDialog.accept(self)
 

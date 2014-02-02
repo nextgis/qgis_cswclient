@@ -2,7 +2,7 @@
 <html lang="{{ language }}">
     <head>
         <meta charset="utf-8"/>
-        <title>{{ labels['service-metadata'] }}</title>
+        <title>{{ gettext('Service Metadata') }}</title>
         <style type="text/css">
             body {
                 background-color: #ffffff;
@@ -17,74 +17,71 @@
     </head>
     <body>
         <header>
-            <h3>{{ labels['service-metadata'] }}</h3>
+            <h3>{{ gettext('Service Metadata') }}</h3>
         </header>
         <section id="service-metadata">
-            <h4>{{ labels['service-identification'] }}</h4>
+            <h4>{{ gettext('Service Identification') }}</h4>
             <table>
                 <tr>
-                    <th>{{ labels['property'] }}</th>
-                    <th>{{ labels['value'] }}</th>
-                </tr>
-                <tr>
-                    <td>{{ labels['title'] }}</td>
+                    <td>{{ gettext('Title') }}</td>
                     <td>{{ obj.identification.title }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['abstract'] }}</td>
+                    <td>{{ gettext('Abstract') }}</td>
                     <td>{{ obj.identification.abstract }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['keywords'] }}</td>
+                    <td>{{ gettext('Keywords') }}</td>
                     <td>{{ obj.identification.keywords|join(',') }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['type'] }}</td>
+                    <td>{{ gettext('Type') }}</td>
                     <td>{{ obj.identification.type }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['version'] }}</td>
+                    <td>{{ gettext('Version') }}</td>
                     <td>{{ obj.identification.version }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['fees'] }}</td>
+                    <td>{{ gettext('Fees') }}</td>
                     <td>{{ obj.identification.fees }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['accessconstraints'] }}</td>
+                    <td>{{ gettext('Access Constraints') }}</td>
                     <td>{{ obj.identification.accessconstraints }}</td>
                 </tr>
             </table>
         </section>
-        <section>
-            <h4>{{ labels['service-provider'] }}</h4>
+        <section id="service-provider">
+            <h4>{{ gettext('Service Provider') }}</h4>
              <table>
                 <tr>
-                    <th>{{ labels['property'] }}</th>
-                    <th>{{ labels['value'] }}</th>
-                </tr>
-                <tr>
-                    <td>{{ labels['provider-name'] }}</td>
+                    <td>{{ gettext('Name') }}</td>
                     <td>{{ obj.provider.name }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['provider-site'] }}</td>
+                    <td>{{ gettext('Site') }}</td>
                     <td><a href="{{ obj.provider.url }}">{{ obj.provider.url }}</a></td>
                 </tr>
+            </table>
+        </section>
+        <section id="service-contact">
+            <h4>{{ gettext('Service Contact') }}</h4>
+            <table>
                 <tr>
-                    <td>{{ labels['contact-name'] }}</td>
+                    <td>{{ gettext('Name') }}</td>
                     <td>{{ obj.provider.contact.name }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-position'] }}</td>
+                    <td>{{ gettext('Position') }}</td>
                     <td>{{ obj.provider.contact.position}}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-role'] }}</td>
+                    <td>{{ gettext('Role') }}</td>
                     <td>{{ obj.provider.contact.role }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-address'] }}</td>
+                    <td>{{ gettext('Address') }}</td>
                     <td>
                         {{ obj.provider.contact.address }}<br/>
                         {{ obj.provider.contact.city }}, {{ obj.provider.contact.region }}<br/>
@@ -93,27 +90,27 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-email'] }}</td>
+                    <td>{{ gettext('Email') }}</td>
                     <td>{{ obj.provider.contact.email }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-phone'] }}</td>
+                    <td>{{ gettext('Phone') }}</td>
                     <td>{{ obj.provider.contact.phone }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-fax'] }}</td>
+                    <td>{{ gettext('Fax') }}</td>
                     <td>{{ obj.provider.contact.fax }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-url'] }}</td>
+                    <td>{{ gettext('Url') }}</td>
                     <td>{{ obj.provider.contact.url }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-hoursofservice'] }}</td>
+                    <td>{{ gettext('Hours of Service') }}</td>
                     <td>{{ obj.provider.contact.hoursofservice }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contact-instructions'] }}</td>
+                    <td>{{ gettext('Contact Instructions') }}</td>
                     <td>{{ obj.provider.contact.instructions }}</td>
                 </tr>
              </table>

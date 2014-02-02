@@ -2,7 +2,7 @@
 <html lang="{{ language }}">
     <head>
         <meta charset="utf-8"/>
-        <title>{{ labels['record-metadata-dc'] }}</title>
+        <title>{{ gettext('Record Metadata') }}</title>
         <style type="text/css">
             body {
                 background-color: #ffffff;
@@ -17,65 +17,60 @@
     </head>
     <body>
         <header>
-            <h3>{{ labels['record-metadata-dc'] }}</h3>
+            <h3>{{ gettext('Record Metadata') }}</h3>
         </header>
         <section id="record-metadata">
             <table>
                 <tr>
-                    <th>{{ labels['property'] }}</th>
-                    <th>{{ labels['value'] }}</th>
-                </tr>
-                <tr>
-                    <td>{{ labels['identifier'] }}</td>
+                    <td>{{ gettext('Identifier') }}</td>
                     <td>{{ obj.identifier }}</td>
                 </tr>
                 <tr>
-                    <th>{{ labels['title'] }}</th>
+                    <th>{{ gettext('Title') }}</th>
                     <th>{{ obj.title }}</th>
                 </tr>
                 <tr>
-                    <td>{{ labels['abstract'] }}</td>
+                    <td>{{ gettext('Abstract') }}</td>
                     <td>{{ obj.abstract }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['subjects'] }}</td>
+                    <td>{{ gettext('Subjects') }}</td>
                     <td>{{ obj.subjects|join(',') }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['creator'] }}</td>
+                    <td>{{ gettext('Creator') }}</td>
                     <td>{{ obj.creator }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contributor'] }}</td>
+                    <td>{{ gettext('Contributor') }}</td>
                     <td>{{ obj.contributor}}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['publisher'] }}</td>
+                    <td>{{ gettext('Publisher') }}</td>
                     <td>{{ obj.publisher}}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['contributor'] }}</td>
+                    <td>{{ gettext('Contributor') }}</td>
                     <td>{{ obj.contributor}}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['modified'] }}</td>
+                    <td>{{ gettext('Modified') }}</td>
                     <td>{{ obj.modified }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['language'] }}</td>
+                    <td>{{ gettext('Language') }}</td>
                     <td>{{ obj.language }}</td>
                 </tr>
-
                 <tr>
-                    <td>{{ labels['format'] }}</td>
+                    <td>{{ gettext('Format') }}</td>
                     <td>{{ obj.format }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['rights'] }}</td>
+                    <td>{{ gettext('Rights') }}</td>
                     <td>{{ obj.rights|join(',') }}</td>
                 </tr>
                 <tr>
-                    <td>{{ labels['bbox'] }}</td>
+                    <td>{{ gettext('Bounding Box') }}</td>
                     <td>{{ [obj.bbox.minx, obj.bbox.miny, obj.bbox.maxx, obj.bbox.maxy]|join(',') }}</td>
                 </tr>
             </table>"
