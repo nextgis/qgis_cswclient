@@ -48,7 +48,7 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
         settings = QSettings()
         conn_name = self.leName.text()
 
-        if conn_name:
+        if conn_name is not None:
             key = '/CSWClient/%s' % conn_name
             keyurl = '%s/url' % key
             key_orig = '/CSWClient/%s' % self.conn_name_orig
@@ -56,7 +56,7 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
             # warn if entry was renamed to an existing connection
             if self.conn_name_orig != conn_name and settings.contains(keyurl):
                 res = QMessageBox.warning(self, self.tr('Save connection'),
-                                          self.tr('Overwrite %1?' % conn_name),
+                                          self.tr('Overwrite %s?' % conn_name),
                                           QMessageBox.Ok | QMessageBox.Cancel)
                 if res == QMessageBox.Cancel:
                     return
