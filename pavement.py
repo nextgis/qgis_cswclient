@@ -76,7 +76,6 @@ def build_qt_files():
 
     for ui_file in os.listdir('plugin/MetaSearch/ui'):
         if ui_file.endswith('.ui'):
-            print ui_file
             ui_file_basename = os.path.splitext(ui_file)[0]
             sh('pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (options.base.plugin,
                ui_file_basename, options.base.plugin, ui_file_basename))
