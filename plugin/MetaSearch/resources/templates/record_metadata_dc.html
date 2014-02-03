@@ -26,8 +26,8 @@
                     <td>{{ obj.identifier }}</td>
                 </tr>
                 <tr>
-                    <th>{{ gettext('Title') }}</th>
-                    <th>{{ obj.title }}</th>
+                    <td>{{ gettext('Title') }}</td>
+                    <td>{{ obj.title }}</td>
                 </tr>
                 <tr>
                     <td>{{ gettext('Abstract') }}</td>
@@ -73,7 +73,7 @@
                     <td>{{ gettext('Bounding Box') }}</td>
                     <td>{{ [obj.bbox.minx, obj.bbox.miny, obj.bbox.maxx, obj.bbox.maxy]|join(',') }}</td>
                 </tr>
-            </table>"
+            </table>
         </section>
     </body>
 </html>
