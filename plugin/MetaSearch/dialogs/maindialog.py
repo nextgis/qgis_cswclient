@@ -50,6 +50,7 @@ from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.responsedialog import ResponseDialog
 from MetaSearch import util
+from MetaSearch.util import StaticContext
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
 
 
@@ -65,6 +66,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.settings = QSettings()
         self.catalog = None
         self.catalog_url = None
+        self.context = StaticContext()
 
         # Servers tab
         self.cmbConnections.activated.connect(self.save_connection)
@@ -268,9 +270,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def add_default_connections(self):
         """add default connections"""
 
-        filename = QDir.toNativeSeparators(os.path.join(currentPath,
+        filename = QDir.toNativeSeparators(os.path.join(self.context.ppath,
                             'resources', 'connections-default.xml'))
-        doc = util.get_connections_from_file(filename)
+        doc = util.get_connections_from_file(self, filename)
         if doc is None:
             return
 
