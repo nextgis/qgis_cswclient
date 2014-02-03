@@ -31,7 +31,7 @@ USERDIR = os.path.expanduser('~')
 options(
     base=Bunch(
         home=BASEDIR,
-        docs=path('%s/docs' % BASEDIR),
+        docs=path(BASEDIR) / 'docs',
         plugin=path('%s/plugin/MetaSearch' % BASEDIR),
         install=path('%s/.qgis2/python/plugins/MetaSearch' % USERDIR),
         ext_libs=path('plugin/MetaSearch/ext-libs'),
@@ -63,7 +63,7 @@ def clean():
     if os.path.exists(options.base.ext_libs):
         shutil.rmtree(options.base.ext_libs)
     with pushd(options.base.docs):
-        sh('make clean')
+        sh('%s clean' % sphinx_make())
     for ui_file in os.listdir('plugin/MetaSearch/ui'):
         if ui_file.endswith('.py') and ui_file != '__init__.py':
             os.remove(options.base.plugin / 'ui' / ui_file)
@@ -106,9 +106,10 @@ def install():
 def refresh_docs():
     """Build sphinx docs from scratch"""
 
+    make = sphinx_make()
     with pushd(options.base.docs):
-        sh('make clean')
-        sh('make html')
+        sh('%s clean' % make)
+        sh('%s html' % make)
 
 
 @task
@@ -133,3 +134,11 @@ def upload():
     """uploads .zip file of plugin to repository"""
 
     call_task('install')
+
+
+def sphinx_make():
+    """return what command Sphinx is using for make"""
+
+    if os.name == 'nt':
+        return 'make.bat'
+    return 'make'
