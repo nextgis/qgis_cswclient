@@ -99,9 +99,7 @@ def highlight_xml(context, xml):
     css = hf.get_style_defs('.highlight')
     body = highlight(xml, XmlLexer(), hf)
 
-    env = Environment(extensions=['jinja2.ext.i18n'],
-                      loader=FileSystemLoader(context.ppath))
-    env.install_gettext_callables(gettext, ngettext, newstyle=True)
+    env = Environment(loader=FileSystemLoader(context.ppath))
 
     template_file = 'resources/templates/xml_highlight.html'
     template = env.get_template(template_file)
