@@ -351,7 +351,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         minY = self.leSouth.text()
         maxX = self.leEast.text()
         maxY = self.leNorth.text()
-        self.bbox = [ minX, minY, maxX, maxY ]
+        self.bbox = [minX, minY, maxX, maxY]
 
         # keywords
         if not self.leKeywords.text():
@@ -370,7 +370,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             QMessageBox.warning(self, self.tr('Search error'), msg)
             return
 
-        # TODO: allow users to select resources types to find. qtype = "service", "dataset"...
+        # TODO: allow users to select resources types to find. qtype =
+        #                                        "service", "dataset"...
         try:
             self.catalog.getrecords(qtype=None,
                                     keywords=self.keywords,
@@ -398,7 +399,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.displayResults()
 
-
     def displayResults(self):
         """display search results"""
 
@@ -424,7 +424,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.btnShowXml.setEnabled(True)
 
-        if self.catalog.results[ "matches" ] < self.maxRecords:
+        if self.catalog.results["matches"] < self.maxRecords:
             disabled = False
         else:
             disabled = True
@@ -463,12 +463,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             data_url = util.extractUrl(self, self.catalog.response, identifier)
             if data_url:
                 self.leDataUrl.setText(data_url)
-                if item.text( 0 ) == 'liveData':
+                if item.text(0) == 'liveData':
                     self.btnAddToWms.setEnabled(True)
-                elif item.text( 0 ) == 'downloadableData':
+                elif item.text(0) == 'downloadableData':
                     self.btnOpenUrl.setEnabled(True)
 
-    def navigate( self ):
+    def navigate(self):
         """manage navigation / paging"""
 
         caller = self.sender().objectName()
@@ -479,7 +479,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.startFrom = self.catalog.results['matches'] - self.maxRecords
         elif caller == 'btnNext':
             self.startFrom += self.maxRecords
-            if self.startFrom >= self.catalog.results[ "matches" ]:
+            if self.startFrom >= self.catalog.results["matches"]:
                 res = QMessageBox.information(self, self.tr('Navigation'),
                                        self.tr('End of results. Go to start?'),
                                        QMessageBox.Ok | QMessageBox.Cancel)
@@ -544,23 +544,22 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # store connection
         if valid and server_name:
             # check if there is a connection with same name
-            self.settings.beginGroup('/Qgis/connections-wms');
-            keys = settings.childGroups();
-            settings.endGroup();
+            self.settings.beginGroup('/Qgis/connections-wms')
+            keys = settings.childGroups()
+            settings.endGroup()
 
         # check for duplicates
         if keys.contains(server_name):
             msg = self.tr('Connection %s exists. Overwrite?' % server_name)
             res = QMessageBox.warning(self, self.tr('Saving server'), msg,
-                                      QMessageBox.Yes | QMessageBox.No )
+                                      QMessageBox.Yes | QMessageBox.No)
             if res != QMessageBox.Yes:
                 return
 
         # no dups detected or overwrite is allowed
         settings.beginGroup('/Qgis/connections-wms')
-        settings.setValue('/%s/url' %  server_name, data_url)
+        settings.setValue('/%s/url' % server_name, data_url)
         settings.endGroup()
-
 
     def show_metadata(self):
         """show record metadata"""
@@ -572,10 +571,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        identifier = str( item.text( 2 ) )
+        identifier = str(item.text(2))
 
         try:
-            QApplication.setOverrideCursor( QCursor( Qt.WaitCursor ) )
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             cat = csw(self.catalog_url)
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
@@ -603,7 +602,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.textMetadata.setHtml(metadata)
         crd.exec_()
 
-
     def show_response(self):
         """show response"""
         crd = ResponseDialog()
@@ -613,10 +611,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         from pygments.lexers import XmlLexer
         from pygments.formatters import HtmlFormatter
 
-        cccc=highlight(self.catalog.response, XmlLexer(), HtmlFormatter())
+        cccc = highlight(self.catalog.response, XmlLexer(), HtmlFormatter())
         crd.textXml.setText(cccc)
         crd.exec_()
-
 
     def extractUrl( self, response, id ):
         """if record identifier element value is a URL, extract and return"""
