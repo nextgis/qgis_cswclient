@@ -163,7 +163,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # to the last item (this makes some sense when deleting items as it
         # allows the user to repeatidly click on delete to remove a whole
         # lot of items)
-        if not exists and conn_count() > 0:
+        if not exists and conn_count > 0:
             # If to_select is null, then the selected connection wasn't found
             # by QSettings, which probably means that this is the first time
             # the user has used CSWClient, so default to the first in the list
