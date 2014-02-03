@@ -6,6 +6,7 @@
 #                    Maxim Dubinin (sim@gis-lab.info)
 #
 # Copyright (C) 2014 Tom Kralidis (tomkralidis@gmail.com)
+# Copyright (C) 2014 Angelos Tzotsos (tzotsos@gmail.com)
 #
 # This source is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -36,7 +37,6 @@ from pygments.lexers import XmlLexer
 from pygments.formatters import HtmlFormatter
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMessageBox
-import xml.etree.ElementTree as etree
 
 LOGGER = logging.getLogger('MetaSearch')
 
