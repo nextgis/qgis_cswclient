@@ -270,7 +270,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         filename = QDir.toNativeSeparators(os.path.join(currentPath,
                             'resources', 'connections-default.xml'))
-        doc = util.get_connections_from_file(filename)
+        doc = util.get_connections_from_file(self, filename)
         if doc is None:
             return
 
@@ -605,14 +605,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def show_response(self):
         """show response"""
         crd = ResponseDialog()
-        #highlighter = XmlHighlighter( dlg.textXml )
-
-        from pygments import highlight
-        from pygments.lexers import XmlLexer
-        from pygments.formatters import HtmlFormatter
-
-        cccc = highlight(self.catalog.response, XmlLexer(), HtmlFormatter())
-        crd.textXml.setText(cccc)
+        html = util.highlight_xml(util.StaticContext(), self.catalog.response)
+        style = QgsApplication.reportStyleSheet()
+        crd.textXml.clear()
+        crd.textXml.document().setDefaultStyleSheet(style)
+        crd.textXml.setHtml(html)
         crd.exec_()
 
     def extractUrl( self, response, id ):
