@@ -597,7 +597,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         record = cat.records[identifier]
 
         metadata = util.render_template('en', util.StaticContext(),
-                                        record, 'record_metadata.html')
+                                        record, 'record_metadata_dc.html')
         style = QgsApplication.reportStyleSheet()
         crd = CSWResponseDialog()
         self.textMetadata.document().setDefaultStyleSheet(style)
