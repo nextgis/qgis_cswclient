@@ -77,7 +77,7 @@ def get_connections_from_file(filename):
     if doc.tag != 'qgcCSWConnections':
         error = 1
         msg = self.tr('Invalid CSW connections XML.')
-        
+
     if exception == 1:
         QMessageBox.information(self, self.tr('Loading Connections'), msg)
         return
@@ -86,50 +86,51 @@ def get_connections_from_file(filename):
 
 from PyQt4.QtXml import *
 
-def extractUrl( parent, xmlDoc, recordId ):
-  doc = QDomDocument()
-  errorStr = ''
-  errorLine = 0
-  errorColumn = 0
 
-  ( success, errorStr, errorLine, errorColumn ) = doc.setContent( xmlDoc, True )
-  print success
-  if not success:
-    QMessageBox.warning( parent, parent.tr( "Parsing error" ),
-                         parent.tr( "Parse error at line %1, column %2:\n%3" )
-                         .arg( errorLine )
-                         .arg( errorColumn )
-                         .arg( errorStr ) )
-    return
+def extractUrl(parent, xmlDoc, recordId):
+    doc = QDomDocument()
+    errorStr = ''
+    errorLine = 0
+    errorColumn = 0
 
-  root = doc.documentElement().firstChildElement( "SearchResults" )
-  child = root.firstChildElement( "Record" )
-  found = False
-  while not child.isNull() and not found:
+    (success, errorStr, errorLine, errorColumn) = doc.setContent(xmlDoc, True)
+    print success
+    if not success:
+        QMessageBox.warning(parent, parent.tr("Parsing error"),
+                         parent.tr("Parse error at line %1, column %2:\n%3")
+                         .arg(errorLine)
+                         .arg(errorColumn)
+                         .arg(errorStr))
+        return
+
+    root = doc.documentElement().firstChildElement("SearchResults")
+    child = root.firstChildElement("Record")
+    found = False
+    while not child.isNull() and not found:
+        elem = child.firstChildElement()
+        while not elem.isNull():
+            e = elem.toElement()
+            if e.tagName() == "identifier" and e.attribute("scheme").endsWith("DocID") and e.text() == recordId:
+                #print "ID", e.text()
+                found = True
+                break
+            elem = elem.nextSiblingElement()
+
+        if not found:
+            child = child.nextSiblingElement()
+
+    # now in child we have selected record and can extract URL
+    found = False
     elem = child.firstChildElement()
     while not elem.isNull():
-      e = elem.toElement()
-      if e.tagName() == "identifier" and e.attribute( "scheme" ).endsWith( "DocID" ) and e.text() == recordId:
-        #print "ID", e.text()
-        found = True
-        break
-      elem = elem.nextSiblingElement()
+        e = elem.toElement()
+        if e.tagName() == "references" and e.attribute("scheme").endsWith("Onlink"):
+            found = True
+            #print "URL", e.text()
+            break
+        elem = elem.nextSiblingElement()
 
-    if not found:
-      child = child.nextSiblingElement()
+    if found:
+        return e.text()
 
-  # now in child we have selected record and can extract URL
-  found = False
-  elem = child.firstChildElement()
-  while not elem.isNull():
-    e = elem.toElement()
-    if e.tagName() == "references" and e.attribute( "scheme" ).endsWith( "Onlink" ):
-      found = True
-      #print "URL", e.text()
-      break
-    elem = elem.nextSiblingElement()
-
-  if found:
-    return e.text()
-
-  return str()
+    return str()
