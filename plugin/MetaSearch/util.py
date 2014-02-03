@@ -27,9 +27,13 @@
 import ConfigParser
 from gettext import gettext, ngettext
 import logging
+import xml.etree.ElementTree as etree
 import os
 
 from jinja2 import Environment, FileSystemLoader
+from pygments import highlight
+from pygments.lexers import XmlLexer
+from pygments.formatters import HtmlFormatter
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMessageBox
 import xml.etree.ElementTree as etree
@@ -88,53 +92,17 @@ def get_connections_from_file(parent, filename):
     return doc
 
 
-from PyQt4.QtXml import *
+def highlight_xml(context, xml):
+    """render XML as highlighted HTML"""
 
+    hf = HtmlFormatter()
+    css = hf.get_style_defs('.highlight')
+    body = highlight(xml, XmlLexer(), hf)
 
-def extractUrl(parent, xmlDoc, recordId):
-    doc = QDomDocument()
-    errorStr = ''
-    errorLine = 0
-    errorColumn = 0
+    env = Environment(extensions=['jinja2.ext.i18n'],
+                      loader=FileSystemLoader(context.ppath))
+    env.install_gettext_callables(gettext, ngettext, newstyle=True)
 
-    (success, errorStr, errorLine, errorColumn) = doc.setContent(xmlDoc, True)
-    print success
-    if not success:
-        QMessageBox.warning(parent, parent.tr("Parsing error"),
-                         parent.tr("Parse error at line %1, column %2:\n%3")
-                         .arg(errorLine)
-                         .arg(errorColumn)
-                         .arg(errorStr))
-        return
-
-    root = doc.documentElement().firstChildElement("SearchResults")
-    child = root.firstChildElement("Record")
-    found = False
-    while not child.isNull() and not found:
-        elem = child.firstChildElement()
-        while not elem.isNull():
-            e = elem.toElement()
-            if e.tagName() == "identifier" and e.attribute("scheme").endsWith("DocID") and e.text() == recordId:
-                #print "ID", e.text()
-                found = True
-                break
-            elem = elem.nextSiblingElement()
-
-        if not found:
-            child = child.nextSiblingElement()
-
-    # now in child we have selected record and can extract URL
-    found = False
-    elem = child.firstChildElement()
-    while not elem.isNull():
-        e = elem.toElement()
-        if e.tagName() == "references" and e.attribute("scheme").endsWith("Onlink"):
-            found = True
-            #print "URL", e.text()
-            break
-        elem = elem.nextSiblingElement()
-
-    if found:
-        return e.text()
-
-    return str()
+    template_file = 'resources/templates/xml_highlight.html'
+    template = env.get_template(template_file)
+    return template.render(css=css, body=body)
