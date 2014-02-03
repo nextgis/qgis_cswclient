@@ -52,10 +52,11 @@ from MetaSearch.dialogs.responsedialog import ResponseDialog
 from MetaSearch import util
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
 
+
 class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     """main dialogue"""
     def __init__(self, iface):
-        """init window"""    
+        """init window"""
 
         QDialog.__init__(self)
         self.setupUi(self)
@@ -107,7 +108,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.settings.value('/CSWClient/returnRecords', 10, int))
 
         key = '/CSWClient/%s' % self.cmbConnections.currentText()
-        self.catalog_url = self.settings.value('%s/url' %  key)
+        self.catalog_url = self.settings.value('%s/url' % key)
 
         self.set_bbox_from_map()
 
@@ -145,7 +146,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnEdit.setEnabled(state_disabled)
         self.btnDelete.setEnabled(state_disabled)
         self.tabWidget.setTabEnabled(1, state_disabled)
-
 
     def setConnectionListPosition(self):
         to_select = self.settings.value('/CSWClient/selected')
@@ -268,7 +268,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def add_default_connections(self):
         """add default connections"""
 
-        filename = QDir.toNativeSeparators( os.path.join( currentPath, 'resources', 'connections-default.xml' ) )
+        filename = QDir.toNativeSeparators(os.path.join(currentPath,
+                            'resources', 'connections-default.xml'))
         doc = util.get_connections_from_file(filename)
         if doc is None:
             return
@@ -427,14 +428,14 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             disabled = False
         else:
             disabled = True
-      
+
         self.btnFirst.setEnabled(disabled)
         self.btnPrev.setEnabled(disabled)
         self.btnNext.setEnabled(disabled)
         self.btnLast.setEnabled(disabled)
 
     def recordClicked(self):
-        """record clicked signal"""    
+        """record clicked signal"""
 
         # disable previosly enabled buttons
         self.btnAddToWms.setEnabled(False)
@@ -468,7 +469,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                     self.btnOpenUrl.setEnabled(True)
 
     def navigate( self ):
-        """manage navigation / paging""" 
+        """manage navigation / paging"""
 
         caller = self.sender().objectName()
 
@@ -539,7 +540,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         server_name, valid = QInputDialog.getText(self,
                                                   self.tr('Enter name for WMS'),
                                                  self.tr('Server name'))
-  
+
         # store connection
         if valid and server_name:
             # check if there is a connection with same name
