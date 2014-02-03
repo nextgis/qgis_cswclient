@@ -35,10 +35,7 @@ from PyQt4.QtGui import QDialog, QDialogButtonBox, QFileDialog, \
     QListWidgetItem, QMessageBox
 
 from MetaSearch.ui.manageconnectionsdialog import Ui_ManageConnectionsDialog
-
-MSGS = {
-    'loading': 'Loading connections',
-}
+from MetaSearch.util import get_connections_from_file
 
 
 class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
@@ -105,24 +102,12 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
             settings.endGroup()
 
         else:  # populate connections list from file
-            try:
-                doc = etree.parse(self.filenamelqfile).getroot()
-            except etree.ParseError, err:
-                label = self.tr('Cannot parse XML file: %1.').arg(err)
-                QMessageBox.warning(self, self.tr(MSGS['loading']), label)
+	    doc = util.get_connections_from_file(self.filename)
+	    if doc is None:
+                self.filename = None
+                self.leFileName.clear()
+                self.listConnections.clear()
                 return
-            except IOError, err:
-                label = self.tr('Cannot open file: %1.').arg(err)
-                QMessageBox.warning(self, self.tr(MSGS['loading']), label)
-                return
-
-        if doc.tag != 'qgcCSWConnections':
-            QMessageBox.information(self, self.tr(MSGS['loading']),
-                                    self.tr('Invalid CSW connections XML.'))
-            self.filename = None
-            self.leFileName.clear()
-            self.listConnections.clear()
-            return
 
         for csw in doc.findall('csw'):
             item = QListWidgetItem(self.listConnections)
@@ -164,8 +149,8 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
 
             # check for duplicates
             if keys.contains(conn_name):
-                label = self.tr('File %1 exists. Overwrite?').arg(conn_name)
-                res = QMessageBox.warning(self, self.tr(MSGS['loading']),
+                label = self.tr('File %s exists. Overwrite?' % conn_name)
+                res = QMessageBox.warning(self, self.tr('Loading Connections'),
                                           label,
                                           QMessageBox.Yes | QMessageBox.No)
                 if res != QMessageBox.Yes:

@@ -31,6 +31,7 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 from PyQt4.QtCore import QCoreApplication
+from PyQt4.QtGui import QMessageBox
 
 LOGGER = logging.getLogger('MetaSearch')
 
@@ -57,7 +58,31 @@ def render_template(language, context, data, template):
 
 def tr(text):
     """translates text for objects which do not inherit QObject"""
+
     return QCoreApplication.translate('MetaSearch', text)
+
+def get_connections_from_file(filename):
+    """load connections from connection file"""
+
+    error = 0
+    try:
+        doc = etree.parse(filename).getroot()
+    except etree.ParseError, err:
+        error = 1
+        msg = self.tr('Cannot parse XML file: %s' % err)
+    except IOError, err:
+        error = 1
+        msg = self.tr('Cannot open file: %s' % err)
+
+    if doc.tag != 'qgcCSWConnections':
+        error = 1
+        msg = self.tr('Invalid CSW connections XML.')
+        
+    if exception == 1:
+        QMessageBox.information(self, self.tr('Loading Connections'), msg)
+        return
+    return doc
+
 
 from PyQt4.QtXml import *
 
