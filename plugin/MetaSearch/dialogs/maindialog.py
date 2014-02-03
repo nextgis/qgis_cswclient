@@ -43,6 +43,7 @@ from xml.parsers.expat import ExpatError
 import xml.etree.ElementTree as etree
 
 from owslib.csw import CatalogueServiceWeb as csw
+from owslib.fes import BBox, PropertyIsEqualTo
 from owslib.ows import ExceptionReport
 from owslib.wms import WebMapService
 
@@ -323,6 +324,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.catalog = None
         self.bbox = None
         self.keywords = None
+        self.constraints = []
 
         # clear all fields and disable buttons
         self.lblResults.setText('')  # TODO .clear() ?
@@ -354,12 +356,19 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         maxX = self.leEast.text()
         maxY = self.leNorth.text()
         self.bbox = [minX, minY, maxX, maxY]
+        # TODO: add spatial constraint back
+        # once we figure out how getrecords2 works against CSWs
+        #self.constraints.append(BBox(self.bbox))
 
         # keywords
-        if not self.leKeywords.text():
-            self.keywords = []
-        else:
-            self.keywords = self.leKeywords.text().split(',')
+        if self.leKeywords.text():
+            # TODO: handle multiple word searches
+            self.keywords = self.leKeywords.text()
+            self.constraints.append(PropertyIsEqualTo('csw:AnyText',
+                                                      self.keywords))
+
+        if len(self.constraints) > 1:  # exclusive search (a && b)
+            self.constraints = [self.constraints]
 
         # build request
         try:
@@ -372,18 +381,20 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             QMessageBox.warning(self, self.tr('Search error'), msg)
             return
 
-        # TODO: allow users to select resources types to find. qtype =
-        #                                        "service", "dataset"...
+        # TODO: allow users to select resources types
+        # to find ('service', 'dataset', etc.)
         try:
-            self.catalog.getrecords(qtype=None,
-                                    keywords=self.keywords,
-                                    bbox=self.bbox,
-                                    sortby=None,
-                                    maxrecords=self.maxRecords)
+            self.catalog.getrecords2(constraints=self.constraints,
+                                     maxrecords=self.maxRecords)
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Search error'),
                                 self.tr('Search error: %s' % err))
+            return
+        except Exception, err:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Connection error'),
+                                self.tr('Connection error: %s' % err))
             return
 
         QApplication.restoreOverrideCursor()
@@ -503,12 +514,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
-        self.catalog.getrecords(qtype=None,
-                                keywords=self.keywords,
-                                bbox=self.bbox,
-                                sortby=None,
-                                maxrecords=self.maxRecords,
-                                startposition=self.startFrom)
+        self.catalog.getrecords2(constraints=self.constraints,
+                                 maxrecords=self.maxRecords,
+                                 startposition=self.startFrom)
 
         QApplication.restoreOverrideCursor()
 
@@ -596,16 +604,18 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         record = cat.records[identifier]
 
+        crd = ResponseDialog()
         metadata = util.render_template('en', util.StaticContext(),
                                         record, 'record_metadata_dc.html')
+
         style = QgsApplication.reportStyleSheet()
-        crd = CSWResponseDialog()
-        self.textMetadata.document().setDefaultStyleSheet(style)
-        self.textMetadata.setHtml(metadata)
+        crd.textXml.document().setDefaultStyleSheet(style)
+        crd.textXml.setHtml(metadata)
         crd.exec_()
 
     def show_response(self):
         """show response"""
+
         crd = ResponseDialog()
         html = util.highlight_xml(util.StaticContext(), self.catalog.response)
         style = QgsApplication.reportStyleSheet()
