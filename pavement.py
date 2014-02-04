@@ -22,9 +22,11 @@
 
 import os
 import shutil
+import zipfile
 
 from paver.easy import call_task, needs, options, path, pushd, sh, task, Bunch
 
+PLUGIN_NAME = 'MetaSearch'
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 USERDIR = os.path.expanduser('~')
 
@@ -33,9 +35,11 @@ options(
         home=BASEDIR,
         docs=path(BASEDIR) / 'docs',
         plugin=path('%s/plugin/MetaSearch' % BASEDIR),
+        ui=path(BASEDIR) / 'plugin' / PLUGIN_NAME / 'ui',
         install=path('%s/.qgis2/python/plugins/MetaSearch' % USERDIR),
         ext_libs=path('plugin/MetaSearch/ext-libs'),
-        tmp=path(path('%s/MetaSearch-dist' % USERDIR))
+        tmp=path(path('%s/MetaSearch-dist' % USERDIR)),
+        version=open('VERSION.txt').read().strip()
     )
 )
 
@@ -64,7 +68,7 @@ def clean():
         shutil.rmtree(options.base.ext_libs)
     with pushd(options.base.docs):
         sh('%s clean' % sphinx_make())
-    for ui_file in os.listdir('plugin/MetaSearch/ui'):
+    for ui_file in os.listdir(options.base.ui):
         if ui_file.endswith('.py') and ui_file != '__init__.py':
             os.remove(options.base.plugin / 'ui' / ui_file)
     sh('git clean -dxf')
@@ -74,7 +78,7 @@ def clean():
 def build_qt_files():
     """build ui files"""
 
-    for ui_file in os.listdir('plugin/MetaSearch/ui'):
+    for ui_file in os.listdir(options.base.ui):
         if ui_file.endswith('.ui'):
             ui_file_basename = os.path.splitext(ui_file)[0]
             sh('pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (options.base.plugin,
@@ -134,6 +138,37 @@ def upload():
     """uploads .zip file of plugin to repository"""
 
     call_task('install')
+
+
+@task
+def package():
+    """create zip file of plugin"""
+
+    filename = '%s-%s.zip' % (PLUGIN_NAME, options.base.version)
+    package_file = '%s/%s' % (options.base.tmp, filename)
+    if not os.path.exists(options.base.tmp):
+        options.base.tmp.mkdir()
+    if os.path.exists(package_file):
+        os.unlink(package_file)
+    with zipfile.ZipFile(package_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(options.base.plugin):
+            for file_add in files:
+                if file_add.endswith('.pyc'):
+                    continue
+                filepath = os.path.join(root, file_add)
+                relpath = os.path.relpath(filepath,
+                                          os.path.join(BASEDIR, 'plugin'))
+                zipf.write(filepath, relpath)
+
+
+@task
+def upload():
+    """upload package zipfile to server"""
+
+    call_task('build_qt_files')
+    call_task('package')
+
+    # TODO: upload to server
 
 
 def sphinx_make():
