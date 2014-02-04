@@ -106,6 +106,7 @@ def highlight_xml(context, xml):
     template = env.get_template(template_file)
     return template.render(css=css, body=body)
 
+
 def open_url(url):
     """open URL in web browser"""
 
