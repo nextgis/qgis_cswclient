@@ -127,11 +127,11 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
                 connection.attrib['url'] = url
 
         # write to disk
-        with open(self.filename, 'wb') as fileobj:
+        with open(self.filename, 'w') as fileobj:
             fileobj.write(prettify_xml(etree.tostring(doc)))
-        #etree.ElementTree(doc).write(self.filename)
         QMessageBox.information(self, self.tr('Save Connections'),
 	                        self.tr('Saved to %s' % self.filename))
+        self.reject()
 
     def load(self, items):
         """load connections"""
