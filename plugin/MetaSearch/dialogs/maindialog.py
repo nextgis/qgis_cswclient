@@ -31,8 +31,8 @@
 import os.path
 
 from PyQt4.QtCore import QSettings, Qt
-from PyQt4.QtGui import (QApplication, QDesktopServices, QCursor, QDialog,
-                         QInputDialog, QMessageBox, QTreeWidgetItem, QUrl)
+from PyQt4.QtGui import (QApplication, QCursor, QDialog, QInputDialog,
+                         QMessageBox, QTreeWidgetItem)
 
 from qgis.core import QgsApplication
 
@@ -45,7 +45,7 @@ from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.responsedialog import ResponseDialog
 from MetaSearch.util import (get_connections_from_file, highlight_xml,
-                             render_template, StaticContext)
+                             open_url, render_template, StaticContext)
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
 
 
@@ -94,7 +94,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnLast.clicked.connect(self.navigate)
 
         self.btnAddToWms.clicked.connect(self.add_to_wms)
-        self.btnOpenUrl.clicked.connect(self.open_url)
+        self.btnOpenUrl.clicked.connect(self.open_url_in_browser)
         self.btnMetadata.clicked.connect(self.show_metadata)
         self.btnShowXml.clicked.connect(self.show_response)
 
@@ -515,12 +515,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.display_results()
 
-    def open_url(self):
+    def open_url_in_browser(self):
         """open URL stub"""
 
-        # TODO: do we need this?
-        QDesktopServices.openUrl(QUrl(self.leDataUrl.text(),
-                                      QUrl.TolerantMode))
+        open_url(self.leDataUrl.text())
 
     def add_to_wms(self):
         """add to WMS list"""

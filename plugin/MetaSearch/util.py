@@ -28,8 +28,9 @@
 import ConfigParser
 from gettext import gettext, ngettext
 import logging
-import xml.etree.ElementTree as etree
 import os
+import webbrowser
+import xml.etree.ElementTree as etree
 
 from jinja2 import Environment, FileSystemLoader
 from pygments import highlight
@@ -104,3 +105,8 @@ def highlight_xml(context, xml):
     template_file = 'resources/templates/xml_highlight.html'
     template = env.get_template(template_file)
     return template.render(css=css, body=body)
+
+def open_url(url):
+    """open URL in web browser"""
+
+    webbrowser.open(url)
