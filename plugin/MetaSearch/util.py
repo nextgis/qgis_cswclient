@@ -30,6 +30,7 @@ from gettext import gettext, ngettext
 import logging
 import os
 import webbrowser
+from xml.dom.minidom import parseString
 import xml.etree.ElementTree as etree
 
 from jinja2 import Environment, FileSystemLoader
@@ -96,9 +97,11 @@ def get_connections_from_file(parent, filename):
 def highlight_xml(context, xml):
     """render XML as highlighted HTML"""
 
+    pretty_xml = parseString(xml).toprettyxml()
+
     hformat = HtmlFormatter()
     css = hformat.get_style_defs('.highlight')
-    body = highlight(xml, XmlLexer(), hformat)
+    body = highlight(pretty_xml, XmlLexer(), hformat)
 
     env = Environment(loader=FileSystemLoader(context.ppath))
 
