@@ -31,8 +31,8 @@
 import xml.etree.ElementTree as etree
 
 from PyQt4.QtCore import QSettings
-from PyQt4.QtGui import QDialog, QDialogButtonBox, QFileDialog, \
-    QListWidgetItem, QMessageBox
+from PyQt4.QtGui import (QDialog, QDialogButtonBox, QFileDialog,
+                         QListWidgetItem, QMessageBox)
 
 from MetaSearch.ui.manageconnectionsdialog import Ui_ManageConnectionsDialog
 from MetaSearch.util import get_connections_from_file

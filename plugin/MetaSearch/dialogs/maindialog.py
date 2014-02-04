@@ -28,17 +28,13 @@
 #
 ###############################################################################
 
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtXml import *
-
-from qgis.core import *
-from qgis.gui import *
-
 import os.path
 
-import xml.etree.ElementTree as etree
+from PyQt4.QtCore import QSettings, Qt
+from PyQt4.QtGui import (QApplication, QDesktopServices, QCursor, QDialog,
+                         QInputDialog, QMessageBox, QTreeWidgetItem, QUrl)
+
+from qgis.core import QgsApplication
 
 from owslib.csw import CatalogueServiceWeb as csw
 from owslib.fes import BBox, PropertyIsEqualTo
@@ -48,8 +44,8 @@ from owslib.wms import WebMapService
 from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.responsedialog import ResponseDialog
-from MetaSearch import util
-from MetaSearch.util import StaticContext
+from MetaSearch.util import (get_connections_from_file, highlight_xml,
+                             render_template, StaticContext)
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
 
 
@@ -209,9 +205,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         if self.catalog:  # display server properties/metadata
             self.btnCapabilities.setEnabled(True)
-            metadata = util.render_template('en', util.StaticContext(),
-                                            self.catalog,
-                                            'service_metadata.html')
+            metadata = render_template('en', self.context,
+                                       self.catalog,
+                                       'service_metadata.html')
             style = QgsApplication.reportStyleSheet()
             self.textMetadata.clear()
             self.textMetadata.document().setDefaultStyleSheet(style)
@@ -271,7 +267,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         filename = os.path.join(self.context.ppath,
                                 'resources', 'connections-default.xml')
-        doc = util.get_connections_from_file(self, filename)
+        doc = get_connections_from_file(self, filename)
         if doc is None:
             return
 
@@ -471,8 +467,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.textAbstract.setText(self.tr('No abstract'))
 
         if item.text(0) in ['liveData', 'downloadableData']:
-            data_url = util.extract_url(self,
-                                        self.catalog.response, identifier)
+            data_url = extract_url(identifier)
             if data_url:
                 self.leDataUrl.setText(data_url)
                 if item.text(0) == 'liveData':
@@ -538,8 +533,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         data_url = self.leDataUrl.text()
 
         # test if URL is valid WMS server
-        from owslib.wms import WebMapService
-
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             wms = WebMapService(data_url)
@@ -610,8 +603,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         record = cat.records[identifier]
 
         crd = ResponseDialog()
-        metadata = util.render_template('en', util.StaticContext(),
-                                        record, 'record_metadata_dc.html')
+        metadata = render_template('en', self.context,
+                                   record, 'record_metadata_dc.html')
 
         style = QgsApplication.reportStyleSheet()
         crd.textXml.document().setDefaultStyleSheet(style)
@@ -622,17 +615,17 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """show response"""
 
         crd = ResponseDialog()
-        html = util.highlight_xml(util.StaticContext(), self.catalog.response)
+        html = highlight_xml(self.context, self.catalog.response)
         style = QgsApplication.reportStyleSheet()
         crd.textXml.clear()
         crd.textXml.document().setDefaultStyleSheet(style)
         crd.textXml.setHtml(html)
         crd.exec_()
 
-    def extract_url(self, response, id):
+    def extract_url(self, identifier):
         """if record identifier element value is a URL, extract and return"""
 
         # TODO
-        # element=dc:identifier and @scheme endwith DocId or Onlink
-
+        # inspect self.catalog.response, element=dc:identifier
+        # and @scheme endwith DocId or Onlink
         return
