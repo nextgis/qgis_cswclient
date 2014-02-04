@@ -93,15 +93,16 @@ def get_connections_from_file(parent, filename):
         return
     return doc
 
+def prettify_xml(xml):
+    """convenience function to prettiy XML"""
+    return parseString(xml).toprettyxml()
 
 def highlight_xml(context, xml):
     """render XML as highlighted HTML"""
 
-    pretty_xml = parseString(xml).toprettyxml()
-
     hformat = HtmlFormatter()
     css = hformat.get_style_defs('.highlight')
-    body = highlight(pretty_xml, XmlLexer(), hformat)
+    body = highlight(prettify_xml(xml), XmlLexer(), hformat)
 
     env = Environment(loader=FileSystemLoader(context.ppath))
 

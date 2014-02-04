@@ -35,7 +35,7 @@ from PyQt4.QtGui import (QDialog, QDialogButtonBox, QFileDialog,
                          QListWidgetItem, QMessageBox)
 
 from MetaSearch.ui.manageconnectionsdialog import Ui_ManageConnectionsDialog
-from MetaSearch.util import get_connections_from_file
+from MetaSearch.util import get_connections_from_file, prettify_xml
 
 
 class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
@@ -128,7 +128,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
 
         # write to disk
         with open(self.filename, 'wb') as fileobj:
-            fileobj.write(etree.tostring(doc))
+            fileobj.write(prettify_xml(etree.tostring(doc)))
         #etree.ElementTree(doc).write(self.filename)
         QMessageBox.information(self, self.tr('Save Connections'),
 	                        self.tr('Saved to %s' % self.filename))
