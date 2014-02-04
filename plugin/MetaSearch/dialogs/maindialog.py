@@ -37,7 +37,7 @@ from PyQt4.QtGui import (QApplication, QCursor, QDialog, QInputDialog,
 from qgis.core import QgsApplication
 
 from owslib.csw import CatalogueServiceWeb as csw
-from owslib.fes import BBox, PropertyIsEqualTo
+from owslib.fes import BBox, PropertyIsLike
 from owslib.ows import ExceptionReport
 from owslib.wms import WebMapService
 
@@ -354,7 +354,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if self.leKeywords.text():
             # TODO: handle multiple word searches
             keywords = self.leKeywords.text()
-            self.constraints.append(PropertyIsEqualTo('csw:AnyText', keywords))
+            self.constraints.append(PropertyIsLike('csw:AnyText', keywords))
 
         if len(self.constraints) > 1:  # exclusive search (a && b)
             self.constraints = [self.constraints]
