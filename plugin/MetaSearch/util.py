@@ -83,7 +83,7 @@ def get_connections_from_file(parent, filename):
         error = 1
         msg = parent.tr('Cannot open file: %s' % err)
 
-    if doc.tag != 'qgcCSWConnections':
+    if doc.tag != 'qgsCSWConnections':
         error = 1
         msg = parent.tr('Invalid CSW connections XML.')
 
