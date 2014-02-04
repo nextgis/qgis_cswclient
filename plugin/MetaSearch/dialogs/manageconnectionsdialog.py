@@ -44,6 +44,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
         """init dialog"""
         QDialog.__init__(self)
         self.setupUi(self)
+        self.settings = QSettings()
         self.filename = None
         self.mode = mode  # 0 - save, 1 - load
         self.btnBrowse.clicked.connect(self.select_file)
@@ -79,7 +80,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
             return
 
         # ensure the user never ommited the extension from the file name
-        if not self.filename.toLower().endsWith('.xml'):
+        if not self.filename.lower().endswith('.xml'):
             self.filename = '%s.xml' % self.filename
 
         self.leFileName.setText(self.filename)
@@ -93,13 +94,12 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
         """populate connections list from settings"""
 
         if self.mode == 0:
-            settings = QSettings()
-            settings.beginGroup('/CSWClient/')
-            keys = settings.childGroups()
+            self.settings.beginGroup('/CSWClient/')
+            keys = self.settings.childGroups()
             for key in keys:
                 item = QListWidgetItem(self.listConnections)
                 item.setText(key)
-            settings.endGroup()
+            self.settings.endGroup()
 
         else:  # populate connections list from file
             doc = get_connections_from_file(self, self.filename)
@@ -109,34 +109,36 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
                 self.listConnections.clear()
                 return
 
-        for csw in doc.findall('csw'):
-            item = QListWidgetItem(self.listConnections)
-            item.setText(csw.attrib.get('name'))
+            for csw in doc.findall('csw'):
+                item = QListWidgetItem(self.listConnections)
+                item.setText(csw.attrib.get('name'))
 
     def save(self, connections):
         """save connections ops"""
 
-        settings = QSettings()
-
         doc = etree.Element('qgsCSWConnections')
-        doc.attrib.set('version', '1.0')
+        doc.attrib['version'] = '1.0'
 
         for conn in connections:
-            connection = etree.SubElement(doc, 'csw')
-            connection.attrib.set('name', conn)
-            url = settings.value('/CSWClient/%s/url' % conn)
-            connection.attrib.set('url', url)
+            url = self.settings.value('/CSWClient/%s/url' % conn)
+            if url is not None:
+                connection = etree.SubElement(doc, 'csw')
+                connection.attrib['name'] = conn
+                connection.attrib['url'] = url
 
         # write to disk
-        etree.ElementTree(doc).write(self.filename)
+        with open(self.filename, 'wb') as fileobj:
+            fileobj.write(etree.tostring(doc))
+        #etree.ElementTree(doc).write(self.filename)
+        QMessageBox.information(self, self.tr('Save Connections'),
+	                        self.tr('Saved to %s' % self.filename))
 
     def load(self, items):
         """load connections"""
 
-        settings = QSettings()
-        settings.beginGroup('/CSWClient/')
-        keys = settings.childGroups()
-        settings.endGroup()
+        self.settings.beginGroup('/CSWClient/')
+        keys = self.settings.childGroups()
+        self.settings.endGroup()
 
         exml = etree.parse(self.filename).getroot()
 
@@ -144,11 +146,11 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
             conn_name = csw.attrib.get('name')
 
             # process only selected connections
-            if not items.contains(conn_name):
+            if conn_name not in items:
                 continue
 
             # check for duplicates
-            if keys.contains(conn_name):
+            if conn_name in keys:
                 label = self.tr('File %s exists. Overwrite?' % conn_name)
                 res = QMessageBox.warning(self, self.tr('Loading Connections'),
                                           label,
@@ -158,7 +160,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
 
             # no dups detected or overwrite is allowed
             url = '/CSWClient/%s/url' % conn_name
-            settings.setValue(url, csw.attrib.get('url'))
+            self.settings.setValue(url, csw.attrib.get('url'))
 
     def accept(self):
         """accept connections"""

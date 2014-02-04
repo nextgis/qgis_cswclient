@@ -279,7 +279,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         for server in doc.findall('csw'):
             name = server.attrib.get('name')
             # check for duplicates
-            if keys.contains(name):
+            if name in keys:
                 msg = self.tr('%s exists.  Overwrite?' % name)
                 res = QMessageBox.warning(self,
                                           self.tr('Loading connections'), msg,
@@ -549,7 +549,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.settings.endGroup()
 
         # check for duplicates
-        if keys.contains(sname):
+        if sname in keys:
             msg = self.tr('Connection %s exists. Overwrite?' % sname)
             res = QMessageBox.warning(self, self.tr('Saving server'), msg,
                                       QMessageBox.Yes | QMessageBox.No)
