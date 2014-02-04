@@ -63,7 +63,7 @@ def render_template(language, context, data, template):
     return template.render(language=language, obj=data)
 
 
-def tr(text):
+def translate(text):
     """translates text for objects which do not inherit QObject"""
 
     return QCoreApplication.translate('MetaSearch', text)
@@ -95,9 +95,9 @@ def get_connections_from_file(parent, filename):
 def highlight_xml(context, xml):
     """render XML as highlighted HTML"""
 
-    hf = HtmlFormatter()
-    css = hf.get_style_defs('.highlight')
-    body = highlight(xml, XmlLexer(), hf)
+    hformat = HtmlFormatter()
+    css = hformat.get_style_defs('.highlight')
+    body = highlight(xml, XmlLexer(), hformat)
 
     env = Environment(loader=FileSystemLoader(context.ppath))
 

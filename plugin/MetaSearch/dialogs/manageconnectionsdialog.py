@@ -102,8 +102,8 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
             settings.endGroup()
 
         else:  # populate connections list from file
-	    doc = util.get_connections_from_file(self, self.filename)
-	    if doc is None:
+            doc = get_connections_from_file(self, self.filename)
+            if doc is None:
                 self.filename = None
                 self.leFileName.clear()
                 self.listConnections.clear()

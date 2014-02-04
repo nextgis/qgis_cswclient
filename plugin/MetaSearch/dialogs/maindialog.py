@@ -36,9 +36,7 @@ from PyQt4.QtXml import *
 from qgis.core import *
 from qgis.gui import *
 
-import sys, os.path, urllib2
-
-from xml.parsers.expat import ExpatError
+import os.path
 
 import xml.etree.ElementTree as etree
 
@@ -271,8 +269,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def add_default_connections(self):
         """add default connections"""
 
-        filename = QDir.toNativeSeparators(os.path.join(self.context.ppath,
-                            'resources', 'connections-default.xml'))
+        filename = os.path.join(self.context.ppath,
+                                'resources', 'connections-default.xml')
         doc = util.get_connections_from_file(self, filename)
         if doc is None:
             return
@@ -422,7 +420,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.lblResults.setText(self.tr('Show: %d from %d' %
                                         (position,
-                                        self.catalog.results['matches'])))
+                                         self.catalog.results['matches'])))
 
         for rec in self.catalog.records:
             item = QTreeWidgetItem(self.treeRecords)
@@ -473,7 +471,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.textAbstract.setText(self.tr('No abstract'))
 
         if item.text(0) in ['liveData', 'downloadableData']:
-            data_url = util.extractUrl(self, self.catalog.response, identifier)
+            data_url = util.extract_url(self,
+                                        self.catalog.response, identifier)
             if data_url:
                 self.leDataUrl.setText(data_url)
                 if item.text(0) == 'liveData':
@@ -493,9 +492,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         elif caller == 'btnNext':
             self.startFrom += self.maxRecords
             if self.startFrom >= self.catalog.results["matches"]:
+                msg = self.tr('End of results. Go to start?')
                 res = QMessageBox.information(self, self.tr('Navigation'),
-                                       self.tr('End of results. Go to start?'),
-                                       QMessageBox.Ok | QMessageBox.Cancel)
+                                              msg,
+                                              (QMessageBox.Ok |
+                                               QMessageBox.Cancel))
                 if res == QMessageBox.Ok:
                     self.startFrom = 0
                 else:
@@ -503,12 +504,14 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         elif caller == "btnPrev":
             self.startFrom -= self.maxRecords
             if self.startFrom <= 0:
+                msg = self.tr('Start of results. Go to end?')
                 res = QMessageBox.information(self, self.tr('Navigation'),
-                                       self.tr('Start of results. Go to end?'),
-                                       QMessageBox.Ok | QMessageBox.Cancel)
+                                              msg,
+                                              (QMessageBox.Ok |
+                                               QMessageBox.Cancel))
             if res == QMessageBox.Ok:
-                self.startFrom = self.catalog.results['matches'] - \
-                                 self.maxRecords
+                self.startFrom = (self.catalog.results['matches'] -
+                                  self.maxRecords)
             else:
                 return
 
@@ -526,7 +529,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """open URL stub"""
 
         # TODO: do we need this?
-        QDesktopServices.openUrl(QUrl(self.leDataUrl.text(), QUrl.TolerantMode))
+        QDesktopServices.openUrl(QUrl(self.leDataUrl.text(),
+                                      QUrl.TolerantMode))
 
     def addToWms(self):
         """add to WMS list"""
@@ -547,20 +551,20 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         QApplication.restoreOverrideCursor()
 
-        server_name, valid = QInputDialog.getText(self,
-                                                  self.tr('Enter name for WMS'),
-                                                 self.tr('Server name'))
+        sname, valid = QInputDialog.getText(self,
+                                            self.tr('Enter name for WMS'),
+                                            self.tr('Server name'))
 
         # store connection
-        if valid and server_name:
+        if valid and sname:
             # check if there is a connection with same name
             self.settings.beginGroup('/Qgis/connections-wms')
             keys = settings.childGroups()
             settings.endGroup()
 
         # check for duplicates
-        if keys.contains(server_name):
-            msg = self.tr('Connection %s exists. Overwrite?' % server_name)
+        if keys.contains(sname):
+            msg = self.tr('Connection %s exists. Overwrite?' % sname)
             res = QMessageBox.warning(self, self.tr('Saving server'), msg,
                                       QMessageBox.Yes | QMessageBox.No)
             if res != QMessageBox.Yes:
@@ -568,7 +572,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         # no dups detected or overwrite is allowed
         settings.beginGroup('/Qgis/connections-wms')
-        settings.setValue('/%s/url' % server_name, data_url)
+        settings.setValue('/%s/url' % sname, data_url)
         settings.endGroup()
 
     def show_metadata(self):
@@ -589,7 +593,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Connection error'),
-                                self.tr('Error connecting to server: %s' % err))
+                                self.tr('Error connecting to server: %s' %
+                                        err))
             return
 
         try:
@@ -597,7 +602,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('GetRecords error'),
-                                self.tr('Error getting response: %1' % err))
+                                self.tr('Error getting response: %s' % err))
             return
 
         QApplication.restoreOverrideCursor()
@@ -624,7 +629,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         crd.textXml.setHtml(html)
         crd.exec_()
 
-    def extractUrl( self, response, id ):
+    def extract_url(self, response, id):
         """if record identifier element value is a URL, extract and return"""
 
         # TODO
