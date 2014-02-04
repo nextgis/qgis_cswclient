@@ -63,6 +63,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.catalog_url = None
         self.context = StaticContext()
 
+        # form inputs
+        self.startfrom = 0
+        self.maxrecords = 10
+        self.constraints = []
+
         # Servers tab
         self.cmbConnections.activated.connect(self.save_connection)
         self.btnServerInfo.clicked.connect(self.connection_info)
@@ -74,11 +79,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnEdit.clicked.connect(self.edit_connection)
         self.btnDelete.clicked.connect(self.delete_connection)
         self.btnLoad.clicked.connect(self.load_connections)
-        self.btnSave.clicked.connect(self.save_connections)
+        self.btnSave.clicked.connect(save_connections)
 
         # Search tab
-        self.treeRecords.itemSelectionChanged.connect(self.recordClicked)
-        self.btnSearch.clicked.connect(self.startSearch)
+        self.treeRecords.itemSelectionChanged.connect(self.record_clicked)
+        self.btnSearch.clicked.connect(self.search)
         self.btnCanvasBbox.clicked.connect(self.set_bbox_from_map)
         self.btnGlobalBbox.clicked.connect(self.set_bbox_global)
 
@@ -88,8 +93,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnNext.clicked.connect(self.navigate)
         self.btnLast.clicked.connect(self.navigate)
 
-        self.btnAddToWms.clicked.connect(self.addToWms)
-        self.btnOpenUrl.clicked.connect(self.openUrl)
+        self.btnAddToWms.clicked.connect(self.add_to_wms)
+        self.btnOpenUrl.clicked.connect(self.open_url)
         self.btnMetadata.clicked.connect(self.show_metadata)
         self.btnShowXml.clicked.connect(self.show_response)
 
@@ -99,7 +104,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """open window"""
 
         self.tabWidget.setCurrentIndex(0)
-        self.populateConnectionList()
+        self.populate_connection_list()
         self.btnCapabilities.setEnabled(False)
         self.spnRecords.setValue(
             self.settings.value('/CSWClient/returnRecords', 10, int))
@@ -121,7 +126,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
     # Servers tab
 
-    def populateConnectionList(self):
+    def populate_connection_list(self):
         """populate select box with connections"""
 
         self.settings.beginGroup('/CSWClient/')
@@ -129,7 +134,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.cmbConnections.addItems(self.settings.childGroups())
         self.settings.endGroup()
 
-        self.setConnectionListPosition()
+        self.set_connection_list_position()
 
         if self.cmbConnections.count() == 0:
             # no connections - disable various buttons
@@ -144,7 +149,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnDelete.setEnabled(state_disabled)
         self.tabWidget.setTabEnabled(1, state_disabled)
 
-    def setConnectionListPosition(self):
+    def set_connection_list_position(self):
+        """set the current index to the selected connection"""
         to_select = self.settings.value('/CSWClient/selected')
         conn_count = self.cmbConnections.count()
 
@@ -219,7 +225,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         conn_new = NewConnectionDialog()
         conn_new.setWindowTitle(self.tr('New CSW server'))
         if conn_new.exec_() == QDialog.Accepted:  # add to server list
-            self.populateConnectionList()
+            self.populate_connection_list()
 
     def edit_connection(self):
         """modify existing connection"""
@@ -233,7 +239,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         conn_edit.leName.setText(current_text)
         conn_edit.leURL.setText(url)
         if conn_edit.exec_() == QDialog.Accepted:  # update server list
-            self.populateConnectionList()
+            self.populate_connection_list()
 
     def delete_connection(self):
         """delete connection"""
@@ -249,18 +255,13 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if result == QMessageBox.Ok:  # remove server from list
             self.settings.remove(key)
             self.cmbConnections.removeItem(self.cmbConnections.currentIndex())
-            self.setConnectionListPosition()
+            self.set_connection_list_position()
 
     def load_connections(self):
         """load servers from list"""
 
         ManageConnectionsDialog(1).exec_()
-        self.populateConnectionList()
-
-    def save_connections(self):
-        """save servers to list"""
-
-        ManageConnectionsDialog(0).exec_()
+        self.populate_connection_list()
 
     def add_default_connections(self):
         """add default connections"""
@@ -272,11 +273,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             return
 
         self.settings.beginGroup('/CSWClient/')
-        keys = settings.childGroups()
-        settings.endGroup()
+        keys = self.settings.childGroups()
+        self.settings.endGroup()
 
-        for csw in doc.findall('csw'):
-            name = csw.attrib.get('name')
+        for server in doc.findall('csw'):
+            name = server.attrib.get('name')
             # check for duplicates
             if keys.contains(name):
                 msg = self.tr('%s exists.  Overwrite?' % name)
@@ -288,9 +289,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
             # no dups detected or overwrite is allowed
             key = '/CSWClient/%s' % name
-            settings.setValue('%s/url' % key, csw.attrib.get('url'))
+            self.settings.setValue('%s/url' % key, server.attrib.get('url'))
 
-        self.populateConnectionList()
+        self.populate_connection_list()
         QMessageBox.information(self, self.tr('CSW servers'),
                                 self.tr('Default connections added'))
 
@@ -312,13 +313,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.leWest.setText('-180')
         self.leEast.setText('180')
 
-    def startSearch(self):
+    def search(self):
         """execute search"""
 
         self.catalog = None
-        self.bbox = None
-        self.keywords = None
-        self.constraints = []
 
         # clear all fields and disable buttons
         self.lblResults.setText('')  # TODO .clear() ?
@@ -341,25 +339,22 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                                self.spnRecords.cleanText())
 
         # start position and number of records to return
-        self.startFrom = 0
-        self.maxRecords = self.spnRecords.value()
+        self.startfrom = 0
+        self.maxrecords = self.spnRecords.value()
 
         # bbox
-        minX = self.leWest.text()
-        minY = self.leSouth.text()
-        maxX = self.leEast.text()
-        maxY = self.leNorth.text()
-        self.bbox = [minX, minY, maxX, maxY]
-        # TODO: add spatial constraint back
-        # once we figure out how getrecords2 works against CSWs
-        #self.constraints.append(BBox(self.bbox))
+        minx = self.leWest.text()
+        miny = self.leSouth.text()
+        maxx = self.leEast.text()
+        maxy = self.leNorth.text()
+        bbox = [minx, miny, maxx, maxy]
+        self.constraints.append(BBox(bbox))
 
         # keywords
         if self.leKeywords.text():
             # TODO: handle multiple word searches
-            self.keywords = self.leKeywords.text()
-            self.constraints.append(PropertyIsEqualTo('csw:AnyText',
-                                                      self.keywords))
+            keywords = self.leKeywords.text()
+            self.constraints.append(PropertyIsEqualTo('csw:AnyText', keywords))
 
         if len(self.constraints) > 1:  # exclusive search (a && b)
             self.constraints = [self.constraints]
@@ -379,7 +374,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # to find ('service', 'dataset', etc.)
         try:
             self.catalog.getrecords2(constraints=self.constraints,
-                                     maxrecords=self.maxRecords)
+                                     maxrecords=self.maxrecords)
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Search error'),
@@ -404,15 +399,15 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.lblResults.setText(self.tr('0 results'))
             return
 
-        self.displayResults()
+        self.display_results()
 
-    def displayResults(self):
+    def display_results(self):
         """display search results"""
 
         self.treeRecords.clear()
         self.leDataUrl.clear()
 
-        position = self.catalog.results['returned'] + self.startFrom
+        position = self.catalog.results['returned'] + self.startfrom
 
         self.lblResults.setText(self.tr('Show: %d from %d' %
                                         (position,
@@ -431,7 +426,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.btnShowXml.setEnabled(True)
 
-        if self.catalog.results["matches"] < self.maxRecords:
+        if self.catalog.results["matches"] < self.maxrecords:
             disabled = False
         else:
             disabled = True
@@ -441,7 +436,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnNext.setEnabled(disabled)
         self.btnLast.setEnabled(disabled)
 
-    def recordClicked(self):
+    def record_clicked(self):
         """record clicked signal"""
 
         # disable previosly enabled buttons
@@ -467,7 +462,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.textAbstract.setText(self.tr('No abstract'))
 
         if item.text(0) in ['liveData', 'downloadableData']:
-            data_url = extract_url(identifier)
+            data_url = self.extract_url(identifier)
             if data_url:
                 self.leDataUrl.setText(data_url)
                 if item.text(0) == 'liveData':
@@ -481,53 +476,53 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         caller = self.sender().objectName()
 
         if caller == 'btnFirst':
-            self.startFrom = 0
+            self.startfrom = 0
         elif caller == 'btnLast':
-            self.startFrom = self.catalog.results['matches'] - self.maxRecords
+            self.startfrom = self.catalog.results['matches'] - self.maxrecords
         elif caller == 'btnNext':
-            self.startFrom += self.maxRecords
-            if self.startFrom >= self.catalog.results["matches"]:
+            self.startfrom += self.maxrecords
+            if self.startfrom >= self.catalog.results["matches"]:
                 msg = self.tr('End of results. Go to start?')
                 res = QMessageBox.information(self, self.tr('Navigation'),
                                               msg,
                                               (QMessageBox.Ok |
                                                QMessageBox.Cancel))
                 if res == QMessageBox.Ok:
-                    self.startFrom = 0
+                    self.startfrom = 0
                 else:
                     return
         elif caller == "btnPrev":
-            self.startFrom -= self.maxRecords
-            if self.startFrom <= 0:
+            self.startfrom -= self.maxrecords
+            if self.startfrom <= 0:
                 msg = self.tr('Start of results. Go to end?')
                 res = QMessageBox.information(self, self.tr('Navigation'),
                                               msg,
                                               (QMessageBox.Ok |
                                                QMessageBox.Cancel))
             if res == QMessageBox.Ok:
-                self.startFrom = (self.catalog.results['matches'] -
-                                  self.maxRecords)
+                self.startfrom = (self.catalog.results['matches'] -
+                                  self.maxrecords)
             else:
                 return
 
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
         self.catalog.getrecords2(constraints=self.constraints,
-                                 maxrecords=self.maxRecords,
-                                 startposition=self.startFrom)
+                                 maxrecords=self.maxrecords,
+                                 startposition=self.startfrom)
 
         QApplication.restoreOverrideCursor()
 
-        self.displayResults()
+        self.display_results()
 
-    def openUrl(self):
+    def open_url(self):
         """open URL stub"""
 
         # TODO: do we need this?
         QDesktopServices.openUrl(QUrl(self.leDataUrl.text(),
                                       QUrl.TolerantMode))
 
-    def addToWms(self):
+    def add_to_wms(self):
         """add to WMS list"""
 
         data_url = self.leDataUrl.text()
@@ -535,7 +530,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # test if URL is valid WMS server
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            wms = WebMapService(data_url)
+            WebMapService(data_url)
         except Exception, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Connection error'),
@@ -552,8 +547,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if valid and sname:
             # check if there is a connection with same name
             self.settings.beginGroup('/Qgis/connections-wms')
-            keys = settings.childGroups()
-            settings.endGroup()
+            keys = self.settings.childGroups()
+            self.settings.endGroup()
 
         # check for duplicates
         if keys.contains(sname):
@@ -564,9 +559,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                 return
 
         # no dups detected or overwrite is allowed
-        settings.beginGroup('/Qgis/connections-wms')
-        settings.setValue('/%s/url' % sname, data_url)
-        settings.endGroup()
+        self.settings.beginGroup('/Qgis/connections-wms')
+        self.settings.setValue('/%s/url' % sname, data_url)
+        self.settings.endGroup()
 
     def show_metadata(self):
         """show record metadata"""
@@ -629,3 +624,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # inspect self.catalog.response, element=dc:identifier
         # and @scheme endwith DocId or Onlink
         return
+
+
+def save_connections():
+    """save servers to list"""
+
+    ManageConnectionsDialog(0).exec_()
