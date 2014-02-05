@@ -20,11 +20,14 @@
 #
 ###############################################################################
 
+import getpass
 import os
 import shutil
+import xmlrpclib
 import zipfile
 
-from paver.easy import call_task, needs, options, path, pushd, sh, task, Bunch
+from paver.easy import (call_task, cmdopts, error, info, needs, options, path,
+                        pushd, sh, task, Bunch)
 
 PLUGIN_NAME = 'MetaSearch'
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -40,6 +43,11 @@ options(
         ext_libs=path('plugin/MetaSearch/ext-libs'),
         tmp=path(path('%s/MetaSearch-dist' % USERDIR)),
         version=open('VERSION.txt').read().strip()
+    ),
+    upload=Bunch(
+        host='plugins.qgis.org',
+        port=80,
+        endpoint='plugins/RPC2/'
     )
 )
 
@@ -134,18 +142,12 @@ def publish_docs():
 
 
 @task
-def upload():
-    """uploads .zip file of plugin to repository"""
-
-    call_task('install')
-
-
-@task
+@needs('build_qt_files')
 def package():
     """create zip file of plugin"""
 
-    filename = '%s-%s.zip' % (PLUGIN_NAME, options.base.version)
-    package_file = '%s/%s' % (options.base.tmp, filename)
+    package_file = get_package_filename()
+
     if not os.path.exists(options.base.tmp):
         options.base.tmp.mkdir()
     if os.path.exists(package_file):
@@ -159,16 +161,53 @@ def package():
                 relpath = os.path.relpath(filepath,
                                           os.path.join(BASEDIR, 'plugin'))
                 zipf.write(filepath, relpath)
+    return package_file  # return name of created zipfile
 
 
 @task
+@cmdopts([
+    ('user=', 'u', 'OSGeo userid'),
+])
 def upload():
     """upload package zipfile to server"""
 
-    call_task('build_qt_files')
+    user = options.get('user', False)
+    if not user:
+        raise ValueError('OSGeo userid required')
+
+    password = getpass.getpass('Enter your password: ')
+    if password.strip() == '':
+        raise ValueError('password required')
+
     call_task('package')
 
-    # TODO: upload to server
+    zipf = get_package_filename()
+
+    url = 'http://%s:%s@%s:%d/%s' % (user, password, options.upload.host,
+                                     options.upload.port,
+                                     options.upload.endpoint)
+
+    info('Uploading to http://%s/%s' % (options.upload.host,
+                                        options.upload.endpoint))
+
+    server = xmlrpclib.ServerProxy(url, verbose=True)
+    print zipf.bytes()
+
+    try:
+        with open(zipf) as zfile:
+            plugin_id, version_id = \
+                server.plugin.upload(xmlrpclib.Binary(zfile.read()))
+            info('Plugin ID: %s', plugin_id)
+            info('Version ID: %s', version_id)
+    except xmlrpclib.Fault, err:
+        error('ERROR: fault error')
+        error('Fault code: %d', err.faultCode)
+        error('Fault string: %s', err.faultString)
+    except xmlrpclib.ProtocolError, err:
+        error('Error: Protocol error')
+        error("%s : %s", err.errcode, err.errmsg)
+        if err.errcode == 403:
+            error('Invalid name and password')
 
 
 def sphinx_make():
@@ -177,3 +216,11 @@ def sphinx_make():
     if os.name == 'nt':
         return 'make.bat'
     return 'make'
+
+
+def get_package_filename():
+    """return filepath of plugin zipfile"""
+
+    filename = '%s-%s.zip' % (PLUGIN_NAME, options.base.version)
+    package_file = '%s/%s' % (options.base.tmp, filename)
+    return package_file
