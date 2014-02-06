@@ -40,6 +40,7 @@ class MetaSearchPlugin(object):
     """base plugin"""
     def __init__(self, iface):
         """init"""
+
         self.iface = iface
         self.context = StaticContext()
         self.action_run = None
@@ -93,6 +94,7 @@ class MetaSearchPlugin(object):
 
     def unload(self):
         """teardown"""
+
         # remove the plugin menu item and icon
         self.iface.removePluginWebMenu(self.web_menu, self.action_run)
         self.iface.removePluginWebMenu(self.web_menu, self.action_help)
@@ -101,8 +103,10 @@ class MetaSearchPlugin(object):
 
     def run(self):
         """open MetaSearch"""
+
         MetaSearchDialog(self.iface).exec_()
 
     def help(self):
         """open help in user's default web browser"""
+
         open_url(self.context.metadata.get('general', 'homepage'))

@@ -319,7 +319,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.catalog = None
 
         # clear all fields and disable buttons
-        self.lblResults.setText('')  # TODO .clear() ?
+        self.lblResults.clear()
         self.treeRecords.clear()
         self.textAbstract.clear()
         self.leDataUrl.clear()

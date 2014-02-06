@@ -38,6 +38,7 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
     """Dialogue to add a new CSW entry"""
     def __init__(self, conn_name=None):
         """init"""
+
         QDialog.__init__(self)
         self.setupUi(self)
         self.settings = QSettings()
@@ -46,12 +47,13 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
 
     def accept(self):
         """add CSW entry"""
+
         conn_name = self.leName.text().strip()
         conn_url = self.leURL.text().strip()
 
         if any([conn_name == '', conn_url == '']):
             QMessageBox.warning(self, self.tr('Save connection'),
-                                self.tr('Both Name and URL must not be empty'))
+                                self.tr('Both Name and URL must be provided'))
             return
 
         if conn_name is not None:
@@ -60,8 +62,8 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
             key_orig = '/CSWClient/%s' % self.conn_name_orig
 
             # warn if entry was renamed to an existing connection
-            if (self.conn_name_orig != conn_name and
-                self.settings.contains(keyurl)):
+            if all([self.conn_name_orig != conn_name,
+                    self.settings.contains(keyurl)]):
                 res = QMessageBox.warning(self, self.tr('Save connection'),
                                           self.tr('Overwrite %s?' % conn_name),
                                           QMessageBox.Ok | QMessageBox.Cancel)
@@ -79,4 +81,5 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
 
     def reject(self):
         """back out of dialogue"""
+
         QDialog.reject(self)

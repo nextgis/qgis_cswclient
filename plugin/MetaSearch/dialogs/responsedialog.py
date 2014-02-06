@@ -37,5 +37,6 @@ class ResponseDialog(QDialog, Ui_ResponseDialog):
     """CSW Response Dialogue"""
     def __init__(self):
         """init"""
+
         QDialog.__init__(self)
         self.setupUi(self)

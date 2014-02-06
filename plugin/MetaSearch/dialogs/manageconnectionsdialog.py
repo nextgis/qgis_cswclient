@@ -42,6 +42,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
     """manage connections"""
     def __init__(self, mode):
         """init dialog"""
+
         QDialog.__init__(self)
         self.setupUi(self)
         self.settings = QSettings()
@@ -52,6 +53,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
 
     def manage_gui(self):
         """manage interface"""
+
         if self.mode == 1:
             self.label.setText(self.tr('Load from file'))
             self.buttonBox.button(QDialogButtonBox.Ok).setText(self.tr('Load'))
@@ -79,7 +81,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
         if not self.filename:
             return
 
-        # ensure the user never ommited the extension from the file name
+        # ensure the user never omitted the extension from the file name
         if not self.filename.lower().endswith('.xml'):
             self.filename = '%s.xml' % self.filename
 
@@ -130,7 +132,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
         with open(self.filename, 'w') as fileobj:
             fileobj.write(prettify_xml(etree.tostring(doc)))
         QMessageBox.information(self, self.tr('Save Connections'),
-	                        self.tr('Saved to %s' % self.filename))
+                                self.tr('Saved to %s' % self.filename))
         self.reject()
 
     def load(self, items):
