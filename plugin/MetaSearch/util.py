@@ -94,7 +94,7 @@ def get_connections_from_file(parent, filename):
     return doc
 
 def prettify_xml(xml):
-    """convenience function to prettiy XML"""
+    """convenience function to prettify XML"""
     return parseString(xml).toprettyxml()
 
 def highlight_xml(context, xml):
