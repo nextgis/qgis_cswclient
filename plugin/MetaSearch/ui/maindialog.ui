@@ -21,7 +21,7 @@
      </property>
      <widget class="QWidget" name="tabServers">
       <attribute name="title">
-       <string>Servers</string>
+       <string>Services</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0" colspan="5">
@@ -30,7 +30,7 @@
        <item row="1" column="0">
         <widget class="QPushButton" name="btnServerInfo">
          <property name="text">
-          <string>Server info</string>
+          <string>Service info</string>
          </property>
         </widget>
        </item>
@@ -75,7 +75,7 @@
        <item row="1" column="3" colspan="2">
         <widget class="QPushButton" name="btnAddDefault">
          <property name="text">
-          <string>Add default servers</string>
+          <string>Add default services</string>
          </property>
         </widget>
        </item>

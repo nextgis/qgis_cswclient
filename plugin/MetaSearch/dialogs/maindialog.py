@@ -204,12 +204,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             QApplication.restoreOverrideCursor()
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
-            msg = self.tr('Error connecting to server %s: %s' %
+            msg = self.tr('Error connecting to service %s: %s' %
                           current_text, err)
             QMessageBox.warning(self, self.tr('Connection error'), msg)
             return
 
-        if self.catalog:  # display server properties/metadata
+        if self.catalog:  # display service metadata
             self.btnCapabilities.setEnabled(True)
             metadata = render_template('en', self.context,
                                        self.catalog,
@@ -220,11 +220,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.textMetadata.setHtml(metadata)
 
     def add_connection(self):
-        """add new server"""
+        """add new service"""
 
         conn_new = NewConnectionDialog()
-        conn_new.setWindowTitle(self.tr('New CSW server'))
-        if conn_new.exec_() == QDialog.Accepted:  # add to server list
+        conn_new.setWindowTitle(self.tr('New Catalogue service'))
+        if conn_new.exec_() == QDialog.Accepted:  # add to service list
             self.populate_connection_list()
 
     def edit_connection(self):
@@ -235,10 +235,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         url = self.settings.value('/CSWClient/%s/url' % current_text)
 
         conn_edit = NewConnectionDialog(current_text)
-        conn_edit.setWindowTitle(self.tr('Edit CSW server'))
+        conn_edit.setWindowTitle(self.tr('Edit Catalogue service'))
         conn_edit.leName.setText(current_text)
         conn_edit.leURL.setText(url)
-        if conn_edit.exec_() == QDialog.Accepted:  # update server list
+        if conn_edit.exec_() == QDialog.Accepted:  # update service list
             self.populate_connection_list()
 
     def delete_connection(self):
@@ -248,17 +248,17 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         key = '/CSWClient/%s' % current_text
 
-        msg = self.tr('Remove server %s?' % current_text)
+        msg = self.tr('Remove service %s?' % current_text)
 
         result = QMessageBox.information(self, self.tr('Confirm delete'), msg,
                                          QMessageBox.Ok | QMessageBox.Cancel)
-        if result == QMessageBox.Ok:  # remove server from list
+        if result == QMessageBox.Ok:  # remove service from list
             self.settings.remove(key)
             self.cmbConnections.removeItem(self.cmbConnections.currentIndex())
             self.set_connection_list_position()
 
     def load_connections(self):
-        """load servers from list"""
+        """load services from list"""
 
         ManageConnectionsDialog(1).exec_()
         self.populate_connection_list()
@@ -292,7 +292,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.settings.setValue('%s/url' % key, server.attrib.get('url'))
 
         self.populate_connection_list()
-        QMessageBox.information(self, self.tr('CSW servers'),
+        QMessageBox.information(self, self.tr('Catalogue services'),
                                 self.tr('Default connections added'))
 
     # Search tab
@@ -370,7 +370,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.catalog = csw(self.catalog_url)
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
-            msg = self.tr('Error connecting to server %s: %s' %
+            msg = self.tr('Error connecting to service %s: %s' %
                           self.catalog_url, err)
             QMessageBox.warning(self, self.tr('Search error'), msg)
             return
@@ -584,7 +584,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Connection error'),
-                                self.tr('Error connecting to server: %s' %
+                                self.tr('Error connecting to service: %s' %
                                         err))
             return
 
