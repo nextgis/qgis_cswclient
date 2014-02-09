@@ -9,5 +9,5 @@
 ui_*.py
 *.qm
 
+MetaSearch.pro
 plugin/MetaSearch/ext-libs
-
