@@ -348,7 +348,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         maxx = self.leEast.text()
         maxy = self.leNorth.text()
         bbox = [minx, miny, maxx, maxy]
-        self.constraints.append(BBox(bbox))
+
+        # only apply spatial filter if bbox is not global
+        # even for a global bbox, if a spatial filter is applied, then
+        # the CSW server will skip records without a bbox
+        if bbox != ['-90', '-180', '90', '180']:
+            self.constraints.append(BBox(bbox))
 
         # keywords
         if self.leKeywords.text():
