@@ -8,12 +8,6 @@ source_lang = en
 type = PO
 
 [MetaSearch.plugin]
-file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/plugin.po
-source_file = plugin/MetaSearch/locale/en/LC_MESSAGGES/plugin.pot
-source_lang = en
-type = PO
-
-[MetaSearch.plugin-ui]
 file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/ui.ts
 source_file = plugin/MetaSearch/locale/en/LC_MESSAGGES/ui.ts
 source_lang = en
