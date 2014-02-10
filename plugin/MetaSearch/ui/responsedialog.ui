@@ -15,9 +15,12 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTextEdit" name="textXml">
+    <widget class="QTextBrowser" name="textXml">
      <property name="lineWrapMode">
       <enum>QTextEdit::NoWrap</enum>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
