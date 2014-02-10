@@ -317,6 +317,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """execute search"""
 
         self.catalog = None
+        self.constraints = []
 
         # clear all fields and disable buttons
         self.lblResults.clear()
