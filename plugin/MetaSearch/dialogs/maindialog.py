@@ -83,6 +83,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         # Search tab
         self.treeRecords.itemSelectionChanged.connect(self.record_clicked)
+        self.treeRecords.itemDoubleClicked.connect(self.show_metadata)
         self.btnSearch.clicked.connect(self.search)
         self.btnCanvasBbox.clicked.connect(self.set_bbox_from_map)
         self.btnGlobalBbox.clicked.connect(self.set_bbox_global)
@@ -95,7 +96,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.btnAddToWms.clicked.connect(self.add_to_wms)
         self.btnOpenUrl.clicked.connect(self.open_url_in_browser)
-        self.btnMetadata.clicked.connect(self.show_metadata)
         self.btnShowXml.clicked.connect(self.show_response)
 
         self.manageGui()
@@ -116,7 +116,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.btnAddToWms.setEnabled(False)
         self.btnOpenUrl.setEnabled(False)
-        self.btnMetadata.setEnabled(False)
         self.btnShowXml.setEnabled(False)
 
         self.btnFirst.setEnabled(False)
@@ -327,7 +326,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.btnAddToWms.setEnabled(False)
         self.btnOpenUrl.setEnabled(False)
-        self.btnMetadata.setEnabled(False)
         self.btnShowXml.setEnabled(False)
 
         self.btnFirst.setEnabled(False)
@@ -428,7 +426,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if self.catalog.records[rec].title:
                 item.setText(1, self.catalog.records[rec].title)
             if self.catalog.records[rec].identifier:
-                item.setData(1, 32, self.catalog.records[rec].identifier)
+                set_identifier(item, self.catalog.records[rec].identifier)
 
         self.btnShowXml.setEnabled(True)
 
@@ -445,10 +443,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def record_clicked(self):
         """record clicked signal"""
 
-        # disable previosly enabled buttons
+        # disable previously enabled buttons
         self.btnAddToWms.setEnabled(False)
         self.btnOpenUrl.setEnabled(False)
-        self.btnMetadata.setEnabled(True)
 
         # clear URL
         self.leDataUrl.clear()
@@ -460,7 +457,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        identifier = item.data(1, 32)
+        identifier = get_identifier(item)
         abstract = self.catalog.records[identifier].abstract
         if abstract:
             self.textAbstract.setText(abstract.strip())
@@ -577,7 +574,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        identifier = item.data(1, 32)
+        identifier = get_identifier(item)
 
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -634,3 +631,13 @@ def save_connections():
     """save servers to list"""
 
     ManageConnectionsDialog(0).exec_()
+
+
+def get_identifier(item):
+    """return identifier for a QTreeWidgetItem"""
+    return item.data(1, 32)
+
+
+def set_identifier(item, identifier):
+    """set identifier for a QTreeWidgetItem"""
+    item.setData(1, 32, identifier)

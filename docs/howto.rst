@@ -105,13 +105,12 @@ The following search parameters are available:
 
 Clicking the 'Search' button will search the Metadata Catalogue.  Search
 results are displayed in a list and are sortable by clicking on the column
-title.  You can navigate through search results with 'First', 'Last', 'Next'
-and 'Prev' buttons.
+title.  You can navigate through search results with the direction buttons below the search results.
 
 Clicking a result will show the record's abstract in the 'Abstract' window and
 provides the following options:
 
-- clicking the 'Metadata' button to display record metadata
+- double-clicking the record displays the record metadata
 - clicking the 'Show XML' button opens a window with the service response in
   raw XML format
 - if record has type "downloadableData" and there is a link in the metadata,
