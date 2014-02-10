@@ -86,11 +86,41 @@ def clean():
 def build_qt_files():
     """build ui files"""
 
+    pyfiles = []
+    uifiles = []
+    trfiles = []
+
+    # compile .ui files into Python
     for ui_file in os.listdir(options.base.ui):
         if ui_file.endswith('.ui'):
             ui_file_basename = os.path.splitext(ui_file)[0]
             sh('pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (options.base.plugin,
                ui_file_basename, options.base.plugin, ui_file_basename))
+
+    # create .pro file
+    for root, dirs, files in os.walk(options.base.plugin / 'dialogs'):
+        for pfile in files:
+            if pfile.endswith('.py'):
+                filepath = os.path.join(root, pfile)
+                relpath = os.path.relpath(filepath, BASEDIR)
+                pyfiles.append(relpath)
+    for root, dirs, files in os.walk(options.base.plugin / 'ui'):
+        for pfile in files:
+            if pfile.endswith('.ui'):
+                filepath = os.path.join(root, pfile)
+                relpath = os.path.relpath(filepath, BASEDIR)
+                uifiles.append(relpath)
+
+    locale_dir = options.base.plugin / 'locale'
+    for loc_dir in os.listdir(locale_dir):
+        filepath = os.path.join(locale_dir, loc_dir, 'LC_MESSAGES', 'ui.qm')
+        relpath = os.path.relpath(filepath, BASEDIR)
+        trfiles.append(relpath)
+
+    with open('%s.pro' % PLUGIN_NAME, 'w') as pro_file:
+        pro_file.write('SOURCES=%s\n' % ' '.join(pyfiles))
+        pro_file.write('FORMS=%s\n' % ' '.join(uifiles))
+        pro_file.write('TRANSLATIONS=%s\n' % ' '.join(trfiles))
 
 
 @task

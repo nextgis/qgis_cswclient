@@ -54,8 +54,8 @@ class MetaSearchPlugin(object):
         LOGGER.debug('Locale name: %s', locale_name)
 
         # load if exists
-        tr_filename = 'MetaSearch_%s.qm' % locale_name
-        tr_file = os.path.join(self.context.ppath, 'i18n', tr_filename)
+        tr_file = os.path.join(self.context.ppath, 'locale', locale_name,
+                               'LC_MESSAGES', 'ui.qm')
 
         if os.path.exists(tr_file):
             self.translator = QTranslator()
