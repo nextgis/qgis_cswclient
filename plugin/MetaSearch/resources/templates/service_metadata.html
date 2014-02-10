@@ -91,7 +91,7 @@
                 </tr>
                 <tr>
                     <td>{{ gettext('Email') }}</td>
-                    <td>{{ obj.provider.contact.email }}</td>
+                    <td><a href="mailto:{{ obj.provider.contact.email  }}">{{ obj.provider.contact.email }}</a></td>
                 </tr>
                 <tr>
                     <td>{{ gettext('Phone') }}</td>
