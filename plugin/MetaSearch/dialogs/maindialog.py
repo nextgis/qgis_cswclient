@@ -428,7 +428,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if self.catalog.records[rec].title:
                 item.setText(1, self.catalog.records[rec].title)
             if self.catalog.records[rec].identifier:
-                item.setText(2, self.catalog.records[rec].identifier)
+                item.setData(1, 32, self.catalog.records[rec].identifier)
 
         self.btnShowXml.setEnabled(True)
 
@@ -460,7 +460,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        identifier = item.text(2)
+        identifier = item.data(1, 32)
         abstract = self.catalog.records[identifier].abstract
         if abstract:
             self.textAbstract.setText(abstract.strip())
@@ -577,7 +577,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        identifier = str(item.text(2))
+        identifier = item.data(1, 32)
 
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
