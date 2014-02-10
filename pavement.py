@@ -159,16 +159,18 @@ def refresh_docs():
 def publish_docs():
     """this script publish Sphinx outputs to github pages"""
 
+    tempdir = options.base.tmp / 'tempdocs'
+
     sh('git clone git@github.com:geopython/MetaSearch.git %s' %
-       options.base.tmp)
-    with pushd(options.base.tmp):
+       tempdir)
+    with pushd(tempdir):
         sh('git checkout gh-pages')
-        sh('cp -rp %s/docs/build/html/en/* .' % options.base.home)
+        sh('cp -rp %s/docs/_build/html/* .' % options.base.home)
         sh('git add .')
         sh('git commit -am "Update docs"')
         sh('git push origin gh-pages')
 
-    options.base.tmp.rmtree()
+    tempdir.rmtree()
 
 
 @task
