@@ -93,9 +93,15 @@ def get_connections_from_file(parent, filename):
         return
     return doc
 
+
 def prettify_xml(xml):
     """convenience function to prettify XML"""
-    return parseString(xml).toprettyxml()
+
+    if xml.count('\n') > 3:  # likely already pretty printed
+        return xml
+    else:
+        return parseString(xml).toprettyxml()
+
 
 def highlight_xml(context, xml):
     """render XML as highlighted HTML"""
