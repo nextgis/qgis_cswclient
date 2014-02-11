@@ -75,5 +75,16 @@
                 </tr>
             </table>
         </section>
+        <section id="links">
+            <h4>Links</h4>
+            <ul>
+            {% for link in obj.references %}
+                <li><a href="{{ link['url'] }}">{{ link['scheme'] }}</a></li>
+            {% endfor %}
+            {% for link in obj.uris %}
+                <li><a href="{{ link['url'] }}">{{ link['protocol'] }}</a></li>
+            {% endfor %}
+            </ul>
+        </section>
     </body>
 </html>
