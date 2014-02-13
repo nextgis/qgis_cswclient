@@ -94,6 +94,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.treeRecords.itemSelectionChanged.connect(self.record_clicked)
         self.treeRecords.itemDoubleClicked.connect(self.show_metadata)
         self.btnSearch.clicked.connect(self.search)
+        self.leKeywords.returnPressed.connect(self.search)
         self.btnCanvasBbox.clicked.connect(self.set_bbox_from_map)
         self.btnGlobalBbox.clicked.connect(self.set_bbox_global)
 
@@ -476,11 +477,14 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         for link in links:
 
             if 'scheme' in link:
-                link_type = link['scheme'].upper()
+                link_type = link['scheme']
             elif 'protocol' in link:
-                link_type = link['protocol'].upper()
+                link_type = link['protocol']
             else:
                 link_type = None
+
+            if link_type is not None:
+                link_type = link_type.upper()
 
             if all([link_type is not None,
                     link_type in ['OGC:WMS', 'OGC:WFS', 'OGC:WCS']]):
