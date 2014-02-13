@@ -31,10 +31,11 @@
 import os.path
 
 from PyQt4.QtCore import QSettings, Qt
-from PyQt4.QtGui import (QApplication, QCursor, QDialog, QInputDialog,
+from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QInputDialog,
                          QMessageBox, QTreeWidgetItem)
 
-from qgis.core import QgsApplication
+from qgis.core import QgsApplication, QgsGeometry, QgsPoint
+from qgis.gui import QgsRubberBand
 
 from owslib.csw import CatalogueServiceWeb as csw
 from owslib.fes import BBox, PropertyIsLike
@@ -60,10 +61,15 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.setupUi(self)
 
         self.iface = iface
+        self.map = iface.mapCanvas()
         self.settings = QSettings()
         self.catalog = None
         self.catalog_url = None
         self.context = StaticContext()
+
+        self.rubber_band = QgsRubberBand(self.map, True)  # True = a polygon
+        self.rubber_band.setColor(QColor(255, 0, 0, 75))
+        self.rubber_band.setWidth(5)
 
         # form inputs
         self.startfrom = 0
@@ -295,7 +301,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def set_bbox_from_map(self):
         """set bounding box from map extent"""
 
-        extent = self.iface.mapCanvas().extent()
+        extent = self.map.extent()
         self.leNorth.setText(str(extent.yMaximum()))
         self.leSouth.setText(str(extent.yMinimum()))
         self.leWest.setText(str(extent.xMinimum()))
@@ -442,14 +448,21 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             return
 
         identifier = get_item_data(item, 'identifier')
-        abstract = self.catalog.records[identifier].abstract
-        if abstract:
-            self.textAbstract.setText(abstract.strip())
+        record = self.catalog.records[identifier]
+
+        if record.abstract:
+            self.textAbstract.setText(record.abstract.strip())
         else:
             self.textAbstract.setText(self.tr('No abstract'))
 
+        # if the record has a bbox, show a footprint on the map
+        if record.bbox is not None:
+            points = bbox_to_polygon(record.bbox)
+            self.rubber_band.setToGeometry(QgsGeometry.fromPolygon(points),
+                                           None)
+
         # figure out if the data is interactive and can be operated on
-        self.find_services(self.catalog.records[identifier], item)
+        self.find_services(record, item)
 
     def find_services(self, record, item):
         """scan record for WMS/WFS/WCS endpoints"""
@@ -669,6 +682,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.btnNext.setEnabled(False)
             self.btnLast.setEnabled(False)
 
+    def reject(self):
+        """back out of dialogue"""
+
+        QDialog.reject(self)
+        self.map.scene().removeItem(self.rubber_band)
+
 
 def save_connections():
     """save servers to list"""
@@ -699,3 +718,19 @@ def _get_field_value(field):
         value = 1
 
     return value
+
+
+def bbox_to_polygon(bbox):
+    """converts OWSLib bbox object to list of QgsPoint objects"""
+
+    minx = float(bbox.minx)
+    miny = float(bbox.miny)
+    maxx = float(bbox.maxx)
+    maxy = float(bbox.maxy)
+
+    return [[
+        QgsPoint(minx, miny),
+        QgsPoint(minx, maxy),
+        QgsPoint(maxx, maxy),
+        QgsPoint(maxx, miny)
+    ]]

@@ -111,6 +111,8 @@ below the search results.
 Clicking a result will show the record's abstract in the 'Abstract' window and
 provides the following options:
 
+- if the metadata record has an associated bounding box, a footprint of the
+  bounding box will be displayed on the map
 - double-clicking the record displays the record metadata with any associated
   access links.  Clicking the links opens the link in the user's web browser.
 - clicking the 'Show XML' button opens a window with the service response in
