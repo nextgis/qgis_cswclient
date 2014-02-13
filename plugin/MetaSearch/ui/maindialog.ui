@@ -319,21 +319,21 @@
          <item row="2" column="0">
           <widget class="QPushButton" name="btnAddToWms">
            <property name="text">
-            <string>Add to WMS list</string>
+            <string>Add WMS</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
           <widget class="QPushButton" name="btnAddToWfs">
            <property name="text">
-            <string>Add to WFS list</string>
+            <string>Add WFS</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2">
           <widget class="QPushButton" name="btnAddToWcs">
            <property name="text">
-            <string>Add to WCS list</string>
+            <string>Add WCS</string>
            </property>
           </widget>
          </item>

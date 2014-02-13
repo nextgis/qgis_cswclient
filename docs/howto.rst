@@ -121,8 +121,8 @@ provides the following options:
   'Add to WMS|WFS|WCS' buttons will be enabled for the user to add to QGIS.
   When clicking this button, MetaSearch will verify if this is a valid OWS.
   On success you will be asked for name of this server and it will be added to
-  the appropriate QGIS connection list.  You can then connect to the OWS by
-  selecting the 'Layer / Add WMS/WMTS Layer|WFS Layer|WCS Layer' menu item.
+  the appropriate QGIS connection list, and the appropriate WMS/WFS/WCS
+  connection dialogue will them appear.
 
 Support
 -------

@@ -34,7 +34,8 @@ from PyQt4.QtCore import QSettings, Qt
 from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QInputDialog,
                          QMessageBox, QTreeWidgetItem)
 
-from qgis.core import QgsApplication, QgsGeometry, QgsPoint
+from qgis.core import (QgsApplication, QgsGeometry, QgsPoint,
+                       QgsProviderRegistry)
 from qgis.gui import QgsRubberBand
 
 from owslib.csw import CatalogueServiceWeb as csw
@@ -556,14 +557,15 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         caller = self.sender().objectName()
 
+        # stype = human name,/Qgis/connections-%s,providername
         if caller == 'btnAddToWms':
-            stype = ['OGC:WMS', 'wms']
+            stype = ['OGC:WMS', 'wms', 'wms']
             data_url = item_data[0]
         elif caller == 'btnAddToWfs':
-            stype = ['OGC:WFS', 'wfs']
+            stype = ['OGC:WFS', 'wfs', 'WFS']
             data_url = item_data[1]
         elif caller == 'btnAddToWcs':
-            stype = ['OGC:WCS', 'wcs']
+            stype = ['OGC:WCS', 'wcs', 'wcs']
             data_url = item_data[2]
 
         # test if URL is valid WMS server
@@ -610,6 +612,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.settings.beginGroup('/Qgis/connections-%s' % stype[1])
         self.settings.setValue('/%s/url' % sname, data_url)
         self.settings.endGroup()
+
+        # open provider window
+        ows_provider = QgsProviderRegistry.instance().selectWidget(stype[2],
+                                                                   self)
+        ows_provider.setModal(False)
+        ows_provider.show()
 
     def show_metadata(self):
         """show record metadata"""
