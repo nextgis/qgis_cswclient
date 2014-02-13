@@ -121,7 +121,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         key = '/CSWClient/%s' % self.cmbConnections.currentText()
         self.catalog_url = self.settings.value('%s/url' % key)
 
-        self.set_bbox_from_map()
+        self.set_bbox_global()
 
         self.reset_buttons()
 
