@@ -32,7 +32,7 @@ import os.path
 
 from PyQt4.QtCore import QSettings, Qt
 from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QInputDialog,
-                         QMessageBox, QTreeWidgetItem)
+                         QMessageBox, QTreeWidgetItem, QWidget)
 
 from qgis.core import (QgsApplication, QgsGeometry, QgsPoint,
                        QgsProviderRegistry)
@@ -624,6 +624,13 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                                                                    self)
         ows_provider.setModal(False)
         ows_provider.show()
+
+        connectionsTab = ows_provider.findChild(QWidget, 'tabServers')
+        connectionsCombo = connectionsTab.findChild(QWidget, 'cmbConnections')
+        index = connectionsCombo.findText('/Qgis/connections-%s/%s' % (stype[1], sname)  )
+        if index >= 0:
+            connectionsCombo.setCurrentIndex(index)
+        ows_provider.on_btnConnect_clicked()
 
     def show_metadata(self):
         """show record metadata"""
