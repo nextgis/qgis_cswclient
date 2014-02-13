@@ -580,7 +580,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
             service_type = stype[0]
-            if service_type == 'OGC:WMS':
+            if service_type == 'OGC:WMS/OGC:WMTS':
                 WebMapService(data_url)
             elif service_type == 'OGC:WFS':
                 WebFeatureService(data_url)
