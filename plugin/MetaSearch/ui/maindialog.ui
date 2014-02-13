@@ -224,7 +224,7 @@
          <item row="2" column="1">
           <widget class="QPushButton" name="btnShowXml">
            <property name="text">
-            <string>View server response (XML)</string>
+            <string>View search results as XML</string>
            </property>
           </widget>
          </item>
