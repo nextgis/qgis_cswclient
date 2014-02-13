@@ -319,7 +319,7 @@
          <item row="2" column="0">
           <widget class="QPushButton" name="btnAddToWms">
            <property name="text">
-            <string>Add WMS</string>
+            <string>Add WMS/WMTS</string>
            </property>
           </widget>
          </item>

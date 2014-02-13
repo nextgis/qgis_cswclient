@@ -117,11 +117,11 @@ provides the following options:
   access links.  Clicking the links opens the link in the user's web browser.
 - clicking the 'Show XML' button opens a window with the service response in
   raw XML format
-- if the record is an OGC web service (WMS, WFS, WCS), the appropriate
-  'Add to WMS|WFS|WCS' buttons will be enabled for the user to add to QGIS.
+- if the record is an OGC web service (WMS/WMTS, WFS, WCS), the appropriate
+  'Add to WMS/WMTS|WFS|WCS' buttons will be enabled for the user to add to QGIS.
   When clicking this button, MetaSearch will verify if this is a valid OWS.
   On success you will be asked for name of this server and it will be added to
-  the appropriate QGIS connection list, and the appropriate WMS/WFS/WCS
+  the appropriate QGIS connection list, and the appropriate WMS/WMTS|WFS|WCS
   connection dialogue will them appear.
 
 Support

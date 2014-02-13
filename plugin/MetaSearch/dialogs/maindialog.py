@@ -469,7 +469,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.find_services(record, item)
 
     def find_services(self, record, item):
-        """scan record for WMS/WFS/WCS endpoints"""
+        """scan record for WMS/WMTS|WFS|WCS endpoints"""
 
         links = record.uris + record.references
 
@@ -487,8 +487,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                 link_type = link_type.upper()
 
             if all([link_type is not None,
-                    link_type in ['OGC:WMS', 'OGC:WFS', 'OGC:WCS']]):
-                if link_type == 'OGC:WMS':
+                    link_type in ['OGC:WMS', 'OGC:WMTS',
+                                  'OGC:WFS', 'OGC:WCS']]):
+                if link_type in ['OGC:WMS', 'OGC:WMTS']:
                     service_list.append(link['url'])
                     self.btnAddToWms.setEnabled(True)
                 else:
@@ -552,7 +553,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.display_results()
 
     def add_to_ows(self):
-        """add to WMS list"""
+        """add to OWS provider connection list"""
 
         item = self.treeRecords.currentItem()
 
@@ -565,7 +566,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         # stype = human name,/Qgis/connections-%s,providername
         if caller == 'btnAddToWms':
-            stype = ['OGC:WMS', 'wms', 'wms']
+            stype = ['OGC:WMS/OGC:WMTS', 'wms', 'wms']
             data_url = item_data[0]
         elif caller == 'btnAddToWfs':
             stype = ['OGC:WFS', 'wfs', 'WFS']
@@ -625,9 +626,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         ows_provider.setModal(False)
         ows_provider.show()
 
-        connectionsTab = ows_provider.findChild(QWidget, 'tabServers')
-        connectionsCombo = connectionsTab.findChild(QWidget, 'cmbConnections')
-        index = connectionsCombo.findText('/Qgis/connections-%s/%s' % (stype[1], sname)  )
+        conn_tab = ows_provider.findChild(QWidget, 'tabServers')
+        conn_cmb = conn_tab.findChild(QWidget, 'cmbConnections')
+        index = conn_cmb.findText('/Qgis/connections-%s/%s' % (stype[1],
+                                                               sname))
         if index >= 0:
             connectionsCombo.setCurrentIndex(index)
         ows_provider.on_btnConnect_clicked()
@@ -687,7 +689,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         crd.exec_()
 
     def reset_buttons(self, services=True, xml=True, navigation=True):
-        """Convenience function to disable WMS/WFS/WCS buttons"""
+        """Convenience function to disable WMS/WMTS|WFS|WCS buttons"""
 
         if services:
             self.btnAddToWms.setEnabled(False)
