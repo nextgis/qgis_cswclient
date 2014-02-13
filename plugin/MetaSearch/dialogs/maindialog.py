@@ -372,7 +372,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # to find ('service', 'dataset', etc.)
         try:
             self.catalog.getrecords2(constraints=self.constraints,
-                                     maxrecords=self.maxrecords)
+                                     maxrecords=self.maxrecords, esn='full')
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Search error'),
@@ -538,7 +538,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.catalog.getrecords2(constraints=self.constraints,
                                  maxrecords=self.maxrecords,
-                                 startposition=self.startfrom)
+                                 startposition=self.startfrom, esn='full')
 
         QApplication.restoreOverrideCursor()
 
