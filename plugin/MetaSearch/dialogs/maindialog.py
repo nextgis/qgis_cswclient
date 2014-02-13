@@ -39,13 +39,15 @@ from qgis.core import QgsApplication
 from owslib.csw import CatalogueServiceWeb as csw
 from owslib.fes import BBox, PropertyIsLike
 from owslib.ows import ExceptionReport
+from owslib.wcs import WebCoverageService
+from owslib.wfs import WebFeatureService
 from owslib.wms import WebMapService
 
 from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.responsedialog import ResponseDialog
 from MetaSearch.util import (get_connections_from_file, highlight_xml,
-                             open_url, render_template, StaticContext)
+                             render_template, StaticContext)
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
 
 
@@ -94,8 +96,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnNext.clicked.connect(self.navigate)
         self.btnLast.clicked.connect(self.navigate)
 
-        self.btnAddToWms.clicked.connect(self.add_to_wms)
-        self.btnOpenUrl.clicked.connect(self.open_url_in_browser)
+        self.btnAddToWms.clicked.connect(self.add_to_ows)
+        self.btnAddToWfs.clicked.connect(self.add_to_ows)
+        self.btnAddToWcs.clicked.connect(self.add_to_ows)
         self.btnShowXml.clicked.connect(self.show_response)
 
         self.manageGui()
@@ -114,14 +117,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.set_bbox_from_map()
 
-        self.btnAddToWms.setEnabled(False)
-        self.btnOpenUrl.setEnabled(False)
-        self.btnShowXml.setEnabled(False)
-
-        self.btnFirst.setEnabled(False)
-        self.btnPrev.setEnabled(False)
-        self.btnNext.setEnabled(False)
-        self.btnLast.setEnabled(False)
+        self.reset_buttons()
 
     # Servers tab
 
@@ -322,16 +318,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.lblResults.clear()
         self.treeRecords.clear()
         self.textAbstract.clear()
-        self.leDataUrl.clear()
 
-        self.btnAddToWms.setEnabled(False)
-        self.btnOpenUrl.setEnabled(False)
-        self.btnShowXml.setEnabled(False)
-
-        self.btnFirst.setEnabled(False)
-        self.btnPrev.setEnabled(False)
-        self.btnNext.setEnabled(False)
-        self.btnLast.setEnabled(False)
+        self.reset_buttons()
 
         # save some settings
         self.settings.setValue('/CSWClient/returnRecords',
@@ -351,7 +339,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # only apply spatial filter if bbox is not global
         # even for a global bbox, if a spatial filter is applied, then
         # the CSW server will skip records without a bbox
-        if bbox != ['-90', '-180', '90', '180']:
+        if bbox != ['-180', '-90', '180', '90']:
             self.constraints.append(BBox(bbox))
 
         # keywords
@@ -409,7 +397,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """display search results"""
 
         self.treeRecords.clear()
-        self.leDataUrl.clear()
 
         position = self.catalog.results['returned'] + self.startfrom
 
@@ -426,7 +413,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if self.catalog.records[rec].title:
                 item.setText(1, self.catalog.records[rec].title)
             if self.catalog.records[rec].identifier:
-                set_identifier(item, self.catalog.records[rec].identifier)
+                set_item_data(item, 'identifier',
+                              self.catalog.records[rec].identifier)
 
         self.btnShowXml.setEnabled(True)
 
@@ -443,12 +431,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def record_clicked(self):
         """record clicked signal"""
 
-        # disable previously enabled buttons
-        self.btnAddToWms.setEnabled(False)
-        self.btnOpenUrl.setEnabled(False)
-
-        # clear URL
-        self.leDataUrl.clear()
+        # disable only service buttons
+        self.reset_buttons(True, False, False)
 
         if not self.treeRecords.selectedItems():
             return
@@ -457,21 +441,50 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        identifier = get_identifier(item)
+        identifier = get_item_data(item, 'identifier')
         abstract = self.catalog.records[identifier].abstract
         if abstract:
             self.textAbstract.setText(abstract.strip())
         else:
             self.textAbstract.setText(self.tr('No abstract'))
 
-        if item.text(0) in ['liveData', 'downloadableData']:
-            data_url = self.extract_url(identifier)
-            if data_url:
-                self.leDataUrl.setText(data_url)
-                if item.text(0) == 'liveData':
+        # figure out if the data is interactive and can be operated on
+        self.find_services(self.catalog.records[identifier], item)
+
+    def find_services(self, record, item):
+        """scan record for WMS/WFS/WCS endpoints"""
+
+        links = record.uris + record.references
+
+        service_list = []
+        for link in links:
+
+            if 'scheme' in link:
+                link_type = link['scheme'].upper()
+            elif 'protocol' in link:
+                link_type = link['protocol'].upper()
+            else:
+                link_type = None
+
+            if all([link_type is not None,
+                    link_type in ['OGC:WMS', 'OGC:WFS', 'OGC:WCS']]):
+                if link_type == 'OGC:WMS':
+                    service_list.append(link['url'])
                     self.btnAddToWms.setEnabled(True)
-                elif item.text(0) == 'downloadableData':
-                    self.btnOpenUrl.setEnabled(True)
+                else:
+                    service_list.append('')
+                if link_type == 'OGC:WFS':
+                    service_list.append(link['url'])
+                    self.btnAddToWfs.setEnabled(True)
+                else:
+                    service_list.append('')
+                if link_type == 'OGC:WCS':
+                    service_list.append(link['url'])
+                    self.btnAddToWcs.setEnabled(True)
+                else:
+                    service_list.append('')
+
+            set_item_data(item, 'link', ','.join(service_list))
 
     def navigate(self):
         """manage navigation / paging"""
@@ -518,38 +531,59 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.display_results()
 
-    def open_url_in_browser(self):
-        """open URL stub"""
-
-        open_url(self.leDataUrl.text())
-
-    def add_to_wms(self):
+    def add_to_ows(self):
         """add to WMS list"""
 
-        data_url = self.leDataUrl.text()
+        item = self.treeRecords.currentItem()
+
+        if not item:
+            return
+
+        item_data = get_item_data(item, 'link').split(',')
+
+        caller = self.sender().objectName()
+
+        if caller == 'btnAddToWms':
+            stype = ['OGC:WMS', 'wms']
+            data_url = item_data[0]
+        elif caller == 'btnAddToWfs':
+            stype = ['OGC:WFS', 'wfs']
+            data_url = item_data[1]
+        elif caller == 'btnAddToWcs':
+            stype = ['OGC:WCS', 'wcs']
+            data_url = item_data[2]
 
         # test if URL is valid WMS server
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            WebMapService(data_url)
+
+            service_type = stype[0]
+            if service_type == 'OGC:WMS':
+                WebMapService(data_url)
+            elif service_type == 'OGC:WFS':
+                WebFeatureService(data_url)
+            elif service_type == 'OGC:WCS':
+                WebCoverageService(data_url)
         except Exception, err:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Connection error'),
-                                self.tr('Error connecting to WMS: %s' % err))
+            msg = self.tr('Error connecting to %s: %s' % (stype[0], err))
+            QMessageBox.warning(self, self.tr('Connection error'), msg)
             return
 
         QApplication.restoreOverrideCursor()
 
-        sname, valid = QInputDialog.getText(self,
-                                            self.tr('Enter name for WMS'),
+        inputmsg = self.tr('Enter name for %s' % stype[0])
+        sname, valid = QInputDialog.getText(self, inputmsg,
                                             self.tr('Server name'))
 
         # store connection
         if valid and sname:
             # check if there is a connection with same name
-            self.settings.beginGroup('/Qgis/connections-wms')
+            self.settings.beginGroup('/Qgis/connections-%s' % stype[1])
             keys = self.settings.childGroups()
             self.settings.endGroup()
+        else:
+            return
 
         # check for duplicates
         if sname in keys:
@@ -560,7 +594,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                 return
 
         # no dups detected or overwrite is allowed
-        self.settings.beginGroup('/Qgis/connections-wms')
+        self.settings.beginGroup('/Qgis/connections-%s' % stype[1])
         self.settings.setValue('/%s/url' % sname, data_url)
         self.settings.endGroup()
 
@@ -574,7 +608,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        identifier = get_identifier(item)
+        identifier = get_item_data(item, 'identifier')
 
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -618,13 +652,22 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         crd.textXml.setHtml(html)
         crd.exec_()
 
-    def extract_url(self, identifier):
-        """if record identifier element value is a URL, extract and return"""
+    def reset_buttons(self, services=True, xml=True, navigation=True):
+        """Convenience function to disable WMS/WFS/WCS buttons"""
 
-        # TODO
-        # inspect self.catalog.response, element=dc:identifier
-        # and @scheme endwith DocId or Onlink
-        return
+        if services:
+            self.btnAddToWms.setEnabled(False)
+            self.btnAddToWfs.setEnabled(False)
+            self.btnAddToWcs.setEnabled(False)
+
+        if xml:
+            self.btnShowXml.setEnabled(False)
+
+        if navigation:
+            self.btnFirst.setEnabled(False)
+            self.btnPrev.setEnabled(False)
+            self.btnNext.setEnabled(False)
+            self.btnLast.setEnabled(False)
 
 
 def save_connections():
@@ -633,11 +676,26 @@ def save_connections():
     ManageConnectionsDialog(0).exec_()
 
 
-def get_identifier(item):
+def get_item_data(item, field):
     """return identifier for a QTreeWidgetItem"""
-    return item.data(1, 32)
+
+    return item.data(_get_field_value(field), 32)
 
 
-def set_identifier(item, identifier):
+def set_item_data(item, field, value):
     """set identifier for a QTreeWidgetItem"""
-    item.setData(1, 32, identifier)
+
+    item.setData(_get_field_value(field), 32, value)
+
+
+def _get_field_value(field):
+    """convenience function to return field value integer"""
+
+    value = 0
+
+    if field == 'identifier':
+        value = 0
+    if field == 'link':
+        value = 1
+
+    return value

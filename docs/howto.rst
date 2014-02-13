@@ -63,8 +63,8 @@ delete and click the 'Delete' button.  You will be asked to confirm deleting
 the entry.
 
 MetaSearch allows for loading and saving connections to an XML file.  This is
-useful when you need to share settings between applications.  Below is an example
-of the XML file format.
+useful when you need to share settings between applications.  Below is an
+example of the XML file format.
 
 .. code-block:: xml
 
@@ -105,23 +105,22 @@ The following search parameters are available:
 
 Clicking the 'Search' button will search the Metadata Catalogue.  Search
 results are displayed in a list and are sortable by clicking on the column
-title.  You can navigate through search results with the direction buttons below the search results.
+title.  You can navigate through search results with the direction buttons
+below the search results.
 
 Clicking a result will show the record's abstract in the 'Abstract' window and
 provides the following options:
 
-- double-clicking the record displays the record metadata
+- double-clicking the record displays the record metadata with any associated
+  access links.  Clicking the links opens the link in the user's web browser.
 - clicking the 'Show XML' button opens a window with the service response in
   raw XML format
-- if record has type "downloadableData" and there is a link in the metadata,
-  the 'Open URL' button will be enabled. Pressing this button will open the
-  link in the user's default browser
-- if record has type 'liveData' and there is a link in the metadata, the
-  'Add to WMS list' button will be enabled.  When clicking this button
-  MetaSearch will verify if this is a valid WMS server.  On success you will
-  be asked for name for this server and it will be added to the QGIS WMS
-  servers list.  You can then connect to this WMS server by selecting the
-  'Layer / Add WMS/WMTS Layer' menu item.
+- if the record is an OGC web service (WMS, WFS, WCS), the appropriate
+  'Add to WMS|WFS|WCS' buttons will be enabled for the user to add to QGIS.
+  When clicking this button, MetaSearch will verify if this is a valid OWS.
+  On success you will be asked for name of this server and it will be added to
+  the appropriate QGIS connection list.  You can then connect to the OWS by
+  selecting the 'Layer / Add WMS/WMTS Layer|WFS Layer|WCS Layer' menu item.
 
 Support
 -------
