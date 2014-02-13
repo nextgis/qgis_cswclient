@@ -407,9 +407,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         position = self.catalog.results['returned'] + self.startfrom
 
-        self.lblResults.setText(self.tr('Show: %d from %d' %
-                                        (position,
-                                         self.catalog.results['matches'])))
+        msg = self.tr('Showing %d - %d of %d results' %
+                     (self.startfrom + 1, position,
+                      self.catalog.results['matches']))
+
+        self.lblResults.setText(msg)
 
         for rec in self.catalog.records:
             item = QTreeWidgetItem(self.treeRecords)
