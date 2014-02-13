@@ -631,7 +631,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         index = conn_cmb.findText('/Qgis/connections-%s/%s' % (stype[1],
                                                                sname))
         if index >= 0:
-            connectionsCombo.setCurrentIndex(index)
+            conn_cmb.setCurrentIndex(index)
         ows_provider.on_btnConnect_clicked()
 
     def show_metadata(self):
