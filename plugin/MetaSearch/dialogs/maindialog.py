@@ -30,7 +30,7 @@
 
 import os.path
 
-from PyQt4.QtCore import QSettings, Qt
+from PyQt4.QtCore import QSettings, Qt, SIGNAL, SLOT
 from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QInputDialog,
                          QMessageBox, QTreeWidgetItem, QWidget)
 
@@ -623,6 +623,17 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # open provider window
         ows_provider = QgsProviderRegistry.instance().selectWidget(stype[2],
                                                                    self)
+        # connect dialog signals to iface slots
+        if service_type == 'OGC:WMS/OGC:WMTS':
+            ows_provider.connect(
+                ows_provider, SIGNAL('addRasterLayer(QString, QString, QString)'), 
+                self.iface, SLOT('addRasterLayer(QString, QString, QString)'))
+        elif service_type == 'OGC:WFS':
+            # TODO probably connect like with WMS
+            pass
+        elif service_type == 'OGC:WCS':
+            # TODO probably connect like with WMS (or exact same signal?)
+            pass
         ows_provider.setModal(False)
         ows_provider.show()
 
