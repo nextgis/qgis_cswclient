@@ -34,7 +34,8 @@ from PyQt4.QtCore import QSettings, Qt, SIGNAL, SLOT
 from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QMessageBox,
                          QTreeWidgetItem, QWidget)
 
-from qgis.core import (QgsApplication, QgsGeometry, QgsPoint,
+from qgis.core import (QgsApplication, QgsCoordinateReferenceSystem,
+                       QgsCoordinateTransform, QgsGeometry, QgsPoint,
                        QgsProviderRegistry)
 from qgis.gui import QgsRubberBand
 
@@ -314,11 +315,31 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def set_bbox_from_map(self):
         """set bounding box from map extent"""
 
+        crs = self.map.mapRenderer().destinationCrs()
+        crsid = int(crs.authid().split(':')[1])
+
         extent = self.map.extent()
-        self.leNorth.setText(str(extent.yMaximum()))
-        self.leSouth.setText(str(extent.yMinimum()))
-        self.leWest.setText(str(extent.xMinimum()))
-        self.leEast.setText(str(extent.xMaximum()))
+
+        if crsid != 4326:  # reproject to EPSG:4326
+            src = QgsCoordinateReferenceSystem(crsid)
+            dest = QgsCoordinateReferenceSystem(4326)
+            xform = QgsCoordinateTransform(src, dest)
+            minxy = xform.transform(QgsPoint(extent.xMinimum(),
+                                             extent.yMinimum()))
+            maxxy = xform.transform(QgsPoint(extent.xMaximum(),
+                                             extent.yMaximum()))
+            minx, miny = minxy
+            maxx, maxy = maxxy
+        else:  # 4326
+            minx = extent.xMinimum()
+            miny = extent.yMinimum()
+            maxx = extent.xMaximum()
+            maxy = extent.yMaximum()
+
+        self.leNorth.setText(str(maxy))
+        self.leSouth.setText(str(miny))
+        self.leWest.setText(str(minx))
+        self.leEast.setText(str(maxx))
 
     def set_bbox_global(self):
         """set global bounding box"""
