@@ -626,7 +626,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # connect dialog signals to iface slots
         if service_type == 'OGC:WMS/OGC:WMTS':
             ows_provider.connect(
-                ows_provider, SIGNAL('addRasterLayer(QString, QString, QString)'), 
+                ows_provider,
+                SIGNAL('addRasterLayer(QString, QString, QString)'),
                 self.iface, SLOT('addRasterLayer(QString, QString, QString)'))
         elif service_type == 'OGC:WFS':
             # TODO probably connect like with WMS
@@ -637,11 +638,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         ows_provider.setModal(False)
         ows_provider.show()
 
+        # open provider dialogue against added OWS
         conn_tab = ows_provider.findChild(QWidget, 'tabServers')
         conn_cmb = conn_tab.findChild(QWidget, 'cmbConnections')
-        index = conn_cmb.findText('/Qgis/connections-%s/%s' % (stype[1],
-                                                               sname))
-        if index >= 0:
+        index = conn_cmb.findText(sname)
+        if index > -1:
             conn_cmb.setCurrentIndex(index)
         ows_provider.on_btnConnect_clicked()
 
