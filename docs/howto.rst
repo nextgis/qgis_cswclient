@@ -97,7 +97,7 @@ services, set various search parameters and view results.
 The following search parameters are available:
 
 - *Keywords*: free text search keywords
-- *Return records*: the number of records to return when searching.  Default is
+- *Records*: the number of records to return when searching.  Default is
   10 records
 - *Bounding box*: the spatial area of interest to filter on.  The default
   bounding box is the map view / canvas.  Click 'Set global' to do a global
