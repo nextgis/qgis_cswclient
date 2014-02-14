@@ -581,11 +581,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
             service_type = stype[0]
             if service_type == 'OGC:WMS/OGC:WMTS':
-                WebMapService(data_url)
+                ows = WebMapService(data_url)
             elif service_type == 'OGC:WFS':
-                WebFeatureService(data_url)
+                ows = WebFeatureService(data_url)
             elif service_type == 'OGC:WCS':
-                WebCoverageService(data_url)
+                ows = WebCoverageService(data_url)
         except Exception, err:
             QApplication.restoreOverrideCursor()
             msg = self.tr('Error connecting to %s: %s' % (stype[0], err))
@@ -594,18 +594,16 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         QApplication.restoreOverrideCursor()
 
-        inputmsg = self.tr('Enter name for %s' % stype[0])
-        sname, valid = QInputDialog.getText(self, inputmsg,
-                                            self.tr('Server name'))
+        if ows.identification.title is not None:
+            sname = ows.identification.title
+        else:
+            sname = '%s from MetaSearch' % service_type
 
         # store connection
-        if valid and sname:
-            # check if there is a connection with same name
-            self.settings.beginGroup('/Qgis/connections-%s' % stype[1])
-            keys = self.settings.childGroups()
-            self.settings.endGroup()
-        else:
-            return
+        # check if there is a connection with same name
+        self.settings.beginGroup('/Qgis/connections-%s' % stype[1])
+        keys = self.settings.childGroups()
+        self.settings.endGroup()
 
         # check for duplicates
         if sname in keys:
