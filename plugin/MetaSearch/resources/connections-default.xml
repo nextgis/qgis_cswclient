@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <qgsCSWConnections version="1.0">
-    <csw name="pycsw services demo" url="http://demo.pycsw.org/services/csw"/>
+    <csw name="Nationaal Georegister (Nederland)" url="http://www.nationaalgeoregister.nl/geonetwork/srv/eng/csw"/>
     <csw name="UK Location Catalogue Publishing Service" url="http://csw.data.gov.uk/geonetwork/srv/en/csw"/>
     <csw name="LINZ Data Service" url="http://data.linz.govt.nz/feeds/csw"/>
     <csw name="NLR CSW" url="http://geomatics.nlr.nl/excat/csw"/>
+    <csw name="pycsw services demo" url="http://demo.pycsw.org/services/csw"/>
 </qgsCSWConnections>
