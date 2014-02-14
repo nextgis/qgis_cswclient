@@ -97,7 +97,7 @@ def get_connections_from_file(parent, filename):
 def prettify_xml(xml):
     """convenience function to prettify XML"""
 
-    if xml.count('\n') > 3:  # likely already pretty printed
+    if xml.count('\n') > 5:  # likely already pretty printed
         return xml
     else:
         return parseString(xml).toprettyxml()
