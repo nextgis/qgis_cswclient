@@ -91,22 +91,21 @@ Searching Catalogue Services
 The 'Search' tab allows the user to query Catalogue Services for data and
 services, set various search parameters and view results.
 
-.. note:: When using the 'Search' tab, MetaSearch always queries the selected
-          Catalogue Service entry in the 'Services' tab.
-
 The following search parameters are available:
 
 - *Keywords*: free text search keywords
-- *Records*: the number of records to return when searching.  Default is
-  10 records
+- *From*: the Catalogue Service to perform the query against
 - *Bounding box*: the spatial area of interest to filter on.  The default
   bounding box is the map view / canvas.  Click 'Set global' to do a global
   search, or enter custom values as desired
+- *Records*: the number of records to return when searching.  Default is
+  10 records
 
-Clicking the 'Search' button will search the Metadata Catalogue.  Search
-results are displayed in a list and are sortable by clicking on the column
-title.  You can navigate through search results with the direction buttons
-below the search results.
+Clicking the 'Search' button will search the selected Metadata Catalogue.
+Search results are displayed in a list and are sortable by clicking on the
+column title.  You can navigate through search results with the directional
+buttons below the search results.  Clicking the 'View search results as XML'
+button opens a window with the service response in raw XML format.
 
 Clicking a result will show the record's abstract in the 'Abstract' window and
 provides the following options:
@@ -114,15 +113,12 @@ provides the following options:
 - if the metadata record has an associated bounding box, a footprint of the
   bounding box will be displayed on the map
 - double-clicking the record displays the record metadata with any associated
-  access links.  Clicking the links opens the link in the user's web browser.
-- clicking the 'Show XML' button opens a window with the service response in
-  raw XML format
+  access links.  Clicking the links opens the link in the user's web browser
 - if the record is an OGC web service (WMS/WMTS, WFS, WCS), the appropriate
   'Add to WMS/WMTS|WFS|WCS' buttons will be enabled for the user to add to QGIS.
   When clicking this button, MetaSearch will verify if this is a valid OWS.
-  On success you will be asked for name of this server and it will be added to
-  the appropriate QGIS connection list, and the appropriate WMS/WMTS|WFS|WCS
-  connection dialogue will them appear.
+  The OWS will then be added to the appropriate QGIS connection list, and the
+  appropriate WMS/WMTS|WFS|WCS connection dialogue will then appear
 
 Support
 -------
