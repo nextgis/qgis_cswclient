@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>537</width>
     <height>650</height>
    </rect>
   </property>
@@ -30,20 +30,6 @@
           <string>Find</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="2" column="3">
-           <widget class="QLineEdit" name="leEast">
-            <property name="text">
-             <string>180</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="leSouth">
-            <property name="text">
-             <string>-90</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="6">
            <widget class="QPushButton" name="btnGlobalBbox">
             <property name="text">
@@ -51,17 +37,13 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="4">
-           <widget class="QLineEdit" name="leNorth">
-            <property name="text">
-             <string>90</string>
-            </property>
-           </widget>
+          <item row="0" column="5" colspan="2">
+           <widget class="QComboBox" name="cmbConnectionsSearch"/>
           </item>
           <item row="2" column="5">
            <widget class="QPushButton" name="btnCanvasBbox">
             <property name="text">
-             <string>Extent from map</string>
+             <string>Map extent</string>
             </property>
            </widget>
           </item>
@@ -72,15 +54,15 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="4" colspan="3">
-           <widget class="QLabel" name="lblCSW">
+          <item row="2" column="4">
+           <widget class="QLineEdit" name="leNorth">
             <property name="text">
-             <string>in Nationaal Georegister</string>
+             <string>90</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="4">
-           <widget class="QLineEdit" name="leKeywords"/>
+          <item row="3" column="5">
+           <widget class="QSpinBox" name="spnRecords"/>
           </item>
           <item row="3" column="6">
            <widget class="QLabel" name="label_2">
@@ -92,13 +74,41 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="5">
-           <widget class="QSpinBox" name="spnRecords"/>
-          </item>
           <item row="3" column="0" colspan="5">
            <widget class="QPushButton" name="btnSearch">
             <property name="text">
              <string>Search</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="leSouth">
+            <property name="text">
+             <string>-90</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QLineEdit" name="leEast">
+            <property name="text">
+             <string>180</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" colspan="2">
+           <widget class="QLineEdit" name="leKeywords"/>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>        From</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Keywords</string>
             </property>
            </widget>
           </item>
@@ -111,6 +121,51 @@
           <string>Results</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
+          <item row="2" column="2">
+           <widget class="QPushButton" name="btnNext">
+            <property name="text">
+             <string>&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnFirst">
+            <property name="text">
+             <string>&lt;&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QPushButton" name="btnAddToWcs">
+            <property name="text">
+             <string>Add WCS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QPushButton" name="btnAddToWms">
+            <property name="text">
+             <string>Add WMS/WMTS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="5">
+           <widget class="QTextEdit" name="textAbstract"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="btnPrev">
+            <property name="text">
+             <string>&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QPushButton" name="btnAddToWfs">
+            <property name="text">
+             <string>Add WFS</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0" colspan="2">
            <widget class="QLabel" name="label_4">
             <property name="text">
@@ -125,25 +180,11 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="5">
-           <widget class="QTextEdit" name="textAbstract"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="btnPrev">
-            <property name="text">
-             <string>&lt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnFirst">
-            <property name="text">
-             <string>&lt;&lt;</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0" colspan="5">
            <widget class="QTreeWidget" name="treeRecords">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Double click to see full record information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
@@ -184,38 +225,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="btnNext">
-            <property name="text">
-             <string>&gt;</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="3">
            <widget class="QPushButton" name="btnLast">
             <property name="text">
              <string>&gt;&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QPushButton" name="btnAddToWms">
-            <property name="text">
-             <string>Add WMS/WMTS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QPushButton" name="btnAddToWfs">
-            <property name="text">
-             <string>Add WFS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QPushButton" name="btnAddToWcs">
-            <property name="text">
-             <string>Add WCS</string>
             </property>
            </widget>
           </item>
@@ -242,7 +255,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0" colspan="5">
-        <widget class="QComboBox" name="cmbConnections"/>
+        <widget class="QComboBox" name="cmbConnectionsServices"/>
        </item>
        <item row="1" column="0">
         <widget class="QPushButton" name="btnServerInfo">

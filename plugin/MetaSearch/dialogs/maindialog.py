@@ -31,8 +31,8 @@
 import os.path
 
 from PyQt4.QtCore import QSettings, Qt, SIGNAL, SLOT
-from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QInputDialog,
-                         QMessageBox, QTreeWidgetItem, QWidget)
+from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QMessageBox,
+                         QTreeWidgetItem, QWidget)
 
 from qgis.core import (QgsApplication, QgsGeometry, QgsPoint,
                        QgsProviderRegistry)
@@ -78,7 +78,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.constraints = []
 
         # Servers tab
-        self.cmbConnections.activated.connect(self.save_connection)
+        self.cmbConnectionsServices.activated.connect(self.save_connection)
+        self.cmbConnectionsSearch.activated.connect(self.save_connection)
         self.btnServerInfo.clicked.connect(self.connection_info)
         self.btnAddDefault.clicked.connect(self.add_default_connections)
         self.btnCapabilities.clicked.connect(self.show_response)
@@ -120,7 +121,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.spnRecords.setValue(
             self.settings.value('/CSWClient/returnRecords', 10, int))
 
-        key = '/CSWClient/%s' % self.cmbConnections.currentText()
+        key = '/CSWClient/%s' % self.cmbConnectionsSearch.currentText()
         self.catalog_url = self.settings.value('%s/url' % key)
 
         self.set_bbox_global()
@@ -133,13 +134,15 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """populate select box with connections"""
 
         self.settings.beginGroup('/CSWClient/')
-        self.cmbConnections.clear()
-        self.cmbConnections.addItems(self.settings.childGroups())
+        self.cmbConnectionsServices.clear()
+        self.cmbConnectionsServices.addItems(self.settings.childGroups())
+        self.cmbConnectionsSearch.clear()
+        self.cmbConnectionsSearch.addItems(self.settings.childGroups())
         self.settings.endGroup()
 
         self.set_connection_list_position()
 
-        if self.cmbConnections.count() == 0:
+        if self.cmbConnectionsServices.count() == 0:
             # no connections - disable various buttons
             state_disabled = False
             self.btnSave.setEnabled(state_disabled)
@@ -155,13 +158,13 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def set_connection_list_position(self):
         """set the current index to the selected connection"""
         to_select = self.settings.value('/CSWClient/selected')
-        conn_count = self.cmbConnections.count()
+        conn_count = self.cmbConnectionsServices.count()
 
-        # does to_select exist in cmbConnections?
+        # does to_select exist in cmbConnectionsServices?
         exists = False
         for i in range(conn_count):
-            if self.cmbConnections.itemText(i) == to_select:
-                self.cmbConnections.setCurrentIndex(i)
+            if self.cmbConnectionsServices.itemText(i) == to_select:
+                self.cmbConnectionsServices.setCurrentIndex(i)
                 exists = True
                 break
 
@@ -179,24 +182,31 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             else:
                 current_index = conn_count - 1
 
-            self.cmbConnections.setCurrentIndex(current_index)
+            self.cmbConnectionsServices.setCurrentIndex(current_index)
 
     def save_connection(self):
         """save connection"""
 
-        current_text = self.cmbConnections.currentText()
+        caller = self.sender().objectName()
+
+        if caller == 'cmbConnectionsServices':  # servers tab
+            current_text = self.cmbConnectionsServices.currentText()
+        elif caller == 'cmbConnectionsSearch':  # search tab
+            current_text = self.cmbConnectionsSearch.currentText()
 
         self.settings.setValue('/CSWClient/selected', current_text)
         key = '/CSWClient/%s' % current_text
-        self.catalog_url = self.settings.value('%s/url' % key)
 
-        # clear server metadata
-        self.textMetadata.clear()
+        if caller == 'cmbConnectionsSearch':  # bind to service in search tab
+            self.catalog_url = self.settings.value('%s/url' % key)
+
+        if caller == 'cmbConnectionsServices':  # clear server metadata
+            self.textMetadata.clear()
 
     def connection_info(self):
         """show connection info"""
 
-        current_text = self.cmbConnections.currentText()
+        current_text = self.cmbConnectionsServices.currentText()
         key = '/CSWClient/%s' % current_text
         self.catalog_url = self.settings.value('%s/url' % key)
 
@@ -233,7 +243,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def edit_connection(self):
         """modify existing connection"""
 
-        current_text = self.cmbConnections.currentText()
+        current_text = self.cmbConnectionsServices.currentText()
 
         url = self.settings.value('/CSWClient/%s/url' % current_text)
 
@@ -247,7 +257,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def delete_connection(self):
         """delete connection"""
 
-        current_text = self.cmbConnections.currentText()
+        current_text = self.cmbConnectionsServices.currentText()
 
         key = '/CSWClient/%s' % current_text
 
@@ -257,7 +267,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                                          QMessageBox.Ok | QMessageBox.Cancel)
         if result == QMessageBox.Ok:  # remove service from list
             self.settings.remove(key)
-            self.cmbConnections.removeItem(self.cmbConnections.currentIndex())
+            self.cmbConnectionsServices.removeItem(
+                self.cmbConnectionsServices.currentIndex())
             self.set_connection_list_position()
 
     def load_connections(self):
@@ -638,7 +649,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         # open provider dialogue against added OWS
         conn_tab = ows_provider.findChild(QWidget, 'tabServers')
-        conn_cmb = conn_tab.findChild(QWidget, 'cmbConnections')
+        conn_cmb = conn_tab.findChild(QWidget, 'cmbConnectionsServices')
         index = conn_cmb.findText(sname)
         if index > -1:
             conn_cmb.setCurrentIndex(index)
