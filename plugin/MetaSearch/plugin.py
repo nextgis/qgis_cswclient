@@ -92,6 +92,9 @@ class MetaSearchPlugin(object):
 
         self.iface.addPluginToWebMenu(self.web_menu, self.action_help)
 
+        # prefab the dialog but not open it yet
+        self.dialog = MetaSearchDialog(self.iface)
+
     def unload(self):
         """teardown"""
 
@@ -104,7 +107,7 @@ class MetaSearchPlugin(object):
     def run(self):
         """open MetaSearch"""
 
-        MetaSearchDialog(self.iface).exec_()
+        self.dialog.exec_()
 
     def help(self):
         """open help in user's default web browser"""
