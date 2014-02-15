@@ -66,13 +66,7 @@ MetaSearch allows for loading and saving connections to an XML file.  This is
 useful when you need to share settings between applications.  Below is an
 example of the XML file format.
 
-.. code-block:: xml
-
-  <qgsCSWConnections version="1.0">
-      <csw name="data.gov" url="http://demo.pycsw.org/services/csw"/>
-      <csw name="UK Location Catalogue Publishing Service" url="http://csw.data.gov.uk/geonetwork/srv/en/csw"/>
-  </qgsCSWConnections>
-
+.. literalinclude:: ../plugin/MetaSearch/resources/connections-default.xml
 
 To load a list of entries, click the 'Load' button.  A new window will appear;
 click the 'Browse' button and navigate to the XML file of entries you wish to
