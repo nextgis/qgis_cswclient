@@ -45,6 +45,7 @@ from owslib.ows import ExceptionReport
 from owslib.wcs import WebCoverageService
 from owslib.wfs import WebFeatureService
 from owslib.wms import WebMapService
+from owslib.wmts import WebMapTileService
 
 from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
@@ -613,7 +614,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
             service_type = stype[0]
             if service_type == 'OGC:WMS/OGC:WMTS':
-                ows = WebMapService(data_url)
+                try:
+                    ows = WebMapService(data_url)
+                except:
+                    ows = WebMapTileService(data_url)
             elif service_type == 'OGC:WFS':
                 ows = WebFeatureService(data_url)
             elif service_type == 'OGC:WCS':
@@ -670,7 +674,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         # open provider dialogue against added OWS
         conn_tab = ows_provider.findChild(QWidget, 'tabServers')
-        conn_cmb = conn_tab.findChild(QWidget, 'cmbConnectionsServices')
+        conn_cmb = conn_tab.findChild(QWidget, 'cmbConnections')
         index = conn_cmb.findText(sname)
         if index > -1:
             conn_cmb.setCurrentIndex(index)
