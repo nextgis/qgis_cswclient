@@ -23,6 +23,9 @@
 import getpass
 import os
 import shutil
+from urllib import urlencode
+from urllib2 import urlopen
+import xml.etree.ElementTree as etree
 import xmlrpclib
 import zipfile
 
@@ -240,6 +243,32 @@ def upload():
         error("%s : %s", err.errcode, err.errmsg)
         if err.errcode == 403:
             error('Invalid name and password')
+
+@task
+def test_default_csw_connections():
+    """test that the default CSW connections work"""
+
+    relpath = 'resources/connections-default.xml'
+    csw_connections_xml = options.base.plugin / relpath
+
+    csws = etree.parse(csw_connections_xml)
+
+    for csw in csws.findall('csw'):
+        name = csw.attrib.get('name')
+        data = {
+            'service': 'CSW',
+            'version': '2.0.2',
+            'request': 'GetCapabilities'
+        }
+	values = urlencode(data)
+        url = '%s?%s' % (csw.attrib.get('url'), values)
+        content = urlopen(url)
+        if content.getcode() != 200:
+            raise ValueError('Bad HTTP status code')
+	csw_xml = etree.fromstring(content.read())
+	tag = '{http://www.opengis.net/cat/csw/2.0.2}Capabilities'
+	if csw_xml.tag != tag:
+            raise ValueError('root element should be csw:Capabilities')
 
 
 def sphinx_make():
