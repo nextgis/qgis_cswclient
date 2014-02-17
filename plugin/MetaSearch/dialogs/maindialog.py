@@ -621,7 +621,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             elif service_type == 'OGC:WFS':
                 ows = WebFeatureService(data_url)
             elif service_type == 'OGC:WCS':
-                ows = WebCoverageService(data_url)
+                # TODO: remove version once OWSLib defaults to 1.0.0
+                ows = WebCoverageService(data_url, '1.0.0')
         except Exception, err:
             QApplication.restoreOverrideCursor()
             msg = self.tr('Error connecting to %s: %s' % (stype[0], err))
