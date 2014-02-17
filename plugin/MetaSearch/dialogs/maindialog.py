@@ -663,8 +663,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                 ows_provider,
                 SIGNAL('addRasterLayer(QString, QString, QString)'),
                 self.iface, SLOT('addRasterLayer(QString, QString, QString)'))
-            conn_tab = ows_provider.findChild(QWidget, 'tabServers')
-            conn_cmb = conn_tab.findChild(QWidget, 'cmbConnections')
+            conn_cmb = ows_provider.findChild(QWidget, 'cmbConnections')
             connect = 'on_btnConnect_clicked'
         elif service_type == 'OGC:WFS':
             ows_provider.connect(
@@ -675,8 +674,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             conn_cmb = ows_provider.findChild(QWidget, 'cmbConnections')
             connect = 'connectToServer'
         elif service_type == 'OGC:WCS':
-            # TODO add WCS support
-            pass
+            ows_provider.connect(
+                ows_provider,
+                SIGNAL('addRasterLayer(QString, QString, QString)'),
+                self.iface, SLOT('addRasterLayer(QString, QString, QString)'))
+            conn_cmb = ows_provider.findChild(QWidget, 'mConnectionsComboBox')
+            connect = 'on_mConnectButton_clicked'
         ows_provider.setModal(False)
         ows_provider.show()
 
