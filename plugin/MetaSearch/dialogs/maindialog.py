@@ -669,8 +669,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         elif service_type == 'OGC:WFS':
             ows_provider.connect(
                 ows_provider,
-                SIGNAL('addVectorLayer(QString, QString, QString)'),
-                self.iface, SLOT('addVectorLayer(QString, QString, QString)'))
+                SIGNAL( "addWfsLayer(QString, QString)" ),
+                self.iface.mainWindow(), 
+                SLOT('addWfsLayer(QString, QString)'))
             conn_cmb = ows_provider.findChild(QWidget, 'cmbConnections')
             connect = 'connectToServer'
         elif service_type == 'OGC:WCS':
@@ -683,6 +684,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         index = conn_cmb.findText(sname)
         if index > -1:
             conn_cmb.setCurrentIndex(index)
+            # only for wfs
+            if service_type == 'OGC:WFS':
+                ows_provider.on_cmbConnections_activated( index )
         getattr(ows_provider, connect)()
 
     def show_metadata(self):
