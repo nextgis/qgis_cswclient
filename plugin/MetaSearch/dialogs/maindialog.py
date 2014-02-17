@@ -768,7 +768,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """back out of dialogue"""
 
         QDialog.reject(self)
-        self.map.scene().removeItem(self.rubber_band)
+        self.rubber_band.reset()
 
 
 def save_connections():
