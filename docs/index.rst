@@ -1,6 +1,12 @@
 MetaSearch Catalogue Client
 ===========================
 
+.. image:: _static/qgis.png
+  :scale: 100%
+  :alt: QGIS
+  :align: left
+  :target: http://qgis.org
+
 .. image:: _static/metasearch-splash.png
   :scale: 100%
   :alt: MetaSearch
