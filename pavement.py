@@ -170,7 +170,7 @@ def publish_docs():
         sh('git checkout gh-pages')
         sh('cp -rp %s/docs/_build/html/* .' % options.base.home)
         sh('git add .')
-        sh('git commit -am "Update docs"')
+        sh('git commit -am "update live docs [ci skip]"')
         sh('git push origin gh-pages')
 
     tempdir.rmtree()
