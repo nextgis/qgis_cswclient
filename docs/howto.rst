@@ -4,24 +4,19 @@ MetaSearch Catalogue Client
 Introduction
 ------------
 
-MetaSearch is a QGIS plugin to interact with metadata catalogue services.
-The OGC Catalogue Service (CSW) standard is initially supported.
-Additional catalogue types are planned for future development.
-
-MetaSearch provides an easy and intuitive approach and user-friendly interface
-to searching metadata catalogues within QGIS.
+.. include:: intro.inc
 
 Installation
 ------------
 
-MetaSearch is designed for QGIS 2.0 and higher.  All dependencies are
+MetaSearch is designed for `QGIS`_ 2.0 and higher.  All dependencies are
 included within MetaSearch.
 
 Install MetaSearch from the QGIS plugin manager, or manually from
 http://plugins.qgis.org/plugins/MetaSearch.
 
-.. note:: for developers, please see the Developers section for specific
-          instructions on on installing MetaSearch.
+.. note:: developers: please see the `README`_ for instructions on
+          installing MetaSearch for development.
 
 Working with Metadata Catalogues in QGIS
 ----------------------------------------
@@ -29,9 +24,10 @@ Working with Metadata Catalogues in QGIS
 CSW (Catalogue Service for the Web)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-CSW (Catalogue Service for the Web) is an OGC (Open Geospatial Consortium)
-specification, that defines common interfaces to discover, browse, and query
-metadata about data, services, and other potential resources.
+`CSW (Catalogue Service for the Web)`_ is an
+`OGC (Open Geospatial Consortium)`_ specification, that defines common
+interfaces to discover, browse, and query metadata about data, services,
+and other potential resources.
 
 Startup
 ^^^^^^^
@@ -90,19 +86,19 @@ Searching Catalogue Services
 .. image:: _static/metasearch-search.png
   :scale: 80%
   :alt: Searching Catalogue Services
-  :align: left
+  :align: right
 
 The 'Search' tab allows the user to query Catalogue Services for data and
 services, set various search parameters and view results.
 
 The following search parameters are available:
 
-- *Keywords*: free text search keywords
-- *From*: the Catalogue Service to perform the query against
-- *Bounding box*: the spatial area of interest to filter on.  The default
+- **Keywords**: free text search keywords
+- **From**: the Catalogue Service to perform the query against
+- **Bounding box**: the spatial area of interest to filter on.  The default
   bounding box is the map view / canvas.  Click 'Set global' to do a global
   search, or enter custom values as desired
-- *Records*: the number of records to return when searching.  Default is
+- **Records**: the number of records to return when searching.  Default is
   10 records
 
 Clicking the 'Search' button will search the selected Metadata Catalogue.
@@ -126,7 +122,7 @@ provides the following options:
 
 .. image:: _static/metasearch-record-metadata.png
   :scale: 60%
-  :alt: project logo
+  :alt: Metadata Record Display
   :align: right
 
 Support
@@ -135,5 +131,10 @@ Support
 - Mailing list: http://lists.osgeo.org/listinfo/qgis-user
 - IRC: irc://irc.freenode.net/qgis
 - Issue tracker: https://github.com/geopython/MetaSearch/issues
-- Source code: https://github.com/geopython/MetaSearch/
+- Source code: https://github.com/geopython/MetaSearch
 - Wiki: https://github.com/geopython/MetaSearch/wiki
+
+.. _`README`: https://github.com/geopython/MetaSearch/blob/master/README.md
+.. _`CSW (Catalogue Service for the Web)`: http://opengeospatial.org/standards/cat
+.. _`OGC (Open Geospatial Consortium)`: http://opengeospatial.org
+.. _`QGIS`: http://qgis.org

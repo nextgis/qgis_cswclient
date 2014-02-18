@@ -7,18 +7,10 @@ MetaSearch Catalogue Client
   :align: right
   :target: http://geopython.github.io/MetaSearch
 
-Contents:
+.. include:: intro.inc
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    Documentation <howto>
    License <license>
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
