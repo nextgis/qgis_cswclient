@@ -5,7 +5,7 @@ MetaSearch Catalogue Client
   :scale: 100%
   :alt: QGIS
   :align: left
-  :target: http://qgis.org
+  :target: http://qgis.org/en/site/
 
 .. image:: _static/metasearch-splash.png
   :scale: 100%
