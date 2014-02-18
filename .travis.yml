@@ -11,6 +11,7 @@ script:
   - cd docs
   - make html
   - make linkcheck
+  - cd ..
   # ensure all code is pep8 compliant
   - find plugin -type f -name "*.py" | xargs pep8
   - pep8 pavement.py
