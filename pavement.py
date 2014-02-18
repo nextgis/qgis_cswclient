@@ -177,7 +177,7 @@ def publish_docs():
 
 
 @task
-@needs('build_qt_files')
+@needs('build_qt_files', 'setup')
 def package():
     """create zip file of plugin"""
 
