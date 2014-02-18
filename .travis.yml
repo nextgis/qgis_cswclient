@@ -6,7 +6,7 @@ install:
   - pip install -r requirements-dev.txt
 script:
   # check that default CSW connections work
-  - paver check_default_csw_connections
+  - paver test_default_csw_connections
   # check that docs build and links work
   - cd docs
   - make html
