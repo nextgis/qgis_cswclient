@@ -43,6 +43,11 @@ The main GUI consists of two tabs: 'Services' and 'Search'.
 Managing Catalogue Services
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. image:: _static/metasearch-services.png
+  :scale: 80%
+  :alt: Managing Catalogue Services
+  :align: right
+
 The 'Services' tab allows the user to manage all available catalogue services.
 MetaSearch provides a default list of Catalogue Services, which can be added
 by pressing 'Add default services' button.
@@ -82,6 +87,11 @@ Capabilities XML.
 Searching Catalogue Services
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. image:: _static/metasearch-search.png
+  :scale: 80%
+  :alt: Searching Catalogue Services
+  :align: left
+
 The 'Search' tab allows the user to query Catalogue Services for data and
 services, set various search parameters and view results.
 
@@ -114,11 +124,16 @@ provides the following options:
   The OWS will then be added to the appropriate QGIS connection list, and the
   appropriate WMS/WMTS|WFS|WCS connection dialogue will then appear
 
+.. image:: _static/metasearch-record-metadata.png
+  :scale: 60%
+  :alt: project logo
+  :align: right
+
 Support
 -------
 
-Mailing list: http://lists.osgeo.org/listinfo/qgis-user
-IRC: irc://irc.freenode.net/qgis
-Issue tracker: https://github.com/geopython/MetaSearch/issues
-Source code: https://github.com/geopython/MetaSearch/
-Wiki: https://github.com/geopython/MetaSearch/wiki
+- Mailing list: http://lists.osgeo.org/listinfo/qgis-user
+- IRC: irc://irc.freenode.net/qgis
+- Issue tracker: https://github.com/geopython/MetaSearch/issues
+- Source code: https://github.com/geopython/MetaSearch/
+- Wiki: https://github.com/geopython/MetaSearch/wiki
