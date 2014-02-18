@@ -156,7 +156,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnServerInfo.setEnabled(state_disabled)
         self.btnEdit.setEnabled(state_disabled)
         self.btnDelete.setEnabled(state_disabled)
-        self.tabWidget.setTabEnabled(1, state_disabled)
 
     def set_connection_list_position(self):
         """set the current index to the selected connection"""
