@@ -225,8 +225,7 @@ def upload():
     info('Uploading to http://%s/%s' % (options.upload.host,
                                         options.upload.endpoint))
 
-    server = xmlrpclib.ServerProxy(url, verbose=True)
-    print zipf.bytes()
+    server = xmlrpclib.ServerProxy(url, verbose=False)
 
     try:
         with open(zipf) as zfile:
