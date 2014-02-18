@@ -1,4 +1,4 @@
-Copyright (C) 2010 NextGIS (http://nextgis.org),
+Copyright (C) 2010 NextGIS (http://nextgis.ru),
 Alexander Bruy (alexander.bruy@gmail.com),
 Maxim Dubinin (sim@gis-lab.info),
 

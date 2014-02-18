@@ -135,6 +135,6 @@ Support
 - Wiki: https://github.com/geopython/MetaSearch/wiki
 
 .. _`README`: https://github.com/geopython/MetaSearch/blob/master/README.md
-.. _`CSW (Catalogue Service for the Web)`: http://opengeospatial.org/standards/cat
-.. _`OGC (Open Geospatial Consortium)`: http://opengeospatial.org
+.. _`CSW (Catalogue Service for the Web)`: http://www.opengeospatial.org/standards/cat
+.. _`OGC (Open Geospatial Consortium)`: http://www.opengeospatial.org
 .. _`QGIS`: http://qgis.org
