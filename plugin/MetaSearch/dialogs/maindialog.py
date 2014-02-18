@@ -49,7 +49,8 @@ from owslib.wmts import WebMapTileService
 
 from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
-from MetaSearch.dialogs.responsedialog import ResponseDialog
+from MetaSearch.dialogs.recorddialog import RecordDialog
+from MetaSearch.dialogs.xmldialog import XMLDialog
 from MetaSearch.util import (get_connections_from_file, highlight_xml,
                              render_template, StaticContext)
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
@@ -84,7 +85,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.cmbConnectionsSearch.activated.connect(self.save_connection)
         self.btnServerInfo.clicked.connect(self.connection_info)
         self.btnAddDefault.clicked.connect(self.add_default_connections)
-        self.btnCapabilities.clicked.connect(self.show_response)
+        self.btnCapabilities.clicked.connect(self.show_xml)
 
         # server management buttons
         self.btnNew.clicked.connect(self.add_connection)
@@ -110,7 +111,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnAddToWms.clicked.connect(self.add_to_ows)
         self.btnAddToWfs.clicked.connect(self.add_to_ows)
         self.btnAddToWcs.clicked.connect(self.add_to_ows)
-        self.btnShowXml.clicked.connect(self.show_response)
+        self.btnShowXml.clicked.connect(self.show_xml)
 
         self.manageGui()
 
@@ -727,24 +728,28 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         record = cat.records[identifier]
 
-        crd = ResponseDialog()
+        crd = RecordDialog()
         metadata = render_template('en', self.context,
                                    record, 'record_metadata_dc.html')
 
         style = QgsApplication.reportStyleSheet()
-        crd.textXml.document().setDefaultStyleSheet(style)
-        crd.textXml.setHtml(metadata)
+        crd.textMetadata.document().setDefaultStyleSheet(style)
+        crd.textMetadata.setHtml(metadata)
         crd.exec_()
 
-    def show_response(self):
-        """show response"""
+    def show_xml(self):
+        """show XML request / response"""
 
-        crd = ResponseDialog()
-        html = highlight_xml(self.context, self.catalog.response)
+        crd = XMLDialog()
+        request_html = highlight_xml(self.context, self.catalog.request)
+        response_html = highlight_xml(self.context, self.catalog.response)
         style = QgsApplication.reportStyleSheet()
-        crd.textXml.clear()
-        crd.textXml.document().setDefaultStyleSheet(style)
-        crd.textXml.setHtml(html)
+        crd.txtbrXMLRequest.clear()
+        crd.txtbrXMLResponse.clear()
+        crd.txtbrXMLRequest.document().setDefaultStyleSheet(style)
+        crd.txtbrXMLResponse.document().setDefaultStyleSheet(style)
+        crd.txtbrXMLRequest.setHtml(request_html)
+        crd.txtbrXMLResponse.setHtml(response_html)
         crd.exec_()
 
     def reset_buttons(self, services=True, xml=True, navigation=True):

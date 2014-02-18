@@ -100,7 +100,11 @@ def prettify_xml(xml):
     if xml.count('\n') > 5:  # likely already pretty printed
         return xml
     else:
-        return parseString(xml).toprettyxml()
+        # check if it's a GET request
+        if xml.startswith('http'):
+            return xml
+        else:
+            return parseString(xml).toprettyxml()
 
 
 def highlight_xml(context, xml):

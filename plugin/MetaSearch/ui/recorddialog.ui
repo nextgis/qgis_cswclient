@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ResponseDialog</class>
- <widget class="QDialog" name="ResponseDialog">
+ <class>RecordDialog</class>
+ <widget class="QDialog" name="RecordDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Service Response</string>
+   <string>Record Metadata</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTextBrowser" name="textXml">
+    <widget class="QTextBrowser" name="textMetadata">
      <property name="lineWrapMode">
       <enum>QTextEdit::NoWrap</enum>
      </property>
@@ -41,7 +41,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ResponseDialog</receiver>
+   <receiver>RecordDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -57,7 +57,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ResponseDialog</receiver>
+   <receiver>RecordDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

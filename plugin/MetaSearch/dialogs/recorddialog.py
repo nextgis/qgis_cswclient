@@ -30,11 +30,11 @@
 
 from PyQt4.QtGui import QDialog
 
-from MetaSearch.ui.responsedialog import Ui_ResponseDialog
+from MetaSearch.ui.recorddialog import Ui_RecordDialog
 
 
-class ResponseDialog(QDialog, Ui_ResponseDialog):
-    """CSW Response Dialogue"""
+class RecordDialog(QDialog, Ui_RecordDialog):
+    """Record Metadata Dialogue"""
     def __init__(self):
         """init"""
 
