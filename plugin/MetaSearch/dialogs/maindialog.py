@@ -164,6 +164,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         to_select = self.settings.value('/CSWClient/selected')
         conn_count = self.cmbConnectionsServices.count()
 
+        if conn_count == 0:
+            self.btnDelete.setEnabled(False)
+            self.btnServerInfo.setEnabled(False)
+            self.btnEdit.setEnabled(False)
+
         # does to_select exist in cmbConnectionsServices?
         exists = False
         for i in range(conn_count):
