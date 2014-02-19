@@ -1,7 +1,7 @@
 MetaSearch Catalogue Client QGIS Plugin
 =======================================
 
-[![Build Status](https://travis-ci.org/geopython/MetaSearc.png?branch=master)](https://travis-ci.org/geopython/MetaSearch)
+[![Build Status](https://travis-ci.org/geopython/MetaSearch.png?branch=master)](https://travis-ci.org/geopython/MetaSearch)
 
 MetaSearch is a QGIS plugin to interact with metadata catalogue services (CSW).
 
