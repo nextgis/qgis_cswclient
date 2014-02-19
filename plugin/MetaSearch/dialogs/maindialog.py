@@ -531,10 +531,14 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if link_type is not None:
                 link_type = link_type.upper()
 
+            # RD: not sure what this is for ??
             if all([link_type is not None,
                     link_type in ['OGC:WMS', 'OGC:WMTS',
+                                  'OGC:WMS-1.1.1-HTTP-GET-MAP',
                                   'OGC:WFS', 'OGC:WCS']]):
-                if link_type in ['OGC:WMS', 'OGC:WMTS']:
+                if link_type in [ 'OGC:WMS', 
+                                  'OGC:WMTS',
+                                  'OGC:WMS-1.1.1-HTTP-GET-MAP']:
                     service_list.append(link['url'])
                     self.btnAddToWms.setEnabled(True)
                 else:
