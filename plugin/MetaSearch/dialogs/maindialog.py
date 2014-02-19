@@ -149,6 +149,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             # no connections - disable various buttons
             state_disabled = False
             self.btnSave.setEnabled(state_disabled)
+            # and start with connection tab open
+            self.tabWidget.setCurrentIndex(1)
         else:
             # connections - enable various buttons
             state_disabled = True
