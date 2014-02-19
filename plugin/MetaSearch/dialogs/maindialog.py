@@ -581,9 +581,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                                               msg,
                                               (QMessageBox.Ok |
                                                QMessageBox.Cancel))
-            if res == QMessageBox.Ok:
-                self.startfrom = (self.catalog.results['matches'] -
-                                  self.maxrecords)
+                if res == QMessageBox.Ok:
+                    self.startfrom = (self.catalog.results['matches'] -
+                                      self.maxrecords)
             else:
                 return
 
