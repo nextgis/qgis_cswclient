@@ -366,6 +366,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.settings.setValue('/CSWClient/returnRecords',
                                self.spnRecords.cleanText())
 
+        # set current catalogue
+        current_text = self.cmbConnectionsSearch.currentText()
+        key = '/CSWClient/%s' % current_text
+        self.catalog_url = self.settings.value('%s/url' % key)
+
         # start position and number of records to return
         self.startfrom = 0
         self.maxrecords = self.spnRecords.value()
