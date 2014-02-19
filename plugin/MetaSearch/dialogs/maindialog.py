@@ -344,10 +344,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             maxx = extent.xMaximum()
             maxy = extent.yMaximum()
 
-        self.leNorth.setText(str(maxy))
-        self.leSouth.setText(str(miny))
-        self.leWest.setText(str(minx))
-        self.leEast.setText(str(maxx))
+        self.leNorth.setText(str(maxy)[0:9])
+        self.leSouth.setText(str(miny)[0:9])
+        self.leWest.setText(str(minx)[0:9])
+        self.leEast.setText(str(maxx)[0:9])
 
     def set_bbox_global(self):
         """set global bounding box"""
