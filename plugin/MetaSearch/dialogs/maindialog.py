@@ -28,6 +28,7 @@
 #
 ###############################################################################
 
+import json
 import os.path
 
 from PyQt4.QtCore import QSettings, Qt, SIGNAL, SLOT
@@ -518,7 +519,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         links = record.uris + record.references
 
-        service_list = []
+        services = {}
         for link in links:
 
             if 'scheme' in link:
@@ -540,22 +541,16 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                 if link_type in ['OGC:WMS',
                                  'OGC:WMTS',
                                  'OGC:WMS-1.1.1-HTTP-GET-MAP']:
-                    service_list.append(link['url'])
+                    services['wms'] = link['url']
                     self.btnAddToWms.setEnabled(True)
-                else:
-                    service_list.append('')
                 if link_type == 'OGC:WFS':
-                    service_list.append(link['url'])
+                    services['wfs'] = link['url']
                     self.btnAddToWfs.setEnabled(True)
-                else:
-                    service_list.append('')
                 if link_type == 'OGC:WCS':
-                    service_list.append(link['url'])
+                    services['wcs'] = link['url']
                     self.btnAddToWcs.setEnabled(True)
-                else:
-                    service_list.append('')
 
-            set_item_data(item, 'link', ','.join(service_list))
+            set_item_data(item, 'link', json.dumps(services))
 
     def navigate(self):
         """manage navigation / paging"""
@@ -610,20 +605,20 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not item:
             return
 
-        item_data = get_item_data(item, 'link').split(',')
+        item_data = json.loads(get_item_data(item, 'link'))
 
         caller = self.sender().objectName()
 
         # stype = human name,/Qgis/connections-%s,providername
         if caller == 'btnAddToWms':
             stype = ['OGC:WMS/OGC:WMTS', 'wms', 'wms']
-            data_url = item_data[0]
+            data_url = item_data['wms']
         elif caller == 'btnAddToWfs':
             stype = ['OGC:WFS', 'wfs', 'WFS']
-            data_url = item_data[1]
+            data_url = item_data['wfs']
         elif caller == 'btnAddToWcs':
             stype = ['OGC:WCS', 'wcs', 'wcs']
-            data_url = item_data[2]
+            data_url = item_data['wcs']
 
         # test if URL is valid WMS server
         try:
