@@ -87,6 +87,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnServerInfo.clicked.connect(self.connection_info)
         self.btnAddDefault.clicked.connect(self.add_default_connections)
         self.btnCapabilities.clicked.connect(self.show_xml)
+        self.tabWidget.currentChanged.connect(self.populate_connection_list)
 
         # server management buttons
         self.btnNew.clicked.connect(self.add_connection)
@@ -175,6 +176,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         for i in range(conn_count):
             if self.cmbConnectionsServices.itemText(i) == to_select:
                 self.cmbConnectionsServices.setCurrentIndex(i)
+                self.cmbConnectionsSearch.setCurrentIndex(i)
                 exists = True
                 break
 
@@ -193,6 +195,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                 current_index = conn_count - 1
 
             self.cmbConnectionsServices.setCurrentIndex(current_index)
+            self.cmbConnectionsSearch.setCurrentIndex(current_index)
 
     def save_connection(self):
         """save connection"""
@@ -249,6 +252,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         conn_new.setWindowTitle(self.tr('New Catalogue service'))
         if conn_new.exec_() == QDialog.Accepted:  # add to service list
             self.populate_connection_list()
+        self.textMetadata.clear()
 
     def edit_connection(self):
         """modify existing connection"""
@@ -277,8 +281,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                                          QMessageBox.Ok | QMessageBox.Cancel)
         if result == QMessageBox.Ok:  # remove service from list
             self.settings.remove(key)
-            self.cmbConnectionsServices.removeItem(
-                self.cmbConnectionsServices.currentIndex())
+            index_to_delete = self.cmbConnectionsServices.currentIndex()
+            self.cmbConnectionsServices.removeItem(index_to_delete)
+            self.cmbConnectionsSearch.removeItem(index_to_delete)
             self.set_connection_list_position()
 
     def load_connections(self):

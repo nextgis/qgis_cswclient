@@ -76,6 +76,7 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
                 self.settings.remove(key_orig)
 
             self.settings.setValue(keyurl, conn_url)
+            self.settings.setValue('/CSWClient/selected', conn_name)
 
             QDialog.accept(self)
 
