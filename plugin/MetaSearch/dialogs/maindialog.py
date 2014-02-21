@@ -227,6 +227,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if not self._get_csw():
             return
 
+        QApplication.restoreOverrideCursor()
+
         if self.catalog:  # display service metadata
             self.btnCapabilities.setEnabled(True)
             metadata = render_template('en', self.context,
@@ -422,8 +424,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                                 self.tr('Connection error: %s' % err))
             return
 
-        QApplication.restoreOverrideCursor()
-
         if not self.catalog.results:
             QMessageBox.information(self, self.tr('Search'),
                                     self.tr('No results.'))
@@ -435,6 +435,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.lblResults.setText(self.tr('0 results'))
             return
 
+        QApplication.restoreOverrideCursor()
         self.display_results()
 
     def display_results(self):
@@ -788,7 +789,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.catalog = CatalogueServiceWeb(self.catalog_url)
-            QApplication.restoreOverrideCursor()
             return True
         except ExceptionReport, err:
             msg = self.tr('Error connecting to service: %s' % err)
