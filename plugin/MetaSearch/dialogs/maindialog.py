@@ -527,16 +527,28 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if all([link_type is not None,
                     link_type in ['OGC:WMS', 'OGC:WMTS',
                                   'OGC:WMS-1.1.1-HTTP-GET-MAP',
-                                  'OGC:WFS', 'OGC:WCS']]):
-                if link_type in ['OGC:WMS',
-                                 'OGC:WMTS',
-                                 'OGC:WMS-1.1.1-HTTP-GET-MAP']:
+                                  'OGC:WMS-1.1.1-HTTP-GET-CAPABILITIES',
+                                  'OGC:WMS-1.3.0-HTTP-GET-MAP',
+                                  'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES',
+                                  'OGC:WFS',
+                                  'OGC:WFS-1.0.0-HTTP-GET-CAPABILITIES',
+                                  'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES',
+                                  'OGC:WCS',
+                                  'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES']]):
+                if link_type in ['OGC:WMS', 'OGC:WMTS',
+                                 'OGC:WMS-1.1.1-HTTP-GET-MAP',
+                                 'OGC:WMS-1.1.1-HTTP-GET-CAPABILITIES',
+                                 'OGC:WMS-1.3.0-HTTP-GET-MAP',
+                                 'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES']:
                     services['wms'] = link['url']
                     self.btnAddToWms.setEnabled(True)
-                if link_type == 'OGC:WFS':
+                if link_type in ['OGC:WFS',
+                                 'OGC:WFS-1.0.0-HTTP-GET-CAPABILITIES',
+                                 'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES']:
                     services['wfs'] = link['url']
                     self.btnAddToWfs.setEnabled(True)
-                if link_type == 'OGC:WCS':
+                if link_type in ['OGC:WCS',
+                                 'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES']:
                     services['wcs'] = link['url']
                     self.btnAddToWcs.setEnabled(True)
 
