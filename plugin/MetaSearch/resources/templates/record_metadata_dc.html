@@ -78,6 +78,9 @@
         <section id="links">
             <h4>Links</h4>
             <ul>
+                <li><a href="{{ obj.xml_url }}">Metadata XML</a></l>
+            </ul>
+            <ul>
             {% for link in obj.references %}
                 <li><a href="{{ link['url'] }}">{{ link['scheme'] if link['scheme'] not in [None, 'None', ''] else gettext('Access Link') }}</a></li>
             {% endfor %}

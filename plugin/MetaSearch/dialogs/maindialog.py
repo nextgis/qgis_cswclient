@@ -734,6 +734,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         QApplication.restoreOverrideCursor()
 
         record = cat.records[identifier]
+        record.xml_url = cat.request
 
         crd = RecordDialog()
         metadata = render_template('en', self.context,
