@@ -40,7 +40,7 @@ from qgis.core import (QgsApplication, QgsCoordinateReferenceSystem,
                        QgsProviderRegistry)
 from qgis.gui import QgsRubberBand
 
-from owslib.csw import CatalogueServiceWeb as csw
+from owslib.csw import CatalogueServiceWeb
 from owslib.fes import BBox, PropertyIsLike
 from owslib.ows import ExceptionReport
 from owslib.wcs import WebCoverageService
@@ -224,15 +224,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.catalog_url = self.settings.value('%s/url' % key)
 
         # connect to the server
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.catalog = csw(self.catalog_url)
-            QApplication.restoreOverrideCursor()
-        except ExceptionReport, err:
-            QApplication.restoreOverrideCursor()
-            msg = self.tr('Error connecting to service %s: %s' %
-                          current_text, err)
-            QMessageBox.warning(self, self.tr('Connection error'), msg)
+        if not self._get_csw():
             return
 
         if self.catalog:  # display service metadata
@@ -411,14 +403,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.constraints = [self.constraints]
 
         # build request
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.catalog = csw(self.catalog_url)
-        except ExceptionReport, err:
-            QApplication.restoreOverrideCursor()
-            msg = self.tr('Error connecting to service %s: %s' %
-                          self.catalog_url, err)
-            QMessageBox.warning(self, self.tr('Search error'), msg)
+        if not self._get_csw():
             return
 
         # TODO: allow users to select resources types
@@ -633,7 +618,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if service_type == 'OGC:WMS/OGC:WMTS':
                 try:
                     ows = WebMapService(data_url)
-                except:
+                except Exception, err:
                     ows = WebMapTileService(data_url)
             elif service_type == 'OGC:WFS':
                 ows = WebFeatureService(data_url)
@@ -724,16 +709,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            cat = csw(self.catalog_url)
-        except ExceptionReport, err:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Connection error'),
-                                self.tr('Error connecting to service: %s' %
-                                        err))
-            return
-
-        try:
-            cat.getrecordbyid([self.catalog.records[identifier].identifier])
+            cat = CatalogueServiceWeb(self.catalog_url)
+            cat.getrecordbyid(
+                [self.catalog.records[identifier].identifier])
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('GetRecords error'),
@@ -790,6 +768,26 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         QDialog.reject(self)
         self.rubber_band.reset()
+
+    def _get_csw(self):
+        """convenience function to init owslib.csw.CatalogueServiceWeb"""
+
+        # connect to the server
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.catalog = CatalogueServiceWeb(self.catalog_url)
+            QApplication.restoreOverrideCursor()
+            return True
+        except ExceptionReport, err:
+            msg = self.tr('Error connecting to service: %s' % err)
+        except ValueError, err:
+            msg = self.tr('Value Error: %s' % err)
+        except Exception, err:
+            msg = self.tr('Unknown Error: %s' % err)
+
+        QMessageBox.warning(self, self.tr('CSW Connection error'), msg)
+        QApplication.restoreOverrideCursor()
+        return False
 
 
 def save_connections():
