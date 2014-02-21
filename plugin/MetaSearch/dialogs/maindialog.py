@@ -33,7 +33,7 @@ import os.path
 
 from PyQt4.QtCore import QSettings, Qt, SIGNAL, SLOT
 from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QMessageBox,
-                         QTreeWidgetItem, QWidget)
+                         QTreeWidgetItem, QWidget, QDialogButtonBox)
 
 from qgis.core import (QgsApplication, QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsGeometry, QgsPoint,
@@ -101,6 +101,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.treeRecords.itemDoubleClicked.connect(self.show_metadata)
         self.btnSearch.clicked.connect(self.search)
         self.leKeywords.returnPressed.connect(self.search)
+        # prevent dialog from closing upon pressing enter
+        self.buttonBox.button(QDialogButtonBox.Close).setAutoDefault(False)
         self.btnCanvasBbox.clicked.connect(self.set_bbox_from_map)
         self.btnGlobalBbox.clicked.connect(self.set_bbox_global)
 
@@ -114,6 +116,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnAddToWfs.clicked.connect(self.add_to_ows)
         self.btnAddToWcs.clicked.connect(self.add_to_ows)
         self.btnShowXml.clicked.connect(self.show_xml)
+
+        # settings stuff
+        self.radioUseAsName.buttonClicked.connect(self.set_ows_save_strategy)
 
         self.manageGui()
 
@@ -132,6 +137,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.set_bbox_global()
 
         self.reset_buttons()
+
+        # get latest connection save strategy from settings and set it in dialog
+        saved = self.settings.value(
+            '/metasearch/ows_save_strategy',
+            self.radioUseAsName.id(self.titleAsk), int)
+        self.radioUseAsName.button(saved).setChecked(True)
 
     # Servers tab
 
@@ -196,6 +207,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
             self.cmbConnectionsServices.setCurrentIndex(current_index)
             self.cmbConnectionsSearch.setCurrentIndex(current_index)
+
+    def set_ows_save_strategy(self, checked):
+        """save how to save ows connections"""
+
+        self.settings.setValue('/metasearch/ows_save_strategy',
+                               self.radioUseAsName.id(checked))
 
     def save_connection(self):
         """save connection"""
@@ -645,10 +662,14 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         QApplication.restoreOverrideCursor()
 
-        if ows.identification.title is not None:
-            sname = ows.identification.title
+        # ows save connection strategies, one of
+        # 1) use ows title but always ask before overwriting
+        # 2) use ows title but always overwrite (never ask)
+        # 3) use a temp name (which can be changed later)
+        if ows.identification.title is None or self.radioUseAsName.checkedButton() == self.tempName:
+            sname = '%s from MetaSearch' % stype[1]
         else:
-            sname = '%s from MetaSearch' % service_type
+            sname = ows.identification.title
 
         # store connection
         # check if there is a connection with same name
@@ -657,7 +678,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.settings.endGroup()
 
         # check for duplicates
-        if sname in keys:
+        if sname in keys and self.radioUseAsName.checkedButton() == self.titleAsk:
             msg = self.tr('Connection %s exists. Overwrite?' % sname)
             res = QMessageBox.warning(self, self.tr('Saving server'), msg,
                                       QMessageBox.Yes | QMessageBox.No)

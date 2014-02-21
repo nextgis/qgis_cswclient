@@ -6,18 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
+    <width>598</width>
     <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MetaSearch client</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabSearch">
       <attribute name="title">
@@ -254,6 +264,20 @@
        <string>Services</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
+       <item row="4" column="0" colspan="5">
+        <widget class="QTextBrowser" name="textMetadata">
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3" colspan="2">
+        <widget class="QPushButton" name="btnAddDefault">
+         <property name="text">
+          <string>Add default services</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0" colspan="5">
         <widget class="QComboBox" name="cmbConnectionsServices"/>
        </item>
@@ -299,20 +323,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="5">
-        <widget class="QTextBrowser" name="textMetadata">
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3" colspan="2">
-        <widget class="QPushButton" name="btnAddDefault">
-         <property name="text">
-          <string>Add default services</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="3">
         <widget class="QPushButton" name="btnLoad">
          <property name="text">
@@ -322,16 +332,75 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
-     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Settings</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="0">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Connection naming</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>When saving the connection of an OWS service</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="titleAsk">
+            <property name="text">
+             <string>Use the OWS Service Title and ask before overwriting</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">radioUseAsName</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="titleNoAsk">
+            <property name="text">
+             <string>Use the OWS Service Title and always overwrite if already available</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">radioUseAsName</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="tempName">
+            <property name="text">
+             <string>Use a temporary name, which you can change later</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">radioUseAsName</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -371,4 +440,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="radioUseAsName"/>
+ </buttongroups>
 </ui>
