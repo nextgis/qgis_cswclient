@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MetaSearch client</string>
+   <string>MetaSearch</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
