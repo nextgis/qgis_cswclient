@@ -57,9 +57,9 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
             return
 
         if conn_name is not None:
-            key = '/CSWClient/%s' % conn_name
+            key = '/MetaSearch/%s' % conn_name
             keyurl = '%s/url' % key
-            key_orig = '/CSWClient/%s' % self.conn_name_orig
+            key_orig = '/MetaSearch/%s' % self.conn_name_orig
 
             # warn if entry was renamed to an existing connection
             if all([self.conn_name_orig != conn_name,
@@ -76,7 +76,7 @@ class NewConnectionDialog(QDialog, Ui_NewConnectionDialog):
                 self.settings.remove(key_orig)
 
             self.settings.setValue(keyurl, conn_url)
-            self.settings.setValue('/CSWClient/selected', conn_name)
+            self.settings.setValue('/MetaSearch/selected', conn_name)
 
             QDialog.accept(self)
 

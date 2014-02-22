@@ -96,7 +96,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
         """populate connections list from settings"""
 
         if self.mode == 0:
-            self.settings.beginGroup('/CSWClient/')
+            self.settings.beginGroup('/MetaSearch/')
             keys = self.settings.childGroups()
             for key in keys:
                 item = QListWidgetItem(self.listConnections)
@@ -122,7 +122,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
         doc.attrib['version'] = '1.0'
 
         for conn in connections:
-            url = self.settings.value('/CSWClient/%s/url' % conn)
+            url = self.settings.value('/MetaSearch/%s/url' % conn)
             if url is not None:
                 connection = etree.SubElement(doc, 'csw')
                 connection.attrib['name'] = conn
@@ -138,7 +138,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
     def load(self, items):
         """load connections"""
 
-        self.settings.beginGroup('/CSWClient/')
+        self.settings.beginGroup('/MetaSearch/')
         keys = self.settings.childGroups()
         self.settings.endGroup()
 
@@ -161,7 +161,7 @@ class ManageConnectionsDialog(QDialog, Ui_ManageConnectionsDialog):
                     continue
 
             # no dups detected or overwrite is allowed
-            url = '/CSWClient/%s/url' % conn_name
+            url = '/MetaSearch/%s/url' % conn_name
             self.settings.setValue(url, csw.attrib.get('url'))
 
     def accept(self):
