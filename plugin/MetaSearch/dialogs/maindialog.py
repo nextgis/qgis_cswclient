@@ -32,8 +32,9 @@ import json
 import os.path
 
 from PyQt4.QtCore import QSettings, Qt, SIGNAL, SLOT
-from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog, QMessageBox,
-                         QTreeWidgetItem, QWidget, QDialogButtonBox)
+from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog,
+                         QDialogButtonBox, QMessageBox, QTreeWidgetItem,
+                         QWidget)
 
 from qgis.core import (QgsApplication, QgsCoordinateReferenceSystem,
                        QgsCoordinateTransform, QgsGeometry, QgsPoint,
