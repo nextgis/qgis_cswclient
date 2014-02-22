@@ -118,7 +118,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.btnShowXml.clicked.connect(self.show_xml)
 
         # settings stuff
-        self.radioUseAsName.buttonClicked.connect(self.set_ows_save_strategy)
+        self.radioTitleAsk.clicked.connect(self.set_ows_save_title_ask)
+        self.radioTitleNoAsk.clicked.connect(self.set_ows_save_title_no_ask)
+        self.radioTempName.clicked.connect(self.set_ows_save_temp_name)
 
         self.manageGui()
 
@@ -138,11 +140,15 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         self.reset_buttons()
 
-        # get latest connection save strategy from settings and set it in dialog
-        saved = self.settings.value(
-            '/metasearch/ows_save_strategy',
-            self.radioUseAsName.id(self.titleAsk), int)
-        self.radioUseAsName.button(saved).setChecked(True)
+        # get preferred connection save strategy from settings and set it
+        save_strat = self.settings.value(
+            '/metasearch/ows_save_strategy', 'title_ask')
+        if save_strat == 'temp_name':
+            self.radioTempName.setChecked(True)
+        elif save_strat == 'title_no_ask':
+            self.radioTitleNoAsk.setChecked(True)
+        else:
+            self.radioTitleAsk.setChecked(True)
 
     # Servers tab
 
@@ -207,12 +213,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
             self.cmbConnectionsServices.setCurrentIndex(current_index)
             self.cmbConnectionsSearch.setCurrentIndex(current_index)
-
-    def set_ows_save_strategy(self, checked):
-        """save how to save ows connections"""
-
-        self.settings.setValue('/metasearch/ows_save_strategy',
-                               self.radioUseAsName.id(checked))
 
     def save_connection(self):
         """save connection"""
@@ -332,6 +332,23 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.populate_connection_list()
         QMessageBox.information(self, self.tr('Catalogue services'),
                                 self.tr('Default connections added'))
+
+    # Settings tab
+
+    def set_ows_save_title_ask(self):
+        """save ows save strategy as save ows title, ask if duplicate"""
+
+        self.settings.setValue('/MetaSearch/ows_save_strategy', 'title_ask')
+
+    def set_ows_save_title_no_ask(self):
+        """save ows save strategy as save ows title, do NOT ask if duplicate"""
+
+        self.settings.setValue('/MetaSearch/ows_save_strategy', 'title_no_ask')
+
+    def set_ows_save_temp_name(self):
+        """save ows save strategy as save with a temporary name"""
+
+        self.settings.setValue('/MetaSearch/ows_save_strategy', 'temp_name')
 
     # Search tab
 
@@ -666,7 +683,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # 1) use ows title but always ask before overwriting
         # 2) use ows title but always overwrite (never ask)
         # 3) use a temp name (which can be changed later)
-        if ows.identification.title is None or self.radioUseAsName.checkedButton() == self.tempName:
+        if ows.identification.title is None or self.radioTempName.isChecked():
             sname = '%s from MetaSearch' % stype[1]
         else:
             sname = ows.identification.title
@@ -678,7 +695,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.settings.endGroup()
 
         # check for duplicates
-        if sname in keys and self.radioUseAsName.checkedButton() == self.titleAsk:
+        if sname in keys and self.radioTitleAsk.isChecked():
             msg = self.tr('Connection %s exists. Overwrite?' % sname)
             res = QMessageBox.warning(self, self.tr('Saving server'), msg,
                                       QMessageBox.Yes | QMessageBox.No)
