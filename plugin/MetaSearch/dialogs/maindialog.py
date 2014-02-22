@@ -142,7 +142,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         # get preferred connection save strategy from settings and set it
         save_strat = self.settings.value(
-            '/metasearch/ows_save_strategy', 'title_ask')
+            '/MetaSearch/ows_save_strategy', 'title_ask')
         if save_strat == 'temp_name':
             self.radioTempName.setChecked(True)
         elif save_strat == 'title_no_ask':
@@ -529,9 +529,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
             src = QgsCoordinateReferenceSystem(4326)
             dst = self.map.mapRenderer().destinationCrs()
-            ct = QgsCoordinateTransform(src, dst)
+            ctr = QgsCoordinateTransform(src, dst)
             geom = QgsGeometry.fromPolygon(points)
-            geom.transform(ct)
+            geom.transform(ctr)
             self.rubber_band.setToGeometry(geom, None)
 
         # figure out if the data is interactive and can be operated on
