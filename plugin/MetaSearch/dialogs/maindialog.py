@@ -124,9 +124,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.populate_connection_list()
         self.btnCapabilities.setEnabled(False)
         self.spnRecords.setValue(
-            self.settings.value('/CSWClient/returnRecords', 10, int))
+            self.settings.value('/MetaSearch/returnRecords', 10, int))
 
-        key = '/CSWClient/%s' % self.cmbConnectionsSearch.currentText()
+        key = '/MetaSearch/%s' % self.cmbConnectionsSearch.currentText()
         self.catalog_url = self.settings.value('%s/url' % key)
 
         self.set_bbox_global()
@@ -138,7 +138,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
     def populate_connection_list(self):
         """populate select box with connections"""
 
-        self.settings.beginGroup('/CSWClient/')
+        self.settings.beginGroup('/MetaSearch/')
         self.cmbConnectionsServices.clear()
         self.cmbConnectionsServices.addItems(self.settings.childGroups())
         self.cmbConnectionsSearch.clear()
@@ -163,7 +163,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
     def set_connection_list_position(self):
         """set the current index to the selected connection"""
-        to_select = self.settings.value('/CSWClient/selected')
+        to_select = self.settings.value('/MetaSearch/selected')
         conn_count = self.cmbConnectionsServices.count()
 
         if conn_count == 0:
@@ -207,8 +207,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         elif caller == 'cmbConnectionsSearch':  # search tab
             current_text = self.cmbConnectionsSearch.currentText()
 
-        self.settings.setValue('/CSWClient/selected', current_text)
-        key = '/CSWClient/%s' % current_text
+        self.settings.setValue('/MetaSearch/selected', current_text)
+        key = '/MetaSearch/%s' % current_text
 
         if caller == 'cmbConnectionsSearch':  # bind to service in search tab
             self.catalog_url = self.settings.value('%s/url' % key)
@@ -220,7 +220,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         """show connection info"""
 
         current_text = self.cmbConnectionsServices.currentText()
-        key = '/CSWClient/%s' % current_text
+        key = '/MetaSearch/%s' % current_text
         self.catalog_url = self.settings.value('%s/url' % key)
 
         # connect to the server
@@ -253,7 +253,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         current_text = self.cmbConnectionsServices.currentText()
 
-        url = self.settings.value('/CSWClient/%s/url' % current_text)
+        url = self.settings.value('/MetaSearch/%s/url' % current_text)
 
         conn_edit = NewConnectionDialog(current_text)
         conn_edit.setWindowTitle(self.tr('Edit Catalogue service'))
@@ -267,7 +267,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         current_text = self.cmbConnectionsServices.currentText()
 
-        key = '/CSWClient/%s' % current_text
+        key = '/MetaSearch/%s' % current_text
 
         msg = self.tr('Remove service %s?' % current_text)
 
@@ -295,7 +295,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if doc is None:
             return
 
-        self.settings.beginGroup('/CSWClient/')
+        self.settings.beginGroup('/MetaSearch/')
         keys = self.settings.childGroups()
         self.settings.endGroup()
 
@@ -311,7 +311,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                     continue
 
             # no dups detected or overwrite is allowed
-            key = '/CSWClient/%s' % name
+            key = '/MetaSearch/%s' % name
             self.settings.setValue('%s/url' % key, server.attrib.get('url'))
 
         self.populate_connection_list()
@@ -370,12 +370,12 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.reset_buttons()
 
         # save some settings
-        self.settings.setValue('/CSWClient/returnRecords',
+        self.settings.setValue('/MetaSearch/returnRecords',
                                self.spnRecords.cleanText())
 
         # set current catalogue
         current_text = self.cmbConnectionsSearch.currentText()
-        key = '/CSWClient/%s' % current_text
+        key = '/MetaSearch/%s' % current_text
         self.catalog_url = self.settings.value('%s/url' % key)
 
         # start position and number of records to return
