@@ -315,8 +315,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.settings.setValue('%s/url' % key, server.attrib.get('url'))
 
         self.populate_connection_list()
-        QMessageBox.information(self, self.tr('Catalogue services'),
-                                self.tr('Default connections added'))
 
     # Search tab
 
@@ -424,14 +422,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
                                 self.tr('Connection error: %s' % err))
             return
 
-        if not self.catalog.results:
-            QMessageBox.information(self, self.tr('Search'),
-                                    self.tr('No results.'))
-            return
-
         if self.catalog.results['matches'] == 0:
-            QMessageBox.information(self, self.tr('Search'),
-                                    self.tr('0 search results'))
+            QApplication.restoreOverrideCursor()
             self.lblResults.setText(self.tr('0 results'))
             return
 
@@ -445,9 +437,10 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         position = self.catalog.results['returned'] + self.startfrom
 
-        msg = self.tr('Showing %d - %d of %d results' %
+        msg = self.tr('Showing %d - %d of %d result%s' %
                      (self.startfrom + 1, position,
-                      self.catalog.results['matches']))
+                      self.catalog.results['matches'],
+                      's'[self.catalog.results['matches'] == 1:]))
 
         self.lblResults.setText(msg)
 
