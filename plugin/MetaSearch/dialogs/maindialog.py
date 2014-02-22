@@ -499,8 +499,13 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # if the record has a bbox, show a footprint on the map
         if record.bbox is not None:
             points = bbox_to_polygon(record.bbox)
-            self.rubber_band.setToGeometry(QgsGeometry.fromPolygon(points),
-                                           None)
+
+            src = QgsCoordinateReferenceSystem(4326)
+            dst = self.map.mapRenderer().destinationCrs()
+            ct = QgsCoordinateTransform(src, dst)
+            geom = QgsGeometry.fromPolygon(points)
+            geom.transform(ct)
+            self.rubber_band.setToGeometry(geom, None)
 
         # figure out if the data is interactive and can be operated on
         self.find_services(record, item)
