@@ -183,7 +183,7 @@
           <item row="1" column="0" colspan="5">
            <widget class="QTreeWidget" name="treeRecords">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Double click to see full record information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Double click to see full record information</string>
             </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>

@@ -31,7 +31,7 @@ from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator
 from PyQt4.QtGui import QAction, QIcon
 
 from MetaSearch.dialogs.maindialog import MetaSearchDialog
-from MetaSearch.util import StaticContext, translate, open_url
+from MetaSearch.util import StaticContext, open_url
 
 LOGGER = logging.getLogger('MetaSearch')
 
@@ -45,6 +45,7 @@ class MetaSearchPlugin(object):
         self.context = StaticContext()
         self.action_run = None
         self.action_help = None
+        self.dialog = None
         self.web_menu = '&MetaSearch'
 
         LOGGER.debug('Setting up i18n')
@@ -66,7 +67,8 @@ class MetaSearchPlugin(object):
                 raise RuntimeError(msg)
             QCoreApplication.installTranslator(self.translator)
 
-        LOGGER.debug(translate('Translation loaded: %s' % tr_file))
+        LOGGER.debug(QCoreApplication.translate(
+            'Translation loaded: %s' % tr_file))
 
     def initGui(self):
         """startup"""
@@ -76,8 +78,11 @@ class MetaSearchPlugin(object):
                                     'images/MetaSearch.png'))
         self.action_run = QAction(run_icon, 'MetaSearch',
                                   self.iface.mainWindow())
-        self.action_run.setWhatsThis(translate('MetaSearch plugin'))
-        self.action_run.setStatusTip(translate('Search Metadata Catalogues'))
+        self.action_run.setWhatsThis(QCoreApplication.translate('MetaSearch',
+                                     'MetaSearch plugin'))
+        self.action_run.setStatusTip(QCoreApplication.translate('MetaSearch',
+                                     'Search Metadata Catalogues'))
+
         self.action_run.triggered.connect(self.run)
 
         self.iface.addToolBarIcon(self.action_run)
@@ -86,8 +91,10 @@ class MetaSearchPlugin(object):
         # help
         help_icon = QIcon('%s/%s' % (self.context.ppath, 'images/help.png'))
         self.action_help = QAction(help_icon, 'Help', self.iface.mainWindow())
-        self.action_help.setWhatsThis(translate('MetaSearch plugin help'))
-        self.action_help.setStatusTip(translate('Get Help on MetaSearch'))
+        self.action_help.setWhatsThis(QCoreApplication.translate('MetaSearch',
+                                      'MetaSearch plugin help'))
+        self.action_help.setStatusTip(QCoreApplication.translate('MetaSearch',
+                                      'Get Help on MetaSearch'))
         self.action_help.triggered.connect(self.help)
 
         self.iface.addPluginToWebMenu(self.web_menu, self.action_help)

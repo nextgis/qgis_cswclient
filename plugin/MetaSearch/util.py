@@ -37,7 +37,6 @@ from jinja2 import Environment, FileSystemLoader
 from pygments import highlight
 from pygments.lexers import XmlLexer
 from pygments.formatters import HtmlFormatter
-from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMessageBox
 
 LOGGER = logging.getLogger('MetaSearch')
@@ -63,12 +62,6 @@ def render_template(language, context, data, template):
     template_file = 'resources/templates/%s' % template
     template = env.get_template(template_file)
     return template.render(language=language, obj=data)
-
-
-def translate(text):
-    """translates text for objects which do not inherit QObject"""
-
-    return QCoreApplication.translate('MetaSearch', text)
 
 
 def get_connections_from_file(parent, filename):
