@@ -107,6 +107,8 @@ def build_qt_files():
                 filepath = os.path.join(root, pfile)
                 relpath = os.path.relpath(filepath, BASEDIR)
                 pyfiles.append(relpath)
+    pyfiles.append(options.base.plugin / 'plugin.py')
+
     for root, dirs, files in os.walk(options.base.plugin / 'ui'):
         for pfile in files:
             if pfile.endswith('.ui'):
