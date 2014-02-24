@@ -177,7 +177,7 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             msg = self.tr('No services/connections defined. To get '
                           'started with MetaSearch, create a new '
                           'connection by clicking \'New\' or click '
-                          'click \'Add default services\'.')
+                          '\'Add default services\'.')
             self.textMetadata.setHtml('<p><h3>%s</h3></p>' % msg)
         else:
             # connections - enable various buttons
