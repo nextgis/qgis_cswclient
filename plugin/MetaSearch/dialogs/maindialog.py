@@ -54,7 +54,7 @@ from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.recorddialog import RecordDialog
 from MetaSearch.dialogs.xmldialog import XMLDialog
 from MetaSearch.util import (get_connections_from_file, highlight_xml,
-                             render_template, StaticContext)
+                             open_url, render_template, StaticContext)
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
 
 
@@ -104,6 +104,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         self.leKeywords.returnPressed.connect(self.search)
         # prevent dialog from closing upon pressing enter
         self.buttonBox.button(QDialogButtonBox.Close).setAutoDefault(False)
+        # launch help from button
+        self.buttonBox.helpRequested.connect(self.help)
         self.btnCanvasBbox.clicked.connect(self.set_bbox_from_map)
         self.btnGlobalBbox.clicked.connect(self.set_bbox_global)
 
@@ -819,6 +821,11 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.btnPrev.setEnabled(False)
             self.btnNext.setEnabled(False)
             self.btnLast.setEnabled(False)
+
+    def help(self):
+        """launch help"""
+
+        open_url(self.context.metadata.get('general', 'homepage'))
 
     def reject(self):
         """back out of dialogue"""
