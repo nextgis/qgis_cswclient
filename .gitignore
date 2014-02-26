@@ -8,6 +8,7 @@
 *_rc.py
 ui_*.py
 *.qm
+*.mo
 
 MetaSearch.pro
 plugin/MetaSearch/ext-libs

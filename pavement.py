@@ -29,6 +29,7 @@ import xml.etree.ElementTree as etree
 import xmlrpclib
 import zipfile
 
+from jinja2 import Environment, FileSystemLoader
 from paver.easy import (call_task, cmdopts, error, info, needs, options, path,
                         pushd, sh, task, Bunch)
 
@@ -118,7 +119,7 @@ def build_qt_files():
 
     locale_dir = options.base.plugin / 'locale'
     for loc_dir in os.listdir(locale_dir):
-        filepath = os.path.join(locale_dir, loc_dir, 'LC_MESSAGES', 'ui.qm')
+        filepath = os.path.join(locale_dir, loc_dir, 'LC_MESSAGES', 'ui.ts')
         relpath = os.path.relpath(filepath, BASEDIR)
         trfiles.append(relpath)
 
@@ -126,6 +127,62 @@ def build_qt_files():
         pro_file.write('SOURCES=%s\n' % ' '.join(pyfiles))
         pro_file.write('FORMS=%s\n' % ' '.join(uifiles))
         pro_file.write('TRANSLATIONS=%s\n' % ' '.join(trfiles))
+
+
+@task
+@needs('build_qt_files')
+def extract_messages():
+    """generate .pot/.ts files from sources"""
+
+    # generate UI .ts file
+    sh('pylupdate4 -noobsolete MetaSearch.pro')
+
+    # generate .po file from plugin templates
+    env = Environment(extensions=['jinja2.ext.i18n'],
+                      loader=FileSystemLoader(options.base.plugin))
+
+    msg_strings = []
+    for tfile in ['service_metadata.html', 'record_metadata_dc.html']:
+        html_file = options.base.plugin / 'resources/templates' / tfile
+        for msg in env.extract_translations(open(html_file).read()):
+            if msg[2] not in msg_strings:
+                msg_strings.append(msg[2])
+
+    po_file = options.base.plugin / 'locale/en/LC_MESSAGES/templates.po'
+    with open(po_file, 'w') as po_file_obj:
+        for msg in msg_strings:
+            po_file_obj.write('msgid "%s"\nmsgstr "%s"\n\n' % (msg, msg))
+
+    # generate docs .po files
+    with pushd(options.base.docs):
+        sh('make gettext')
+        locales_arg = ''
+        for lang in os.listdir('locale'):
+            locales_arg = '%s -l %s' % (locales_arg, lang)
+        sh('sphinx-intl update -p _build/locale %s' % locales_arg)
+
+
+@task
+def compile_messages():
+    """generate .qm/.po files"""
+
+    # generate UI .qm file
+    sh('lrelease MetaSearch.pro')
+
+    # generate all .mo files
+    locales = options.base.plugin / 'locale'
+
+    for locale_dir in os.listdir(locales):
+        with pushd(locales / locale_dir):
+            for filename in os.listdir('LC_MESSAGES'):
+                if filename.endswith('.po'):
+                    with pushd('LC_MESSAGES'):
+                        sh('msgfmt %s -o %s' %
+                           (filename, filename.replace('.po', '.mo')))
+
+    # generate docs .mo files
+    with pushd(options.base.docs):
+        sh('sphinx-intl build')
 
 
 @task
@@ -156,7 +213,9 @@ def refresh_docs():
     make = sphinx_make()
     with pushd(options.base.docs):
         sh('%s clean' % make)
-        sh('%s html' % make)
+        sh('sphinx-intl build')
+        for lang in os.listdir(options.base.docs / 'locale'):
+            sh('%s -e SPHINXOPTS="-D language=\'%s\'" html' % (make, lang))
 
 
 @task
@@ -256,7 +315,7 @@ def test_default_csw_connections():
     csws = etree.parse(csw_connections_xml)
 
     for csw in csws.findall('csw'):
-        name = csw.attrib.get('name')
+        #name = csw.attrib.get('name')
         data = {
             'service': 'CSW',
             'version': '2.0.2',

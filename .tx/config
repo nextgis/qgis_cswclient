@@ -12,3 +12,9 @@ file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/ui.ts
 source_file = plugin/MetaSearch/locale/en/LC_MESSAGGES/ui.ts
 source_lang = en
 type = QT
+
+[MetaSearch.plugin.templates]
+file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/templates.po
+file_filter = plugin/MetaSearch/locale/en/LC_MESSAGES/templates.po
+source_lang = en
+type = PO
