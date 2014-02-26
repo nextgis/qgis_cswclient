@@ -30,6 +30,7 @@
 
 import json
 import os.path
+from urllib2 import build_opener, install_opener, ProxyHandler
 
 from PyQt4.QtCore import QSettings, Qt, SIGNAL, SLOT
 from PyQt4.QtGui import (QApplication, QColor, QCursor, QDialog,
@@ -152,6 +153,9 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             self.radioTitleNoAsk.setChecked(True)
         else:
             self.radioTitleAsk.setChecked(True)
+
+        # install proxy handler if specified in QGIS settings
+        self.install_proxy()
 
     # Servers tab
 
@@ -853,6 +857,31 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         QMessageBox.warning(self, self.tr('CSW Connection error'), msg)
         QApplication.restoreOverrideCursor()
         return False
+
+    def install_proxy(self):
+        """set proxy if one is set in QGIS network settings"""
+
+        # initially support HTTP for now
+        if self.settings.value('/proxy/proxyEnabled') == 'true':
+            if self.settings.value('/proxy/proxyType') == 'HttpProxy':
+                ptype = 'http'
+
+            user = self.settings.value('/proxy/proxyUser')
+            password = self.settings.value('/proxy/proxyPassword')
+            host = self.settings.value('/proxy/proxyHost')
+            port = self.settings.value('/proxy/proxyPort')
+
+            proxy_up = ''
+            proxy_port = ''
+
+            if all([user != '', password != '']):
+                proxy_up = '%s:%s@' % (user, password)
+
+            if port != '':
+                proxy_port = ':%s' % port
+
+            conn = '%s://%s%s%s' % (ptype, proxy_up, host, proxy_port)
+            install_opener(build_opener(ProxyHandler({ptype: conn})))
 
 
 def save_connections():
