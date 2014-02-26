@@ -242,6 +242,8 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         if caller == 'cmbConnectionsServices':  # clear server metadata
             self.textMetadata.clear()
 
+        self.btnCapabilities.setEnabled(False)
+
     def connection_info(self):
         """show connection info"""
 
