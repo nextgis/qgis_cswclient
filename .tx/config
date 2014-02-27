@@ -1,20 +1,20 @@
 [main]
 host = https://www.transifex.com
+type = PO
 
 [MetaSearch.docs]
-file_filter = docs/locale/<lang>/LC_MESSAGES/docs.po
-source_file = docs/locale/en/LC_MESSAGES/docs.po
+file_filter = docs/locale/<lang>/LC_MESSAGES/index.po
+source_file = docs/locale/en/LC_MESSAGES/index.po
 source_lang = en
 type = PO
 
-[MetaSearch.plugin]
+[MetaSearch.plugin-core]
 file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/ui.ts
-source_file = plugin/MetaSearch/locale/en/LC_MESSAGGES/ui.ts
+source_file = plugin/MetaSearch/locale/en/LC_MESSAGES/ui.ts
 source_lang = en
 type = QT
 
-[MetaSearch.plugin.templates]
-file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/templates.po
+[MetaSearch.plugin-templates]
 file_filter = plugin/MetaSearch/locale/en/LC_MESSAGES/templates.po
 source_lang = en
 type = PO
