@@ -150,8 +150,20 @@ def extract_messages():
 
     po_file = options.base.plugin / 'locale/en/LC_MESSAGES/templates.po'
     with open(po_file, 'w') as po_file_obj:
+        po_file_obj.write(
+            '\nmsgid ""\n'
+            'msgstr ""\n'
+            '"Project-Id-Version: MetaSearch 0.1-dev\\n"\n'
+            '"Report-Msgid-Bugs-To: \\n"\n'
+            '"POT-Creation-Date: 2014-02-25 12:58-0500\\n"\n'
+            '"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n"\n'
+            '"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n"\n'
+            '"Language-Team: LANGUAGE <LL@li.org>\\n"\n'
+            '"MIME-Version: 1.0\\n"\n'
+            '"Content-Type: text/plain; charset=UTF-8\\n"\n'
+            '"Content-Transfer-Encoding: 8bit\\n"\n\n')
         for msg in msg_strings:
-            po_file_obj.write('msgid "%s"\nmsgstr "%s"\n\n' % (msg, msg))
+            po_file_obj.write('msgid "%s"\nmsgstr ""\n\n' % msg)
 
     # generate docs .po files
     with pushd(options.base.docs):
