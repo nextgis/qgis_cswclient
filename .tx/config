@@ -7,21 +7,41 @@ file_filter = docs/locale/<lang>/LC_MESSAGES/index.po
 source_file = docs/locale/en/LC_MESSAGES/index.po
 source_lang = en
 type = PO
+trans.nl = docs/locale/nl/LC_MESSAGES/index.po
+trans.it = docs/locale/it/LC_MESSAGES/index.po
+trans.fr = docs/locale/fr/LC_MESSAGES/index.po
+trans.cs = docs/locale/cs/LC_MESSAGES/index.po
+trans.de = docs/locale/de/LC_MESSAGES/index.po
 
 [MetaSearch.docs_howto]
 file_filter = docs/locale/<lang>/LC_MESSAGES/howto.po
 source_file = docs/locale/en/LC_MESSAGES/howto.po
 source_lang = en
 type = PO
+trans.nl = docs/locale/nl/LC_MESSAGES/howto.po
+trans.it = docs/locale/it/LC_MESSAGES/howto.po
+trans.fr = docs/locale/fr/LC_MESSAGES/howto.po
+trans.cs = docs/locale/cs/LC_MESSAGES/howto.po
+trans.de = docs/locale/de/LC_MESSAGES/howto.po
 
 [MetaSearch.plugin_core]
 file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/ui.ts
 source_file = plugin/MetaSearch/locale/en/LC_MESSAGES/ui.ts
 source_lang = en
 type = QT
+trans.nl = plugin/MetaSearch/locale/nl/LC_MESSAGES/ui.ts
+trans.it = plugin/MetaSearch/locale/it/LC_MESSAGES/ui.ts
+trans.fr = plugin/MetaSearch/locale/fr/LC_MESSAGES/ui.ts
+trans.cs = plugin/MetaSearch/locale/cs/LC_MESSAGES/ui.ts
+trans.de = plugin/MetaSearch/locale/de/LC_MESSAGES/ui.ts
 
 [MetaSearch.plugin_templates]
 file_filter = plugin/MetaSearch/locale/<lang>/LC_MESSAGES/templates.po
 source_file = plugin/MetaSearch/locale/en/LC_MESSAGES/templates.po
 source_lang = en
 type = PO
+trans.nl = plugin/MetaSearch/locale/nl/LC_MESSAGES/templates.po
+trans.it = plugin/MetaSearch/locale/it/LC_MESSAGES/templates.po
+trans.fr = plugin/MetaSearch/locale/fr/LC_MESSAGES/templates.po
+trans.cs = plugin/MetaSearch/locale/cs/LC_MESSAGES/templates.po
+trans.de = plugin/MetaSearch/locale/de/LC_MESSAGES/templates.po

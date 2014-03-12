@@ -50,7 +50,10 @@ class MetaSearchPlugin(object):
 
         LOGGER.debug('Setting up i18n')
 
-        locale_name = str(QLocale.system().name()).split('_')[0]
+        # TODO: does this work for locales like: pt_BR ?
+        locale_name = QSettings().value("locale/userLocale")[0:2]
+        # this one below does not pick up when you load QGIS with --lang param
+#        locale_name = str(QLocale.system().name()).split('_')[0]
 
         LOGGER.debug('Locale name: %s', locale_name)
 
