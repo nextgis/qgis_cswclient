@@ -27,7 +27,7 @@
 import logging
 import os
 
-from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator
+from PyQt4.QtCore import QCoreApplication, QLocale, QSettings, QTranslator
 from PyQt4.QtGui import QAction, QIcon
 
 from MetaSearch.dialogs.maindialog import MetaSearchDialog
