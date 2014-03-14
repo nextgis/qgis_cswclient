@@ -83,16 +83,13 @@ def clean():
     for ui_file in os.listdir(options.base.ui):
         if ui_file.endswith('.py') and ui_file != '__init__.py':
             os.remove(options.base.plugin / 'ui' / ui_file)
+    os.remove(options.base.home / '%s.pro' % PLUGIN_NAME)
     sh('git clean -dxf')
 
 
 @task
-def build_qt_files():
+def build_ui_files():
     """build ui files"""
-
-    pyfiles = []
-    uifiles = []
-    trfiles = []
 
     # compile .ui files into Python
     for ui_file in os.listdir(options.base.ui):
@@ -101,7 +98,15 @@ def build_qt_files():
             sh('pyuic4 -o %s/ui/%s.py %s/ui/%s.ui' % (options.base.plugin,
                ui_file_basename, options.base.plugin, ui_file_basename))
 
-    # create .pro file
+
+@task
+def build_pro_file():
+    """create .pro file"""
+
+    pyfiles = []
+    uifiles = []
+    trfiles = []
+
     for root, dirs, files in os.walk(options.base.plugin / 'dialogs'):
         for pfile in files:
             if pfile.endswith('.py'):
@@ -130,7 +135,7 @@ def build_qt_files():
 
 
 @task
-@needs('build_qt_files')
+@needs(['build_ui_files', 'build_pro_file'])
 def extract_messages():
     """generate .pot/.ts files from sources"""
 
@@ -175,8 +180,11 @@ def extract_messages():
 
 
 @task
+@needs('build_pro_file')
 def compile_messages():
     """generate .qm/.po files"""
+
+    get_translations()
 
     # generate UI .qm file
     sh('lrelease MetaSearch.pro')
@@ -198,7 +206,7 @@ def compile_messages():
 
 
 @task
-@needs('build_qt_files')
+@needs('build_ui_files')
 def install():
     """install plugin into user QGIS environment"""
 
@@ -222,12 +230,15 @@ def install():
 def refresh_docs():
     """Build sphinx docs from scratch"""
 
+    get_translations()
     make = sphinx_make()
     with pushd(options.base.docs):
         sh('%s clean' % make)
         sh('sphinx-intl build')
         for lang in os.listdir(options.base.docs / 'locale'):
-            sh('%s -e SPHINXOPTS="-D language=\'%s\'" html' % (make, lang))
+            builddir = '%s/_build/%s' % (options.base.docs, lang)
+            sh('%s -e SPHINXOPTS="-D language=\'%s\'" -e BUILDDIR="%s" html' %
+               (make, lang, builddir))
 
 
 @task
@@ -241,7 +252,14 @@ def publish_docs():
        tempdir)
     with pushd(tempdir):
         sh('git checkout gh-pages')
-        sh('cp -rp %s/docs/_build/html/* .' % options.base.home)
+        # copy English to root
+        sh('cp -rp %s/docs/_build/en/html/* .' % options.base.home)
+        # copy all other languages to their own dir
+        for lang in os.listdir(options.base.docs / '_build'):
+            if lang != 'en':
+                sh('mkdir -p %s' % lang)
+                sh('cp -rp %s/docs/_build/%s/html/* %s' %
+                   (options.base.home, lang, lang))
         sh('git add .')
         sh('git commit -am "update live docs [ci skip]"')
         sh('git push origin gh-pages')
@@ -250,7 +268,7 @@ def publish_docs():
 
 
 @task
-@needs('build_qt_files', 'setup')
+@needs('build_ui_files', 'setup', 'extract_messages')
 def package():
     """create zip file of plugin"""
 
@@ -358,3 +376,9 @@ def get_package_filename():
     filename = '%s-%s.zip' % (PLUGIN_NAME, options.base.version)
     package_file = '%s/%s' % (options.base.tmp, filename)
     return package_file
+
+
+def get_translations():
+    """get Transifex translations"""
+
+    sh('tx pull -a')

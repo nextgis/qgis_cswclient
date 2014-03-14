@@ -12,3 +12,7 @@ ui_*.py
 
 MetaSearch.pro
 plugin/MetaSearch/ext-libs
+# ui .py files built dynamically
+plugin/MetaSearch/ui/*.py
+
+docs/_build
