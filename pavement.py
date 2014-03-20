@@ -265,7 +265,8 @@ def publish_docs():
                 for dfile in os.listdir(options.base.docs /
                                         '_build/%s/html' % lang):
                     if dfile.endswith('.html'):
-                        lfile = options.base.docs / '_build/%s/html/%s' % (lang, dfile)
+                        lfile = options.base.docs / '_build/%s/html/%s' % \
+                            (lang, dfile)
                         source = open(lfile).read()
                         for res in ['_static', '_sources', '_images']:
                             source = source.replace(res, '../%s' % res)
