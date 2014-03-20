@@ -257,6 +257,20 @@ def publish_docs():
         # copy all other languages to their own dir
         for lang in os.listdir(options.base.docs / '_build'):
             if lang != 'en':
+                # point all resources to english
+                for res in ['_static', '_sources', '_images']:
+                    sh('rm -fr %s/docs/_build/%s/html/%s' %
+                       (options.base.home, lang, res))
+                # update .html files to point to English
+                for dfile in os.listdir(options.base.docs /
+                                        '_build/%s/html' % lang):
+                    if dfile.endswith('.html'):
+                        lfile = options.base.docs / '_build/%s/html/%s' % (lang, dfile)
+                        source = open(lfile).read()
+                        for res in ['_static', '_sources', '_images']:
+                            source = source.replace(res, '../%s' % res)
+                        with open(lfile, 'w') as fhl:
+                            fhl.write(source)
                 sh('mkdir -p %s' % lang)
                 sh('cp -rp %s/docs/_build/%s/html/* %s' %
                    (options.base.home, lang, lang))
