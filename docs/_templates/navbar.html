@@ -3,17 +3,19 @@
 {% block navbarsearch %}
 {{ super() }}
 
+{% set pagename1 = pagename.split('/')[1] %}
+
 <ul class="nav navbar-nav">
   <li class="dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language <b class="caret"></b></a>
     <ul class="dropdown-menu localtoc">
       <ul>
         <li><a class="reference internal" href="{{ pagename }}.html" title="English">English</a></li>
-        <li><a class="reference internal" href="cs/{{ pagename }}.html" title="Czech">&#268;e&#353;tina</a></li>
-        <li><a class="reference internal" href="de/{{ pagename }}.html" title="German">Deutsch</a></li>
-        <li><a class="reference internal" href="fr/{{ pagename }}.html" title="French">Fran&ccedil;ais</a></li>
-        <li><a class="reference internal" href="it/{{ pagename }}.html" title="Italian">Italiano</a></li>
-        <li><a class="reference internal" href="nl/{{ pagename }}.html" title="Dutch">Nederlands</a></li>
+        <li><a class="reference internal" href="cs/{{ pathto(pagename, 1) }}.html" title="Czech">&#268;e&#353;tina</a></li>
+        <li><a class="reference internal" href="de/{{ pathto(pagename, 1) }}.html" title="German">Deutsch</a></li>
+        <li><a class="reference internal" href="fr/{{ pathto(pagename, 1) }}.html" title="French">Fran&ccedil;ais</a></li>
+        <li><a class="reference internal" href="it/{{ pathto(pagename, 1) }}.html" title="Italian">Italiano</a></li>
+        <li><a class="reference internal" href="nl/{{ pathto(pagename, 1) }}.html" title="Dutch">Nederlands</a></li>
       </ul>
     </ul>
   </li>
