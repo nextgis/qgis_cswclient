@@ -570,17 +570,24 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if link_type is not None:
                 link_type = link_type.upper()
 
+            # acceptable interactive link types
             wmswmst_link_types = ['OGC:WMS', 'OGC:WMTS',
                                   'OGC:WMS-1.1.1-HTTP-GET-MAP',
                                   'OGC:WMS-1.1.1-HTTP-GET-CAPABILITIES',
                                   'OGC:WMS-1.3.0-HTTP-GET-MAP',
-                                  'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES']
+                                  'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES',
+                                  'urn:x-esri:specification:ServiceType:wms:url',
+                                  'urn:x-esri:specification:ServiceType:Gmd:URL.wms']
             wfs_link_types = ['OGC:WFS',
                               'OGC:WFS-1.0.0-HTTP-GET-CAPABILITIES',
-                              'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES']
+                              'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES',
+                              'urn:x-esri:specification:ServiceType:wfs:url',
+                              'urn:x-esri:specification:ServiceType:Gmd:URL.wfs']
             wcs_link_types = ['OGC:WCS',
-                              'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES']
-            
+                              'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES',
+                              'urn:x-esri:specification:ServiceType:wcs:url',
+                              'urn:x-esri:specification:ServiceType:Gmd:URL.wcs']
+
             # if the link type exists, and it is one of the acceptable
             # interactive link types, then set
             if all([link_type is not None,
