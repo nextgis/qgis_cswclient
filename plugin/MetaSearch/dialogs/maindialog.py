@@ -570,33 +570,28 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if link_type is not None:
                 link_type = link_type.upper()
 
-            # if the link type exists, and it is one of the acceptable
-            # interactive link types, then set
-            if all([link_type is not None,
-                    link_type in ['OGC:WMS', 'OGC:WMTS',
+            wmswmst_link_types = ['OGC:WMS', 'OGC:WMTS',
                                   'OGC:WMS-1.1.1-HTTP-GET-MAP',
                                   'OGC:WMS-1.1.1-HTTP-GET-CAPABILITIES',
                                   'OGC:WMS-1.3.0-HTTP-GET-MAP',
-                                  'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES',
-                                  'OGC:WFS',
-                                  'OGC:WFS-1.0.0-HTTP-GET-CAPABILITIES',
-                                  'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES',
-                                  'OGC:WCS',
-                                  'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES']]):
-                if link_type in ['OGC:WMS', 'OGC:WMTS',
-                                 'OGC:WMS-1.1.1-HTTP-GET-MAP',
-                                 'OGC:WMS-1.1.1-HTTP-GET-CAPABILITIES',
-                                 'OGC:WMS-1.3.0-HTTP-GET-MAP',
-                                 'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES']:
+                                  'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES']
+            wfs_link_types = ['OGC:WFS',
+                              'OGC:WFS-1.0.0-HTTP-GET-CAPABILITIES',
+                              'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES']
+            wcs_link_types = ['OGC:WCS',
+                              'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES']
+            
+            # if the link type exists, and it is one of the acceptable
+            # interactive link types, then set
+            if all([link_type is not None,
+                    link_type in wmswmst_link_types + wfs_link_types + wcs_link_types]):
+                if link_type in wmswmst_link_types:
                     services['wms'] = link['url']
                     self.btnAddToWms.setEnabled(True)
-                if link_type in ['OGC:WFS',
-                                 'OGC:WFS-1.0.0-HTTP-GET-CAPABILITIES',
-                                 'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES']:
+                if link_type in wfs_link_types:
                     services['wfs'] = link['url']
                     self.btnAddToWfs.setEnabled(True)
-                if link_type in ['OGC:WCS',
-                                 'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES']:
+                if link_type in wcs_link_types:
                     services['wcs'] = link['url']
                     self.btnAddToWcs.setEnabled(True)
 
