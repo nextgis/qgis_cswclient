@@ -54,6 +54,7 @@ from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.recorddialog import RecordDialog
 from MetaSearch.dialogs.xmldialog import XMLDialog
+from MetaSearch import link_types
 from MetaSearch.util import (get_connections_from_file, highlight_xml,
                              open_url, render_template, StaticContext)
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
@@ -570,28 +571,15 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
             if link_type is not None:
                 link_type = link_type.upper()
 
-            # acceptable interactive link types
-            wmswmst_link_types = ['OGC:WMS', 'OGC:WMTS',
-                                  'OGC:WMS-1.1.1-HTTP-GET-MAP',
-                                  'OGC:WMS-1.1.1-HTTP-GET-CAPABILITIES',
-                                  'OGC:WMS-1.3.0-HTTP-GET-MAP',
-                                  'OGC:WMS-1.3.0-HTTP-GET-CAPABILITIES',
-                                  'urn:x-esri:specification:ServiceType:wms:url',
-                                  'urn:x-esri:specification:ServiceType:Gmd:URL.wms']
-            wfs_link_types = ['OGC:WFS',
-                              'OGC:WFS-1.0.0-HTTP-GET-CAPABILITIES',
-                              'OGC:WFS-1.1.0-HTTP-GET-CAPABILITIES',
-                              'urn:x-esri:specification:ServiceType:wfs:url',
-                              'urn:x-esri:specification:ServiceType:Gmd:URL.wfs']
-            wcs_link_types = ['OGC:WCS',
-                              'OGC:WCS-1.1.0-HTTP-GET-CAPABILITIES',
-                              'urn:x-esri:specification:ServiceType:wcs:url',
-                              'urn:x-esri:specification:ServiceType:Gmd:URL.wcs']
+            wmswmst_link_types = map(str.upper, link_types.WMSWMST_LINK_TYPES)
+            wfs_link_types = map(str.upper, link_types.WFS_LINK_TYPES)
+            wcs_link_types = map(str.upper, link_types.WCS_LINK_TYPES)
 
             # if the link type exists, and it is one of the acceptable
             # interactive link types, then set
             if all([link_type is not None,
-                    link_type in wmswmst_link_types + wfs_link_types + wcs_link_types]):
+                    link_type in wmswmst_link_types + wfs_link_types +
+                    wcs_link_types]):
                 if link_type in wmswmst_link_types:
                     services['wms'] = link['url']
                     self.btnAddToWms.setEnabled(True)
