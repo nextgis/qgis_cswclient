@@ -50,11 +50,11 @@ from owslib.wfs import WebFeatureService
 from owslib.wms import WebMapService
 from owslib.wmts import WebMapTileService
 
+from MetaSearch import link_types
 from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.recorddialog import RecordDialog
 from MetaSearch.dialogs.xmldialog import XMLDialog
-from MetaSearch import link_types
 from MetaSearch.util import (get_connections_from_file, highlight_xml,
                              open_url, render_template, StaticContext)
 from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
