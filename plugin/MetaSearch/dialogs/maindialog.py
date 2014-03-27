@@ -413,7 +413,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # clear all fields and disable buttons
         self.lblResults.clear()
         self.treeRecords.clear()
-        self.textAbstract.clear()
 
         self.reset_buttons()
 
@@ -533,11 +532,6 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
 
         identifier = get_item_data(item, 'identifier')
         record = self.catalog.records[identifier]
-
-        if record.abstract:
-            self.textAbstract.setText(record.abstract.strip())
-        else:
-            self.textAbstract.setText(self.tr('No abstract'))
 
         # if the record has a bbox, show a footprint on the map
         if record.bbox is not None:
