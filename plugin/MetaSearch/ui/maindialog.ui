@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabSearch">
       <attribute name="title">
@@ -26,94 +26,195 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>Find</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Keywords</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" colspan="2">
-           <widget class="QLineEdit" name="leKeywords"/>
-          </item>
-          <item row="2" column="5">
-           <widget class="QPushButton" name="btnCanvasBbox">
-            <property name="text">
-             <string>Map extent</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5" colspan="2">
-           <widget class="QComboBox" name="cmbConnectionsSearch"/>
-          </item>
-          <item row="0" column="4">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>        From</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="leEast">
-            <property name="text">
-             <string>180</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="6">
-           <widget class="QPushButton" name="btnGlobalBbox">
-            <property name="text">
-             <string>Set global</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QLineEdit" name="leNorth">
-            <property name="text">
-             <string>90</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="leWest">
-            <property name="text">
-             <string>-180</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QLineEdit" name="leSouth">
-            <property name="text">
-             <string>-90</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="5" colspan="2">
-           <widget class="QPushButton" name="btnSearch">
-            <property name="text">
-             <string>Search</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>xmin, ymin</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>xmax, ymax</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QLabel" name="label_3">
+          <property name="geometry">
+           <rect>
+            <x>7</x>
+            <y>33</y>
+            <width>71</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Keywords</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="leKeywords">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>30</y>
+            <width>191</width>
+            <height>26</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnCanvasBbox">
+          <property name="geometry">
+           <rect>
+            <x>280</x>
+            <y>90</y>
+            <width>111</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Map extent</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="cmbConnectionsSearch">
+          <property name="geometry">
+           <rect>
+            <x>340</x>
+            <y>30</y>
+            <width>221</width>
+            <height>27</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label">
+          <property name="geometry">
+           <rect>
+            <x>250</x>
+            <y>30</y>
+            <width>78</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>        From</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnGlobalBbox">
+          <property name="geometry">
+           <rect>
+            <x>280</x>
+            <y>60</y>
+            <width>111</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Set global</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnSearch">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>90</y>
+            <width>161</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Search</string>
+          </property>
+         </widget>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>60</y>
+            <width>271</width>
+            <height>58</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>xmax</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="leEast">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>180</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>ymax</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3" colspan="2">
+            <widget class="QLineEdit" name="leNorth">
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>90</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>xmin</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="leWest">
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>-180</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>ymin</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3" colspan="2">
+            <widget class="QLineEdit" name="leSouth">
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>-90</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
        <item>
