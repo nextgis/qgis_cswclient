@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
-    <height>650</height>
+    <width>608</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,93 +26,204 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string>Find</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="2" column="6">
-           <widget class="QPushButton" name="btnGlobalBbox">
-            <property name="text">
-             <string>Set global</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5" colspan="2">
-           <widget class="QComboBox" name="cmbConnectionsSearch"/>
-          </item>
-          <item row="2" column="5">
-           <widget class="QPushButton" name="btnCanvasBbox">
-            <property name="text">
-             <string>Map extent</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="QLineEdit" name="leWest">
-            <property name="text">
-             <string>-180</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="4">
-           <widget class="QLineEdit" name="leNorth">
-            <property name="text">
-             <string>90</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="5">
-           <widget class="QSpinBox" name="spnRecords"/>
-          </item>
-          <item row="3" column="6">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Records</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="5">
-           <widget class="QPushButton" name="btnSearch">
-            <property name="text">
-             <string>Search</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="leSouth">
-            <property name="text">
-             <string>-90</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QLineEdit" name="leEast">
-            <property name="text">
-             <string>180</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" colspan="2">
-           <widget class="QLineEdit" name="leKeywords"/>
-          </item>
-          <item row="0" column="4">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>        From</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Keywords</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QLabel" name="label_3">
+          <property name="geometry">
+           <rect>
+            <x>7</x>
+            <y>33</y>
+            <width>71</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Keywords</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="leKeywords">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>30</y>
+            <width>191</width>
+            <height>26</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnCanvasBbox">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>90</y>
+            <width>131</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Map extent</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="cmbConnectionsSearch">
+          <property name="geometry">
+           <rect>
+            <x>340</x>
+            <y>30</y>
+            <width>231</width>
+            <height>27</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label">
+          <property name="geometry">
+           <rect>
+            <x>250</x>
+            <y>30</y>
+            <width>78</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>        From</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnGlobalBbox">
+          <property name="geometry">
+           <rect>
+            <x>290</x>
+            <y>60</y>
+            <width>131</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Set global</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnSearch">
+          <property name="geometry">
+           <rect>
+            <x>430</x>
+            <y>90</y>
+            <width>141</width>
+            <height>27</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Search</string>
+          </property>
+         </widget>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>60</y>
+            <width>272</width>
+            <height>58</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Xmax</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="leEast">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>180</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>Ymax</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3" colspan="2">
+            <widget class="QLineEdit" name="leNorth">
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>90</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Xmin</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="leWest">
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>-180</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Ymin</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3" colspan="2">
+            <widget class="QLineEdit" name="leSouth">
+             <property name="minimumSize">
+              <size>
+               <width>85</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>-90</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <zorder>label_3</zorder>
+         <zorder>leKeywords</zorder>
+         <zorder>btnCanvasBbox</zorder>
+         <zorder>cmbConnectionsSearch</zorder>
+         <zorder>label</zorder>
+         <zorder>btnGlobalBbox</zorder>
+         <zorder>btnSearch</zorder>
+         <zorder>layoutWidget</zorder>
+         <zorder>groupBox_2</zorder>
         </widget>
        </item>
        <item>
@@ -121,58 +232,6 @@
           <string>Results</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="2" column="2">
-           <widget class="QPushButton" name="btnNext">
-            <property name="text">
-             <string>&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnFirst">
-            <property name="text">
-             <string>&lt;&lt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QPushButton" name="btnAddToWcs">
-            <property name="text">
-             <string>Add WCS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QPushButton" name="btnAddToWms">
-            <property name="text">
-             <string>Add WMS/WMTS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" colspan="5">
-           <widget class="QTextEdit" name="textAbstract"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="btnPrev">
-            <property name="text">
-             <string>&lt;</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QPushButton" name="btnAddToWfs">
-            <property name="text">
-             <string>Add WFS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Abstract</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" colspan="3">
            <widget class="QLabel" name="lblResults">
             <property name="text">
@@ -218,6 +277,19 @@
             </column>
            </widget>
           </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="btnPrev">
+            <property name="minimumSize">
+             <size>
+              <width>145</width>
+              <height>27</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&lt;</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="3" colspan="2">
            <widget class="QPushButton" name="btnShowXml">
             <property name="text">
@@ -225,10 +297,63 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="3">
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnFirst">
+            <property name="text">
+             <string>&lt;&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="btnAddToWms">
+            <property name="text">
+             <string>Add WMS/WMTS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="btnAddToWfs">
+            <property name="minimumSize">
+             <size>
+              <width>145</width>
+              <height>27</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Add WFS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="4">
            <widget class="QPushButton" name="btnLast">
+            <property name="minimumSize">
+             <size>
+              <width>140</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>&gt;&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QPushButton" name="btnAddToWcs">
+            <property name="text">
+             <string>Add WCS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QPushButton" name="btnNext">
+            <property name="minimumSize">
+             <size>
+              <width>140</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>&gt;</string>
             </property>
            </widget>
           </item>
@@ -237,14 +362,12 @@
          <zorder>lblResults</zorder>
          <zorder>btnPrev</zorder>
          <zorder>btnFirst</zorder>
-         <zorder>btnNext</zorder>
-         <zorder>label_4</zorder>
-         <zorder>textAbstract</zorder>
-         <zorder>btnAddToWms</zorder>
          <zorder>btnShowXml</zorder>
-         <zorder>btnLast</zorder>
+         <zorder>btnAddToWms</zorder>
          <zorder>btnAddToWfs</zorder>
+         <zorder>btnLast</zorder>
          <zorder>btnAddToWcs</zorder>
+         <zorder>btnNext</zorder>
         </widget>
        </item>
       </layout>
@@ -331,8 +454,8 @@
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>558</width>
-         <height>548</height>
+         <width>571</width>
+         <height>131</height>
         </rect>
        </property>
        <property name="title">
@@ -384,6 +507,58 @@
          </spacer>
         </item>
        </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>150</y>
+         <width>571</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Results paging</string>
+       </property>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>41</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Show</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spnRecords">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>30</y>
+          <width>104</width>
+          <height>26</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>30</y>
+          <width>229</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>results at a time</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
       </widget>
      </widget>
     </widget>
