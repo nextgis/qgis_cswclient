@@ -360,7 +360,7 @@ def test_default_csw_connections():
     csws = etree.parse(csw_connections_xml)
 
     for csw in csws.findall('csw'):
-        #name = csw.attrib.get('name')
+        # name = csw.attrib.get('name')
         data = {
             'service': 'CSW',
             'version': '2.0.2',
