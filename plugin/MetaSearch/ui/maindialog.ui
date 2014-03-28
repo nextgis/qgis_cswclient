@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
+    <width>608</width>
     <height>550</height>
    </rect>
   </property>
@@ -30,13 +30,6 @@
           <string>Find</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="3" column="3">
-           <widget class="QLineEdit" name="leWest">
-            <property name="text">
-             <string>-180</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
@@ -51,13 +44,6 @@
            <widget class="QPushButton" name="btnCanvasBbox">
             <property name="text">
              <string>Map extent</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="5" colspan="2">
-           <widget class="QPushButton" name="btnSearch">
-            <property name="text">
-             <string>Search</string>
             </property>
            </widget>
           </item>
@@ -78,24 +64,52 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLineEdit" name="leSouth">
+          <item row="2" column="6">
+           <widget class="QPushButton" name="btnGlobalBbox">
             <property name="text">
-             <string>-90</string>
+             <string>Set global</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
+          <item row="2" column="3">
            <widget class="QLineEdit" name="leNorth">
             <property name="text">
              <string>90</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="6">
-           <widget class="QPushButton" name="btnGlobalBbox">
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="leWest">
             <property name="text">
-             <string>Set global</string>
+             <string>-180</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QLineEdit" name="leSouth">
+            <property name="text">
+             <string>-90</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="5" colspan="2">
+           <widget class="QPushButton" name="btnSearch">
+            <property name="text">
+             <string>Search</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>xmin, ymin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>xmax, ymax</string>
             </property>
            </widget>
           </item>
@@ -372,37 +386,44 @@
        <property name="title">
         <string>Results paging</string>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QLabel" name="label_5">
         <property name="geometry">
          <rect>
-          <x>30</x>
+          <x>10</x>
           <y>30</y>
-          <width>163</width>
-          <height>22</height>
+          <width>41</width>
+          <height>26</height>
          </rect>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Show</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="spnRecords"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>results at a time</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="text">
+         <string>Show</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spnRecords">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>30</y>
+          <width>104</width>
+          <height>26</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>30</y>
+          <width>229</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>results at a time</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
        </widget>
       </widget>
      </widget>
