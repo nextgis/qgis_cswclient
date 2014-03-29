@@ -536,13 +536,13 @@ class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
         # if the record has a bbox, show a footprint on the map
         if record.bbox is not None:
             points = bbox_to_polygon(record.bbox)
-
-            src = QgsCoordinateReferenceSystem(4326)
-            dst = self.map.mapRenderer().destinationCrs()
-            ctr = QgsCoordinateTransform(src, dst)
-            geom = QgsGeometry.fromPolygon(points)
-            geom.transform(ctr)
-            self.rubber_band.setToGeometry(geom, None)
+            if points is not None:
+                src = QgsCoordinateReferenceSystem(4326)
+                dst = self.map.mapRenderer().destinationCrs()
+                ctr = QgsCoordinateTransform(src, dst)
+                geom = QgsGeometry.fromPolygon(points)
+                geom.transform(ctr)
+                self.rubber_band.setToGeometry(geom, None)
 
         # figure out if the data is interactive and can be operated on
         self.find_services(record, item)
@@ -901,15 +901,21 @@ def _get_field_value(field):
 
 def bbox_to_polygon(bbox):
     """converts OWSLib bbox object to list of QgsPoint objects"""
+    
+    if bbox.minx is not None and\
+       bbox.maxx is not None and\
+       bbox.miny is not None and\
+       bbox.maxy is not None:
+        minx = float(bbox.minx)
+        miny = float(bbox.miny)
+        maxx = float(bbox.maxx)
+        maxy = float(bbox.maxy)
 
-    minx = float(bbox.minx)
-    miny = float(bbox.miny)
-    maxx = float(bbox.maxx)
-    maxy = float(bbox.maxy)
-
-    return [[
-        QgsPoint(minx, miny),
-        QgsPoint(minx, maxy),
-        QgsPoint(maxx, maxy),
-        QgsPoint(maxx, miny)
-    ]]
+        return [[
+            QgsPoint(minx, miny),
+            QgsPoint(minx, maxy),
+            QgsPoint(maxx, maxy),
+            QgsPoint(maxx, miny)
+        ]]
+    else:
+        return None 
