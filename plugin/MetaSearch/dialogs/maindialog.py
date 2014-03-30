@@ -901,11 +901,11 @@ def _get_field_value(field):
 
 def bbox_to_polygon(bbox):
     """converts OWSLib bbox object to list of QgsPoint objects"""
-    
-    if bbox.minx is not None and\
-       bbox.maxx is not None and\
-       bbox.miny is not None and\
-       bbox.maxy is not None:
+
+    if all([bbox.minx is not None,
+            bbox.maxx is not None,
+            bbox.miny is not None,
+            bbox.maxy is not None]):
         minx = float(bbox.minx)
         miny = float(bbox.miny)
         maxx = float(bbox.maxx)
@@ -918,4 +918,4 @@ def bbox_to_polygon(bbox):
             QgsPoint(maxx, miny)
         ]]
     else:
-        return None 
+        return None
