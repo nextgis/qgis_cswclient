@@ -135,7 +135,7 @@ def build_pro_file():
 
 
 @task
-@needs(['build_ui_files', 'build_pro_file'])
+@needs(['build_pro_file'])
 def extract_messages():
     """generate .pot/.ts files from sources"""
 
@@ -206,7 +206,6 @@ def compile_messages():
 
 
 @task
-@needs('build_ui_files')
 def install():
     """install plugin into user QGIS environment"""
 

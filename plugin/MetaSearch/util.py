@@ -38,6 +38,7 @@ from pygments import highlight
 from pygments.lexers import XmlLexer
 from pygments.formatters import HtmlFormatter
 from PyQt4.QtGui import QMessageBox
+from PyQt4.uic import loadUiType
 
 LOGGER = logging.getLogger('MetaSearch')
 
@@ -50,6 +51,13 @@ class StaticContext(object):
         self.ppath = os.path.dirname(os.path.abspath(__file__))
         self.metadata = ConfigParser.ConfigParser()
         self.metadata.readfp(open(os.path.join(self.ppath, 'metadata.txt')))
+
+
+def get_ui_class(ui_file):
+    """return class object of a uifile"""
+    ui_file_full = '%s%sui%s%s' % (os.path.dirname(os.path.abspath(__file__)),
+                                   os.sep, os.sep, ui_file)
+    return loadUiType(ui_file_full)[0]
 
 
 def render_template(language, context, data, template):

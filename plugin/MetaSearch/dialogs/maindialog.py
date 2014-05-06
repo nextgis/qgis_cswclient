@@ -55,12 +55,14 @@ from MetaSearch.dialogs.manageconnectionsdialog import ManageConnectionsDialog
 from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.recorddialog import RecordDialog
 from MetaSearch.dialogs.xmldialog import XMLDialog
-from MetaSearch.util import (get_connections_from_file, highlight_xml,
-                             open_url, render_template, StaticContext)
-from MetaSearch.ui.maindialog import Ui_MetaSearchDialog
+from MetaSearch.util import (get_connections_from_file, get_ui_class,
+                             highlight_xml, open_url, render_template,
+                             StaticContext)
+
+BASE_CLASS = get_ui_class('maindialog.ui')
 
 
-class MetaSearchDialog(QDialog, Ui_MetaSearchDialog):
+class MetaSearchDialog(QDialog, BASE_CLASS):
     """main dialogue"""
     def __init__(self, iface):
         """init window"""
