@@ -39,6 +39,7 @@ from MetaSearch.util import (get_connections_from_file, get_ui_class,
 
 BASE_CLASS = get_ui_class('manageconnectionsdialog.ui')
 
+
 class ManageConnectionsDialog(QDialog, BASE_CLASS):
     """manage connections"""
     def __init__(self, mode):
