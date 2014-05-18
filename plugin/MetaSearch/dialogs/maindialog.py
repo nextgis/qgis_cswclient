@@ -865,6 +865,8 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
 
             if port != '':
                 proxy_port = ':%s' % port
+            else:
+                return
 
             conn = '%s://%s%s%s' % (ptype, proxy_up, host, proxy_port)
             install_opener(build_opener(ProxyHandler({ptype: conn})))
