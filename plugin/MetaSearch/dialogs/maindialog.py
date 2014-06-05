@@ -110,6 +110,7 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
         self.buttonBox.button(QDialogButtonBox.Close).setAutoDefault(False)
         # launch help from button
         self.buttonBox.helpRequested.connect(self.help)
+        self.btnCanvasBbox.setAutoDefault(False)
         self.btnCanvasBbox.clicked.connect(self.set_bbox_from_map)
         self.btnGlobalBbox.clicked.connect(self.set_bbox_global)
 
