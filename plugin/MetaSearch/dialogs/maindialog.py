@@ -503,7 +503,8 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
             else:
                 item.setText(0, 'unknown')
             if self.catalog.records[rec].title:
-                item.setText(1, normalize_text(self.catalog.records[rec].title))
+                item.setText(1,
+                             normalize_text(self.catalog.records[rec].title))
             if self.catalog.records[rec].identifier:
                 set_item_data(item, 'identifier',
                               self.catalog.records[rec].identifier)
