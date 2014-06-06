@@ -126,3 +126,9 @@ def open_url(url):
     """open URL in web browser"""
 
     webbrowser.open(url)
+
+
+def normalize_text(text):
+    """tidy up string"""
+
+    return text.replace('\n', '')

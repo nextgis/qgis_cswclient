@@ -56,8 +56,8 @@ from MetaSearch.dialogs.newconnectiondialog import NewConnectionDialog
 from MetaSearch.dialogs.recorddialog import RecordDialog
 from MetaSearch.dialogs.xmldialog import XMLDialog
 from MetaSearch.util import (get_connections_from_file, get_ui_class,
-                             highlight_xml, open_url, render_template,
-                             StaticContext)
+                             highlight_xml, normalize_text, open_url,
+                             render_template, StaticContext)
 
 BASE_CLASS = get_ui_class('maindialog.ui')
 
@@ -499,11 +499,11 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
         for rec in self.catalog.records:
             item = QTreeWidgetItem(self.treeRecords)
             if self.catalog.records[rec].type:
-                item.setText(0, self.catalog.records[rec].type)
+                item.setText(0, normalize_text(self.catalog.records[rec].type))
             else:
                 item.setText(0, 'unknown')
             if self.catalog.records[rec].title:
-                item.setText(1, self.catalog.records[rec].title)
+                item.setText(1, normalize_text(self.catalog.records[rec].title))
             if self.catalog.records[rec].identifier:
                 set_item_data(item, 'identifier',
                               self.catalog.records[rec].identifier)
