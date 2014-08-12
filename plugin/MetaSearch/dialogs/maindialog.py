@@ -542,9 +542,16 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
             if points is not None:
                 src = QgsCoordinateReferenceSystem(4326)
                 dst = self.map.mapRenderer().destinationCrs()
-                ctr = QgsCoordinateTransform(src, dst)
                 geom = QgsGeometry.fromPolygon(points)
-                geom.transform(ctr)
+                if src.postgisSrid() != dst.postgisSrid():
+                    ctr = QgsCoordinateTransform(src, dst)
+                    try:
+                        geom.transform(ctr)
+                    except Exception, err:
+                        QMessageBox.warning(
+                            self,
+                            self.tr('Coordinate Transformation Error'),
+                            str(err))
                 self.rubber_band.setToGeometry(geom, None)
 
         # figure out if the data is interactive and can be operated on
