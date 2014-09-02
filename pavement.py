@@ -281,7 +281,7 @@ def publish_docs():
 
 
 @task
-@needs('build_ui_files', 'setup', 'extract_messages')
+@needs('setup', 'extract_messages')
 def package():
     """create zip file of plugin"""
 
