@@ -2,7 +2,7 @@
 name=MetaSearch Catalogue Client
 description=MetaSearch is a QGIS plugin to interact with metadata catalogue services (CSW).
 category=Web
-version=0.3.0
+version=0.3-dev
 qgisMinimumVersion=2.0
 icon=images/MetaSearch.png
 author=Tom Kralidis
@@ -13,12 +13,6 @@ tracker=https://github.com/geopython/MetaSearch/issues
 repository=https://github.com/geopython/MetaSearch.git
 experimental=False
 deprecated=False
-changelog=Version 0.3.0 (2014-09-02)
-    - refactor link types support
-    - updated default connections list
-    - ui files are now built at runtime
-    - more robust BBOX parsing
-    - remove service GetCapabilities checking (left to relevant QGIS providers)
-    - support for protected service (left to relevant QGIS providers)
-    - fir WMTS connectivity (left to relevant QGIS providers)
-    - fix querying CSW servers with different GetRecords URLs
+changelog=TBDVersion x.y.z (YYYY-MM-DD)
+    - change1
+    - change2
