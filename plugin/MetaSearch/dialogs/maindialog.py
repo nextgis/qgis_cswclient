@@ -124,11 +124,6 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
         self.btnAddToWcs.clicked.connect(self.add_to_ows)
         self.btnShowXml.clicked.connect(self.show_xml)
 
-        # settings stuff
-        self.radioTitleAsk.clicked.connect(self.set_ows_save_title_ask)
-        self.radioTitleNoAsk.clicked.connect(self.set_ows_save_title_no_ask)
-        self.radioTempName.clicked.connect(self.set_ows_save_temp_name)
-
         self.manageGui()
 
     def manageGui(self):
@@ -146,16 +141,6 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
         self.set_bbox_global()
 
         self.reset_buttons()
-
-        # get preferred connection save strategy from settings and set it
-        save_strat = self.settings.value(
-            '/MetaSearch/ows_save_strategy', 'title_ask')
-        if save_strat == 'temp_name':
-            self.radioTempName.setChecked(True)
-        elif save_strat == 'title_no_ask':
-            self.radioTitleNoAsk.setChecked(True)
-        else:
-            self.radioTitleAsk.setChecked(True)
 
         # install proxy handler if specified in QGIS settings
         self.install_proxy()
@@ -664,37 +649,9 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
             stype = ['OGC:WCS', 'wcs', 'wcs']
             data_url = item_data['wcs']
 
-        # test if URL is valid WMS server
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-
-            service_type = stype[0]
-            if service_type == 'OGC:WMS/OGC:WMTS':
-                try:
-                    ows = WebMapService(data_url)
-                except Exception, err:
-                    ows = WebMapTileService(data_url)
-            elif service_type == 'OGC:WFS':
-                ows = WebFeatureService(data_url)
-            elif service_type == 'OGC:WCS':
-                # TODO: remove version once OWSLib defaults to 1.0.0
-                ows = WebCoverageService(data_url, '1.0.0')
-        except Exception, err:
-            QApplication.restoreOverrideCursor()
-            msg = self.tr('Error connecting to %s: %s' % (stype[0], err))
-            QMessageBox.warning(self, self.tr('Connection error'), msg)
-            return
-
         QApplication.restoreOverrideCursor()
 
-        # ows save connection strategies, one of
-        # 1) use ows title but always ask before overwriting
-        # 2) use ows title but always overwrite (never ask)
-        # 3) use a temp name (which can be changed later)
-        if ows.identification.title is None or self.radioTempName.isChecked():
-            sname = '%s from MetaSearch' % stype[1]
-        else:
-            sname = ows.identification.title
+        sname = '%s from MetaSearch' % stype[1]
 
         # store connection
         # check if there is a connection with same name
@@ -703,7 +660,7 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
         self.settings.endGroup()
 
         # check for duplicates
-        if sname in keys and self.radioTitleAsk.isChecked():
+        if sname in keys:
             msg = self.tr('Connection %s exists. Overwrite?' % sname)
             res = QMessageBox.warning(self, self.tr('Saving server'), msg,
                                       QMessageBox.Yes | QMessageBox.No)
@@ -718,6 +675,9 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
         # open provider window
         ows_provider = QgsProviderRegistry.instance().selectWidget(stype[2],
                                                                    self)
+
+        service_type = stype[0]
+
         # connect dialog signals to iface slots
         if service_type == 'OGC:WMS/OGC:WMTS':
             ows_provider.connect(
