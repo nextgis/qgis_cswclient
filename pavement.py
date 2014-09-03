@@ -102,6 +102,8 @@ def build_ui_files():
 def build_pro_file():
     """create .pro file"""
 
+    get_translations()
+
     pyfiles = []
     uifiles = []
     trfiles = []
@@ -182,8 +184,6 @@ def extract_messages():
 @needs('build_pro_file')
 def compile_messages():
     """generate .qm/.po files"""
-
-    get_translations()
 
     # generate UI .qm file
     sh('lrelease MetaSearch.pro')
@@ -281,7 +281,7 @@ def publish_docs():
 
 
 @task
-@needs('setup', 'extract_messages')
+@needs('setup', 'extract_messages', 'compile_messages')
 def package():
     """create zip file of plugin"""
 
