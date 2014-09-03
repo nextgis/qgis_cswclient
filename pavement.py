@@ -82,7 +82,7 @@ def clean():
     for ui_file in os.listdir(options.base.ui):
         if ui_file.endswith('.py') and ui_file != '__init__.py':
             os.remove(options.base.plugin / 'ui' / ui_file)
-    os.remove(options.base.home / '%s.pro' % PLUGIN_NAME)
+    os.remove(path(options.base.home) / '%s.pro' % PLUGIN_NAME)
     sh('git clean -dxf')
 
 
