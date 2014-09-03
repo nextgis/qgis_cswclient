@@ -473,10 +473,10 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
 
         position = self.catalog.results['returned'] + self.startfrom
 
-        msg = self.tr('Showing %d - %d of %d result%s') % (
-                      self.startfrom + 1, position,
-                       self.catalog.results['matches'],
-                       's'[self.catalog.results['matches'] == 1:])
+        msg = self.tr('Showing %d - %d of %d result%s') % \
+                     (self.startfrom + 1, position,
+                      self.catalog.results['matches'],
+                      's'[self.catalog.results['matches'] == 1:])
 
         self.lblResults.setText(msg)
 
@@ -733,7 +733,7 @@ class MetaSearchDialog(QDialog, BASE_CLASS):
         except ExceptionReport, err:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('GetRecords error'),
-                                self.tr('Error getting response: %s'))))))))) % err)
+                                self.tr('Error getting response: %s') % err)
             return
 
         QApplication.restoreOverrideCursor()
