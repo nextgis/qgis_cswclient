@@ -131,6 +131,7 @@ Settings
 You can fine tune MetaSearch with the following settings:
 
 - **Results paging**: when searching metadata catalogues, the number of results to show per page
+- **Timeout**: when searching metadata catalogues, the number of seconds for blocking connection attempt.  Default value is 10
 
 Support
 -------
