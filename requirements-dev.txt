@@ -1,0 +1,8 @@
+Jinja2==2.7.2
+Paver==1.2.2
+pep8
+pylint
+Sphinx==1.2.1
+sphinx_bootstrap_theme==0.3.6
+sphinx-intl
+transifex_client
