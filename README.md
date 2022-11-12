@@ -7,7 +7,7 @@ This program is licensed under GNU GPL v2 or any later version
 
 Commercial support
 ------------------
-Need to fix a bug or add a feature to Click-fu? 
+Need to fix a bug or add a feature to CSWClient? 
 
 We provide custom development and support for this software. [Contact us](https://nextgis.com/contact/) to discuss options!
 
